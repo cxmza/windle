@@ -1,36 +1,42 @@
 import { expect, test } from '@playwright/test';
-import { openProtocolMenu, revealNav, scrollSettled, storyMounted } from './story.ts';
+import { openProtocolMenu, scrollSettled, storyMounted } from './story.ts';
 
 test.describe('desktop top bar', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test('is a floating black bar: contained, centred, 16px from the top; lockup left, links and actions right', async ({
+  test('is three islands: lockup on the page, a compact centred glass capsule, a glass actions island on the right', async ({
     page,
   }) => {
     await page.goto('/');
-    const pill = await page.locator('[data-dock]').boundingBox();
-    expect(pill).not.toBeNull();
-    if (!pill) return;
-    expect(Math.round(pill.width)).toBe(1100);
-    expect(Math.round(pill.height)).toBe(56);
-    expect(Math.round(pill.y)).toBe(16);
-    expect(Math.abs(pill.x + pill.width / 2 - 720)).toBeLessThan(2);
+    const capsule = await page.locator('[data-dock]').boundingBox();
+    const actions = await page.locator('[data-dock-actions]').boundingBox();
+    expect(capsule && actions).toBeTruthy();
+    if (!capsule || !actions) return;
+    expect(Math.round(capsule.height)).toBe(56);
+    expect(Math.round(capsule.y)).toBe(16);
+    expect(capsule.width).toBeLessThan(420);
+    expect(Math.abs(capsule.x + capsule.width / 2 - 720)).toBeLessThan(2);
+    expect(Math.round(actions.height)).toBe(56);
+    expect(Math.round(actions.y)).toBe(16);
     const logo = await page.locator('[data-header-logo]').boundingBox();
-    const nav = await page.getByRole('navigation', { name: 'Primary' }).boundingBox();
     const signIn = await page.locator('[data-dock-signin]').boundingBox();
     const launch = await page.locator('[data-dock-cta]').boundingBox();
-    expect(logo && nav && signIn && launch).toBeTruthy();
-    if (!logo || !nav || !signIn || !launch) return;
-    expect(logo.x + logo.width).toBeLessThanOrEqual(nav.x);
-    expect(nav.x + nav.width).toBeLessThanOrEqual(signIn.x);
+    expect(logo && signIn && launch).toBeTruthy();
+    if (!logo || !signIn || !launch) return;
+    expect(logo.x + logo.width).toBeLessThanOrEqual(capsule.x);
+    expect(capsule.x + capsule.width).toBeLessThanOrEqual(actions.x);
+    expect(signIn.x).toBeGreaterThanOrEqual(actions.x);
     expect(signIn.x + signIn.width).toBeLessThanOrEqual(launch.x);
-    expect(launch.x + launch.width).toBeLessThanOrEqual(pill.x + pill.width);
+    expect(launch.x + launch.width).toBeLessThanOrEqual(actions.x + actions.width);
+    expect(actions.x + actions.width).toBeLessThanOrEqual(1440);
+    for (const target of [signIn, launch]) expect(target.height).toBeGreaterThanOrEqual(44);
+    await expect(page.locator('[data-dock-island] [data-header-logo]')).toHaveCount(0);
     await expect(page.locator('[data-dock-root] [data-logo-jelly]:visible')).toHaveCount(1);
-    await expect(page.locator('[data-dock]').getByRole('link', { name: 'Launch app' })).toHaveAttribute(
+    await expect(page.locator('[data-dock-actions]').getByRole('link', { name: 'Launch app' })).toHaveAttribute(
       'href',
       'https://app.windle.fun',
     );
-    await expect(page.locator('[data-dock]').getByRole('link', { name: 'Sign in' })).toHaveAttribute(
+    await expect(page.locator('[data-dock-actions]').getByRole('link', { name: 'Sign in' })).toHaveAttribute(
       'href',
       'https://oauth.windle.fun',
     );
@@ -64,13 +70,20 @@ test.describe('desktop top bar', () => {
     await expect.poll(() => new URL(page.url()).pathname, { timeout: 15_000 }).toBe('/collateral');
   });
 
-  test('the Protocol menu opens and moves with the keyboard', async ({ page }) => {
+  test('the Protocol menu opens under the capsule and moves with the keyboard', async ({ page }) => {
     await page.goto('/');
     const trigger = page.getByRole('button', { name: 'Protocol' });
     await trigger.focus();
     await page.keyboard.press('Enter');
     const menu = page.locator('[data-dock-menu]');
     await expect(menu).toBeVisible();
+    const capsule = await page.locator('[data-dock]').boundingBox();
+    await expect
+      .poll(async () => {
+        const box = await menu.boundingBox();
+        return box && capsule ? Math.abs(box.x + box.width / 2 - (capsule.x + capsule.width / 2)) : 99;
+      })
+      .toBeLessThan(4);
     await page.keyboard.press('ArrowDown');
     await expect(menu.locator('[data-dock-link]').first()).toBeFocused();
     await page.keyboard.press('ArrowDown');
@@ -80,16 +93,18 @@ test.describe('desktop top bar', () => {
     await expect(trigger).toBeFocused();
   });
 
-  test('keeps one size, shape and position at every scroll offset, up and down', async ({ page }) => {
+  test('keeps one size, shape and position of every island at every scroll offset, up and down', async ({ page }) => {
     await page.goto('/');
     await storyMounted(page);
-    const pill = page.locator('[data-dock]');
-    const measure = async () => {
-      const box = await pill.boundingBox();
-      return box && [box.x, box.y, box.width, box.height].map(Math.round);
-    };
+    const measure = () =>
+      page.locator('[data-dock-island]').evaluateAll((els) =>
+        els.map((el) => {
+          const box = el.getBoundingClientRect();
+          return [box.x, box.y, box.width, box.height].map(Math.round);
+        }),
+      );
     const initial = await measure();
-    expect(initial?.slice(1)).toEqual([16, 1100, 56]);
+    expect(initial).toHaveLength(2);
     for (const y of [200, 1400, 600, 0]) {
       await page.evaluate(`window.scrollTo(0, ${y})`);
       await scrollSettled(page);
@@ -99,60 +114,87 @@ test.describe('desktop top bar', () => {
     }
   });
 
-  test('is glass: a near-clear tint with a backdrop blur, not an opaque plate', async ({ page }) => {
+  test('is glass: a near-clear tint with a small backdrop blur, not an opaque plate', async ({ page }) => {
     await page.goto('/');
     const style = await page.evaluate<{ bg: string; filter: string }>(
-      "(() => { const cs = getComputedStyle(document.querySelector('[data-dock-glass]')); return { bg: cs.backgroundColor, filter: cs.backdropFilter }; })()",
+      "(() => { const cs = getComputedStyle(document.querySelector('[data-dock] [data-glass]')); return { bg: cs.backgroundColor, filter: cs.backdropFilter }; })()",
     );
     const alpha = Number(/\/\s*([\d.]+)/.exec(style.bg)?.[1] ?? /,\s*([\d.]+)\)$/.exec(style.bg)?.[1] ?? 1);
     expect(alpha).toBeLessThan(0.15);
     expect(style.filter).toContain('blur');
   });
 
-  test('keeps the lockup and actions inside the viewport at lg and tablet widths', async ({ page }) => {
+  test('refracts in Chromium: each island gets a lens filter built for its measured size', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-dock] [data-glass][data-lens]')).toHaveCount(1);
+    await expect(page.locator('[data-dock-actions] [data-glass][data-lens]')).toHaveCount(1);
+    const fits = await page.evaluate<boolean[]>(`(() =>
+      [...document.querySelectorAll('[data-dock-island]')].map((island) => {
+        const glass = island.querySelector('[data-glass]');
+        const id = /url\\("#([^"]+)"\\)/.exec(getComputedStyle(glass).backdropFilter)?.[1];
+        const filter = id ? document.getElementById(id) : null;
+        const box = island.getBoundingClientRect();
+        return !!filter && Math.abs(Number(filter.getAttribute('width')) - box.width) < 1 && Math.abs(Number(filter.getAttribute('height')) - box.height) < 1;
+      }))()`);
+    expect(fits).toEqual([true, true]);
+  });
+
+  test('a glass bubble slides to the hovered item and hides when the pointer leaves', async ({ page }) => {
+    await page.goto('/');
+    const bubble = page.locator('[data-dock-bubble]');
+    const offset = (selector: string) => async () => {
+      const [b, t] = await Promise.all([bubble.boundingBox(), page.locator(selector).boundingBox()]);
+      return b && t ? Math.abs(b.x + b.width / 2 - (t.x + t.width / 2)) : 99;
+    };
+    await expect(bubble).not.toHaveAttribute('data-visible', '');
+    await page.locator('[data-dock-docs]').hover();
+    await expect(bubble).toHaveAttribute('data-visible', '');
+    await expect.poll(offset('[data-dock-docs]')).toBeLessThan(2);
+    await page.locator('[data-dock] [data-dock-link=ecosystem]').hover();
+    await expect.poll(offset('[data-dock] [data-dock-link=ecosystem]')).toBeLessThan(2);
+    await page.mouse.move(100, 600);
+    await expect(bubble).not.toHaveAttribute('data-visible', '');
+  });
+
+  test('keeps the lockup and actions inside the viewport at lg and tablet widths without overlap', async ({ page }) => {
     for (const width of [1024, 768]) {
       await page.setViewportSize({ width, height: 800 });
       await page.goto('/');
-      const bar = await page.locator('[data-dock]').boundingBox();
-      expect(bar && bar.x >= 0 && bar.x + bar.width <= width).toBe(true);
       const logo = await page.locator('[data-header-logo]').boundingBox();
-      const launch = await page.locator('[data-dock-cta]:visible').boundingBox();
-      expect(logo && launch && logo.x + logo.width <= launch.x).toBe(true);
+      const capsule = await page.locator('[data-dock]').boundingBox();
+      const actions = await page.locator('[data-dock-actions]').boundingBox();
+      expect(logo && capsule && actions).toBeTruthy();
+      if (!logo || !capsule || !actions) return;
+      expect(logo.x).toBeGreaterThanOrEqual(0);
+      expect(logo.x + logo.width).toBeLessThanOrEqual(capsule.x);
+      expect(capsule.x + capsule.width).toBeLessThanOrEqual(actions.x);
+      expect(actions.x + actions.width).toBeLessThanOrEqual(width);
       expect(await page.evaluate<boolean>('document.documentElement.scrollWidth <= window.innerWidth')).toBe(true);
     }
-  });
-
-  test('scroll progress hairline fills along the bar', async ({ page }) => {
-    await page.goto('/');
-    await storyMounted(page);
-    await page.evaluate('window.scrollTo(0, document.documentElement.scrollHeight / 2)');
-    await revealNav(page);
-    const share = await page.locator('[data-dock-progress-fill]').evaluate((el) => {
-      const track = el.parentElement?.getBoundingClientRect().width ?? 1;
-      return el.getBoundingClientRect().width / track;
-    });
-    expect(share).toBeGreaterThan(0.3);
-    expect(share).toBeLessThan(0.7);
   });
 });
 
 test.describe('390px', () => {
   test.use({ viewport: { width: 390, height: 780 } });
 
-  test('shows the lockup, a compact Launch app and the menu button; the sheet opens and closes with Escape', async ({
+  test('shows the lockup and one small glass island with Launch app and the menu button; the sheet opens and closes with Escape', async ({
     page,
   }) => {
     await page.goto('/');
-    const pill = await page.locator('[data-dock]').boundingBox();
-    expect(Math.round(pill?.height ?? 0)).toBe(56);
-    expect(Math.round(pill?.y ?? 0)).toBe(16);
+    const island = await page.locator('[data-dock-actions]').boundingBox();
+    expect(Math.round(island?.height ?? 0)).toBe(56);
+    expect(Math.round(island?.y ?? 0)).toBe(16);
+    await expect(page.locator('[data-dock]')).toBeHidden();
+    await expect(page.locator('[data-dock-island]:visible')).toHaveCount(1);
     const logo = await page.locator('[data-header-logo]').boundingBox();
     const launch = await page.locator('[data-dock-cta]:visible').boundingBox();
     const menuButton = page.getByRole('button', { name: 'Open menu' });
     const mb = await menuButton.boundingBox();
     expect(logo && launch && mb && logo.x + logo.width <= launch.x && launch.x + launch.width <= mb.x).toBe(true);
-    expect(mb && mb.x + mb.width <= 390).toBe(true);
+    expect(mb && mb.width >= 44 && mb.height >= 44 && mb.x + mb.width <= 390).toBe(true);
+    await expect(page.locator('[data-dock-signin]')).toBeHidden();
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeHidden();
+    await expect(page.locator('[data-dock-actions] [data-glass]')).not.toHaveAttribute('data-lens', '');
     expect(await page.evaluate<boolean>('document.documentElement.scrollWidth <= window.innerWidth')).toBe(true);
 
     await menuButton.click();

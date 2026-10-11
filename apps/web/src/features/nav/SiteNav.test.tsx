@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CHAPTERS } from '../story/chapters';
 import { chapterPath } from '../story/routes';
+import { buildLensMap, LENS_BEZEL } from './LiquidGlassDefs';
 import { APP_URL, activeProtocolId, DOCS_URL, isProtocolActive, PROTOCOL_ITEMS, SIGN_IN_URL } from './nav-data';
-import { scrollProgress } from './nav-scroll';
 import { SiteNav } from './SiteNav';
 
 const live = vi.hoisted(() => ({ active: 0 }));
@@ -40,8 +40,20 @@ describe('SiteNav', () => {
     expect(logo).toHaveAttribute('href', '/');
     expect(logo?.querySelector('[data-logo-jelly]')).not.toBeNull();
     expect(container.querySelector('[data-dock-root] [data-dock]')).not.toBeNull();
-    expect(container.querySelector('[data-dock-progress] [data-dock-progress-fill]')).not.toBeNull();
-    expect(container.querySelector('[data-dock-indicator]')).toBeNull();
+    expect(container.querySelector('[data-dock-root] [data-dock-actions]')).not.toBeNull();
+    expect(container.querySelector('[data-dock-bubble]')).not.toBeNull();
+    expect(container.querySelector('[data-dock-progress]')).toBeNull();
+  });
+
+  it('keeps the logo on the page and glass islands only for the capsule and the actions', () => {
+    const { container } = render(<SiteNav />);
+    expect(container.querySelectorAll('[data-dock-island]')).toHaveLength(2);
+    expect(container.querySelectorAll('[data-dock-island] [data-glass]')).toHaveLength(2);
+    const logo = container.querySelector('[data-header-logo]');
+    expect(logo?.closest('[data-dock-island]')).toBeNull();
+    expect(container.querySelector('[data-dock] [data-dock-protocol]')).not.toBeNull();
+    expect(container.querySelector('[data-dock-actions] [data-dock-cta]')).not.toBeNull();
+    expect(container.querySelector('[data-dock-actions] [data-dock-signin]')).not.toBeNull();
   });
 
   it('never uses a hash href', () => {
@@ -158,12 +170,31 @@ describe('nav-data helpers', () => {
   });
 });
 
-describe('nav-scroll helpers', () => {
-  it('clamps scroll progress to 0..1 and survives a page that cannot scroll', () => {
-    expect(scrollProgress(0, 1000)).toBe(0);
-    expect(scrollProgress(500, 1000)).toBe(0.5);
-    expect(scrollProgress(2000, 1000)).toBe(1);
-    expect(scrollProgress(-5, 1000)).toBe(0);
-    expect(scrollProgress(10, 0)).toBe(0);
+describe('buildLensMap', () => {
+  const width = 120;
+  const height = 48;
+  const map = buildLensMap({ width, height });
+  const at = (x: number, y: number) => {
+    const i = (y * width + x) * 4;
+    return { r: map[i] ?? 0, g: map[i + 1] ?? 0, a: map[i + 3] ?? 0 };
+  };
+
+  it('has one opaque RGBA texel per pixel', () => {
+    expect(map).toHaveLength(width * height * 4);
+    expect(at(10, 10).a).toBe(255);
+  });
+
+  it('is nearly neutral in the flat centre', () => {
+    const c = at(width / 2, height / 2);
+    expect(Math.abs(c.r - 128)).toBeLessThan(6);
+    expect(Math.abs(c.g - 128)).toBeLessThan(6);
+  });
+
+  it('bends strongest at the rim, toward the centre, and fades by the bezel width', () => {
+    const top = at(width / 2, 0);
+    const bottom = at(width / 2, height - 1);
+    expect(top.g).toBeGreaterThan(180);
+    expect(bottom.g).toBeLessThan(76);
+    expect(Math.abs(at(width / 2, LENS_BEZEL + 4).g - 128)).toBeLessThan(Math.abs(top.g - 128) / 3);
   });
 });

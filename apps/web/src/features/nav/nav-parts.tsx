@@ -3,28 +3,33 @@ import { cn } from '@/lib/cn';
 import { chapterPath } from '../story/routes';
 import { APP_URL, type ProtocolItem, SIGN_IN_URL } from './nav-data';
 
-/** Top-level bar item (trigger or link): white label with a hair of shadow; hover / active / open = a small inner glass bubble (.dock-item, globals.css). */
+const navText =
+  'text-(length:--nav-font-size) font-medium tracking-(--nav-tracking) whitespace-nowrap text-(--nav-text) transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
+
+/** Capsule item (trigger or link): 44px target, Inter Tight 15/500, white at 88% rising to 100%; the sliding bubble (nav-bubble.ts) sits behind it. */
 export const navItemClass = cn(
-  'dock-item relative inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-sm font-medium whitespace-nowrap text-(--nav-text) transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none',
+  'relative inline-flex h-11 items-center gap-1.5 rounded-full px-3.5',
+  navText,
   '[@media(hover:hover)]:hover:text-foreground active:text-foreground data-active:text-foreground aria-[current]:text-foreground data-[state=open]:text-foreground',
 );
 
+/** Ghost item for the actions island: no plate until hovered. */
 export function SignInLink({ className, ...props }: ComponentPropsWithRef<'a'>) {
   return (
-    <a href={SIGN_IN_URL} data-dock-signin className={cn(navItemClass, className)} {...props}>
+    <a href={SIGN_IN_URL} data-dock-signin className={cn('dock-item', navItemClass, className)} {...props}>
       Sign in
     </a>
   );
 }
 
-/** Solid white pill CTA: the contrast anchor of the glass bar, with a top highlight, dark label; hover turns it electric blue with white text. */
+/** Primary action: a solid white pill, so it keeps full contrast over any backdrop the glass lets through; hover turns it electric blue. */
 export function LaunchLink({ className, ...props }: ComponentPropsWithRef<'a'>) {
   return (
     <a
       href={APP_URL}
       data-dock-cta
       className={cn(
-        'inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-foreground px-5 text-sm font-semibold whitespace-nowrap text-background shadow-[inset_0_1px_0_var(--nav-hl-top)] transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-accent-hover active:text-accent-foreground [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground',
+        'inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-foreground px-5 text-(length:--nav-font-size) font-semibold tracking-(--nav-tracking) whitespace-nowrap text-background shadow-(--nav-cta-shadow) transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-accent-hover active:text-accent-foreground [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground',
         className,
       )}
       {...props}

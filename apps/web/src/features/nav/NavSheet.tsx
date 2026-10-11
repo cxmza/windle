@@ -5,16 +5,16 @@ import { WindleLogo } from '../story/brand/WindleLogo';
 import type { ChapterKey } from '../story/chapters';
 import { chapterPath } from '../story/routes';
 import { DOCS_URL, PROTOCOL_ITEMS, SIGN_IN_URL, X_LINK } from './nav-data';
-import { ArrowUpRightGlyph, XGlyph } from './nav-icons';
+import { ArrowUpRightGlyph, CloseGlyph, MenuGlyph, XGlyph } from './nav-icons';
 import { LaunchLink, ProtocolRow } from './nav-parts';
 
 const DESKTOP_QUERY = '(min-width: 48rem)'; // Tailwind `md`
 
 const groupLabel = 'px-3 text-xs font-medium tracking-wide text-muted-foreground';
 const barButton =
-  'dock-bubble inline-flex h-10 shrink-0 items-center justify-center rounded-full px-4 text-sm font-medium text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
+  'dock-item inline-flex size-11 shrink-0 items-center justify-center rounded-full text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
 const plainRow =
-  'dock-row flex min-h-12 items-center justify-between gap-3 rounded-2xl px-3 text-base font-medium text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
+  'dock-row flex min-h-12 items-center justify-between gap-3 rounded-2xl px-3 text-base font-medium tracking-(--nav-tracking) text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
 
 /** < md: the menu button in the bar and the full-height sheet that drops from the top (Radix Dialog: focus trap, Esc, scroll lock, focus return). */
 export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
@@ -28,7 +28,7 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
     <Dialog.Root open={open} onOpenChange={setRequested}>
       <Dialog.Trigger asChild>
         <button type="button" data-dock-menu-button aria-label="Open menu" className={`${barButton} md:hidden`}>
-          Menu
+          <MenuGlyph />
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -44,19 +44,19 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
           }}
           className="fixed inset-0 z-(--z-sheet) flex flex-col pt-[env(safe-area-inset-top,0px)] outline-none md:hidden"
         >
-          <div className="flex h-(--topbar-height) shrink-0 items-center justify-between px-(--gutter)">
+          <div className="flex h-[calc(var(--topbar-height)+var(--nav-offset))] shrink-0 items-center justify-between px-(--gutter) pt-(--nav-offset)">
             <a
               href={chapterPath('hero')}
               onClick={close}
               className="inline-flex items-center py-2 [&_[data-windle-mark]]:text-foreground"
             >
-              <WindleLogo markSize={20} wordmarkClassName="text-base font-extrabold tracking-[-0.03em] uppercase" />
+              <WindleLogo markSize={22} wordmarkClassName="text-base font-extrabold tracking-[-0.03em] uppercase" />
               <span className="sr-only">, back to top</span>
             </a>
             <Dialog.Title className="sr-only">Menu</Dialog.Title>
             <Dialog.Close asChild>
               <button type="button" aria-label="Close menu" className={barButton}>
-                Close
+                <CloseGlyph />
               </button>
             </Dialog.Close>
           </div>
