@@ -1,0 +1,20 @@
+# Build-context allow-list for apps/api/Dockerfile (context = repo root). Everything else (other apps, node_modules,
+# dist, env files, keys) never reaches the builder.
+*
+!package.json
+!package-lock.json
+!tsconfig.base.json
+!apps/*/package.json
+!packages/*/package.json
+!packages/shared/src/**
+!packages/shared/tsconfig.json
+!apps/api/package.json
+!apps/api/build.mjs
+!apps/api/tsconfig.json
+!apps/api/drizzle.config.ts
+!apps/api/src/**
+!apps/api/drizzle/**
+**/node_modules
+**/dist
+**/*.test.ts
+**/.env*

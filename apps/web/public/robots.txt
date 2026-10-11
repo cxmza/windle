@@ -1,0 +1,5 @@
+# www.windle.fun: everything is public. AI crawlers welcome; a summary for them lives at /llms.txt.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.windle.fun/sitemap.xml

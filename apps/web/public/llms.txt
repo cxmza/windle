@@ -1,0 +1,28 @@
+# windle
+
+> windle is a Solana protocol where teams back onchain-verifiable promises with collateral, a YES/NO market prices each promise, and at the deadline the chain decides: ship → collateral returned, YES paid; miss → collateral slashed to NO holders.
+
+Status: pre-launch. Markets, prices and amounts shown on the website are illustrative, not live data. Collateral assets, minimums and fees are not decided yet.
+
+## How it works
+
+- [Promise](https://www.windle.fun/promise): a team makes an onchain claim anyone can verify, e.g. "Mainnet by Dec 1".
+- [Collateral](https://www.windle.fun/collateral): the team locks funds it loses if it doesn't deliver.
+- [Market](https://www.windle.fun/market): buy YES if you believe, NO if you don't; the price is the odds.
+- [Incentive](https://www.windle.fun/incentive): the only insider is the team, and it profits only by shipping.
+- [Judge](https://www.windle.fun/judge): at the deadline the chain checks the condition (program deployed, vesting untouched, revenue above N). No oracle votes, no disputes.
+- [Outcome](https://www.windle.fun/outcome): ship → collateral returned, YES paid; slash → collateral to NO holders.
+- [Ecosystem](https://www.windle.fun/ecosystem): built on Solana, works with pump.fun tokens.
+- [Join](https://www.windle.fun/launch): make a promise or back a team.
+
+## Docs
+
+- [Documentation](https://docs.windle.fun/): concepts, guides, FAQ, risk disclosure.
+- [Introduction](https://docs.windle.fun/introduction/)
+- [How it works](https://docs.windle.fun/how-it-works/)
+- [FAQ](https://docs.windle.fun/faq/)
+
+## Optional
+
+- [Brand kit](https://cdn.windle.fun/): logo marks and app icons.
+- [API reference](https://api.windle.fun/reference): early, subject to change.

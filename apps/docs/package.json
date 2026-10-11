@@ -1,0 +1,20 @@
+{
+  "name": "@windle/docs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro sync && tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.42.6",
+    "@windle/tokens": "*",
+    "astro": "^7.3.8"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,4 @@
+/* Brand fonts (self-hosted via Fontsource). Import before tokens.css; the family names match --font-* in tokens.css. */
+@import "@fontsource-variable/unbounded";
+@import "@fontsource-variable/inter-tight";
+@import "@fontsource-variable/caveat";

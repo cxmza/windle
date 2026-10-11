@@ -1,0 +1,60 @@
+---
+// Colour swatches straight from @windle/tokens (palette.ts mirrors tokens.css; its test keeps the two in sync).
+import { BLUE, NEUTRAL } from '@windle/tokens';
+
+const swatches = [
+  { name: 'Black', role: 'Page background', hex: NEUTRAL.black, oklch: 'oklch(0 0 0)' },
+  { name: 'White', role: 'Text, emphasis blocks', hex: NEUTRAL.white, oklch: 'oklch(1 0 0)' },
+  { name: 'Deep navy', role: 'Panels, market bar track', hex: BLUE[100], oklch: 'oklch(0.16 0.075 263)' },
+  { name: 'Electric blue', role: 'Accent, interactive fill', hex: BLUE[500], oklch: 'oklch(0.55 0.2 260)' },
+  { name: 'Sky', role: 'Blue text and marks on dark', hex: BLUE[700], oklch: 'oklch(0.72 0.15 245)' },
+  { name: 'Glow', role: 'Focus ring, halos', hex: BLUE[800], oklch: 'oklch(0.82 0.11 225)' },
+] as const;
+---
+
+<dl class="wl-swatches not-content">
+  {
+    swatches.map((s) => (
+      <div class="wl-swatch">
+        <span class="wl-swatch__chip" style={`background:${s.hex}`} aria-hidden="true" />
+        <dt>{s.name}</dt>
+        <dd>
+          <code>{s.hex}</code> · <code>{s.oklch}</code>
+          <br />
+          {s.role}
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .wl-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1rem;
+    margin-block: 1.5rem;
+  }
+  .wl-swatch {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr;
+    column-gap: 0.75rem;
+    align-items: start;
+  }
+  .wl-swatch__chip {
+    grid-row: span 2;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+  .wl-swatch dt {
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+  .wl-swatch dd {
+    margin: 0;
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+</style>

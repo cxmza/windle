@@ -1,0 +1,21 @@
+{
+  "name": "@windle/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "API contracts shared by api, app and auth: zod schemas + inferred TS types.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

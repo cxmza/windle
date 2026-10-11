@@ -1,0 +1,4 @@
+# windle: hourly disk report at :07 (log only).
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+7 * * * * root /opt/windle/bin/disk-watch.sh >> /opt/windle/logs/disk-watch.log 2>&1

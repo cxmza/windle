@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#000000">
+<title>windle brand kit & cdn — logo marks, app icons, assets</title>
+<meta name="description" content="The windle brand kit (logo marks and app icons in SVG and PNG) plus static assets, fonts and on-the-fly image transforms for the windle Solana protocol.">
+<link rel="canonical" href="https://cdn.windle.fun/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="windle">
+<meta property="og:title" content="windle brand kit & cdn">
+<meta property="og:description" content="Logo marks, app icons, fonts and on-the-fly image transforms for windle.">
+<meta property="og:url" content="https://cdn.windle.fun/">
+<meta property="og:image" content="https://cdn.windle.fun/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="windle cdn: brand kit and assets">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cdn.windle.fun/og.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/cdn.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="https://www.windle.fun" aria-label="windle home">
+    <svg class="brand-mark" viewBox="0 0 120 120" aria-hidden="true"><path fill="currentColor" d="M30 14 H32.5 L44 58 L55.5 14 H64.5 L76 58 L87.5 14 H90 A16 16 0 0 1 106 30 V90 A16 16 0 0 1 90 106 H73.3 L60 70 L46.7 106 H30 A16 16 0 0 1 14 90 V30 A16 16 0 0 1 30 14 Z"/></svg>
+    <span>windle</span><span class="brand-sub">cdn</span>
+  </a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#paths">Paths</a>
+    <a href="#images">Images</a>
+    <a href="#brand">Brand kit</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">cdn.windle.fun</p>
+    <h1>Assets at the edge,<br>images on demand.</h1>
+    <p class="lede">Hashed bundles, fonts and the brand kit are served with long-lived caching and open CORS. Images are resized, cropped and re-encoded on the fly, then cached on disk so each variant is computed once.</p>
+  </section>
+
+  <section id="paths" class="block">
+    <h2>What lives here</h2>
+    <div class="cards">
+      <article class="card">
+        <code class="path">/assets/ · /fonts/</code>
+        <h3>Versioned files</h3>
+        <p>Content-hashed names only. Cached for a year and marked <code>immutable</code>: a new version is a new URL.</p>
+        <p class="meta">Cache-Control: public, max-age=31536000, immutable</p>
+      </article>
+      <article class="card">
+        <code class="path">/brand/</code>
+        <h3>Brand kit</h3>
+        <p>Logo marks and icons under stable names. Cached for a day, revalidated in the background for a week.</p>
+        <p class="meta">Cache-Control: public, max-age=86400, stale-while-revalidate=604800</p>
+      </article>
+      <article class="card">
+        <code class="path">/img/</code>
+        <h3>Image transforms</h3>
+        <p>Signed URLs only. Resize, crop, quality and format per request. AVIF or WebP is chosen from the browser's <code>Accept</code> header.</p>
+        <p class="meta">X-Cache-Status: MISS → HIT</p>
+      </article>
+    </div>
+    <p class="note">Every response carries <code>Access-Control-Allow-Origin: *</code> and <code>Timing-Allow-Origin: *</code>, so fonts load cross-origin and images can be used as WebGL textures.</p>
+  </section>
+
+  <section id="images" class="block">
+    <h2>Image transforms</h2>
+    <pre class="anatomy"><span class="a-host">https://cdn.windle.fun/img/</span><span class="a-sig">{signature}</span>/<span class="a-opt">{options}</span>/plain/<span class="a-src">{path}</span><span class="a-fmt">[@format]</span></pre>
+    <dl class="legend">
+      <div><dt class="a-sig">signature</dt><dd>HMAC-SHA256 of the rest of the path, base64url. Unsigned or tampered URLs are rejected with 403. URLs are minted by the api or <code>/opt/windle/bin/imgproxy-url.sh</code>.</dd></div>
+      <div><dt class="a-opt">options</dt><dd>imgproxy processing options, e.g. <code>rs:fill:1200:600</code>, <code>q:70</code>, <code>g:sm</code>.</dd></div>
+      <div><dt class="a-src">path</dt><dd>A file in this CDN's release, e.g. <code>samples/aurora.jpg</code>. Remote URLs are not accepted.</dd></div>
+      <div><dt class="a-fmt">@format</dt><dd>Omit it for automatic AVIF / WebP / original by <code>Accept</code> (browser and origin cache only). Pin it (<code>@webp</code>) when the URL should also be cached by Cloudflare.</dd></div>
+    </dl>
+
+    <figure class="demo-hero">
+      <img src="{{IMG_HERO}}" width="1200" height="600" alt="Blue aurora over a dark horizon, rendered on the fly at 1200×600 in the best format this browser accepts." decoding="async">
+      <figcaption><code>rs:fill:1200:600</code> · format negotiated for this browser · source 2400×1600 JPEG</figcaption>
+    </figure>
+    <div class="variants">
+      <figure>
+        <img src="{{IMG_AVIF}}" width="480" height="320" alt="Aurora sample pinned to AVIF" loading="lazy" decoding="async">
+        <figcaption><code>@avif</code></figcaption>
+      </figure>
+      <figure>
+        <img src="{{IMG_WEBP}}" width="480" height="320" alt="Aurora sample pinned to WebP" loading="lazy" decoding="async">
+        <figcaption><code>@webp</code></figcaption>
+      </figure>
+      <figure>
+        <img src="{{IMG_JPEG}}" width="480" height="320" alt="Aurora sample pinned to JPEG" loading="lazy" decoding="async">
+        <figcaption><code>@jpg</code></figcaption>
+      </figure>
+    </div>
+    <ol class="layers" aria-label="Cache layers">
+      <li><strong>Browser</strong> caches every variant for a year (<code>Vary: Accept</code>).</li>
+      <li><strong>Cloudflare</strong> caches pinned-format URLs only; automatic ones carry <code>Cloudflare-CDN-Cache-Control: no-store</code>.</li>
+      <li><strong>Origin cache</strong>: nginx keeps each variant on disk (2 GB, 30 days idle), keyed by format bucket.</li>
+      <li><strong>imgproxy</strong> renders a miss: 2 workers, 40 MP source limit, 4096 px output limit.</li>
+    </ol>
+  </section>
+
+  <section id="brand" class="block">
+    <h2>Brand kit</h2>
+    <p class="note">The windle mark: a rounded square with a W cut in negative space. Keep clear space of a quarter of its width; do not recolour beyond blue, white and black.</p>
+    <div class="kit">
+      <article class="tile tile-dark">
+        <img src="/brand/windle-mark-blue.svg" width="96" height="96" alt="windle mark, blue">
+        <h3>Mark · blue</h3>
+        <p><a href="/brand/windle-mark-blue.svg" download>SVG</a> <a href="{{PNG_BLUE_512}}" download="windle-mark-blue-512.png">PNG 512</a> <a href="{{PNG_BLUE_1024}}" download="windle-mark-blue-1024.png">PNG 1024</a></p>
+      </article>
+      <article class="tile tile-dark">
+        <img src="/brand/windle-mark-white.svg" width="96" height="96" alt="windle mark, white">
+        <h3>Mark · white</h3>
+        <p><a href="/brand/windle-mark-white.svg" download>SVG</a> <a href="{{PNG_WHITE_512}}" download="windle-mark-white-512.png">PNG 512</a></p>
+      </article>
+      <article class="tile tile-light">
+        <img src="/brand/windle-mark-black.svg" width="96" height="96" alt="windle mark, black">
+        <h3>Mark · black</h3>
+        <p><a href="/brand/windle-mark-black.svg" download>SVG</a> <a href="{{PNG_BLACK_512}}" download="windle-mark-black-512.png">PNG 512</a></p>
+      </article>
+      <article class="tile tile-dark">
+        <img src="/brand/windle-app-icon.svg" width="96" height="96" alt="windle app icon">
+        <h3>App icon</h3>
+        <p><a href="/brand/windle-app-icon.svg" download>SVG</a> <a href="{{PNG_ICON_1024}}" download="windle-app-icon-1024.png">PNG 1024</a></p>
+      </article>
+    </div>
+    <dl class="swatches">
+      <div><dt><span class="sw sw-blue" aria-hidden="true"></span>Electric blue</dt><dd>#1C69E3 · oklch(0.55 0.2 260)</dd></div>
+      <div><dt><span class="sw sw-glow" aria-hidden="true"></span>Glow</dt><dd>#6CD3FA · oklch(0.82 0.11 225)</dd></div>
+      <div><dt><span class="sw sw-ink" aria-hidden="true"></span>Ink</dt><dd>#000000 · oklch(0 0 0)</dd></div>
+    </dl>
+  </section>
+</main>
+
+<footer class="foot">
+  <a href="https://www.windle.fun">windle.fun</a>
+  <span aria-hidden="true">·</span>
+  <a href="https://docs.windle.fun">docs</a>
+  <span aria-hidden="true">·</span>
+  <a href="https://app.windle.fun">app</a>
+</footer>
+</body>
+</html>

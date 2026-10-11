@@ -1,0 +1,4 @@
+# windle: weekly prune of old windle-labelled images (Sun 05:33 UTC).
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+33 5 * * 0 root /opt/windle/bin/maintenance.sh >> /opt/windle/logs/maintenance.log 2>&1

@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // URL is a WHATWG global in both browsers and Node; DOM lib is the dependency-free way to type it.
+    "lib": ["ES2023", "DOM"]
+  },
+  "include": ["src"]
+}

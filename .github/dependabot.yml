@@ -1,0 +1,58 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    open-pull-requests-limit: 10
+    labels: [dependencies]
+    commit-message:
+      prefix: deps
+      prefix-development: deps-dev
+    groups:
+      react:
+        patterns: [react, react-dom, '@types/react', '@types/react-dom', react-router, '@tanstack/*']
+      three:
+        patterns: [three, '@types/three', '@react-three/*']
+      motion:
+        patterns: [gsap, '@gsap/*', motion, lenis]
+      astro:
+        patterns: [astro, '@astrojs/*']
+      api:
+        patterns: [fastify, '@fastify/*', 'fastify-*', 'drizzle-*', ioredis, postgres, pino, '@scalar/*', zod]
+      solana:
+        patterns: ['@solana/*', '@wallet-standard/*', '@noble/*', bs58]
+      tooling:
+        patterns:
+          - typescript
+          - '@biomejs/*'
+          - vite
+          - '@vitejs/*'
+          - '@rolldown/*'
+          - vitest
+          - '@vitest/*'
+          - '@playwright/*'
+          - jsdom
+          - '@testing-library/*'
+          - tailwindcss
+          - '@tailwindcss/*'
+          - esbuild
+          - tsx
+      everything-else:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels: [dependencies, ci]
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ['*']

@@ -1,0 +1,9 @@
+---
+// windle is dark-only (packages/tokens defines no light theme), so the theme is pinned before first paint instead of
+// read from localStorage / prefers-color-scheme. `StarlightThemeProvider` stays defined as a no-op for any caller.
+---
+
+<script is:inline>
+  document.documentElement.dataset.theme = 'dark';
+  window.StarlightThemeProvider = { updatePickers() {} };
+</script>

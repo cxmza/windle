@@ -1,0 +1,10 @@
+# /etc/logrotate.d/windle - windle job logs. nginx's own logrotate already covers /var/log/nginx/*.log.
+/opt/windle/logs/*.log {
+    weekly
+    rotate 8
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 root adm
+}

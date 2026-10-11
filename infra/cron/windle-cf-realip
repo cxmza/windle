@@ -1,0 +1,4 @@
+# windle: refresh Cloudflare networks for real_ip, weekly (Mon 04:52 UTC). CF changes ranges rarely but silently.
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+52 4 * * 1 root /opt/windle/bin/cf-realip-update.sh >> /opt/windle/logs/cf-realip.log 2>&1

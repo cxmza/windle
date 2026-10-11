@@ -1,0 +1,4 @@
+# windle: nightly Postgres + Redis backup (03:41 UTC). Minutes chosen to avoid another tenant's job at :17.
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+41 3 * * * root /opt/windle/bin/backup.sh >> /opt/windle/logs/backup.log 2>&1

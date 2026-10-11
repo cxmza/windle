@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest an improvement to windle — product, docs, API or developer experience.
+title: '[feature] '
+labels: [feature, needs triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Open-ended ideas and protocol design questions fit better in [Discussions](https://github.com/cxmza/windle/discussions). Use this form for a concrete, scoped change.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change? Sketches and examples welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options:
+        - Landing / brand
+        - Product app
+        - Sign-in
+        - Docs
+        - API
+        - Protocol design
+        - Tooling / CI

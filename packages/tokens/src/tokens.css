@@ -1,0 +1,234 @@
+/* SHIP OR SLASH tokens — black/white base + one deep-navy / electric-blue accent family, dark-first (the page is always dark).
+   Tailwind 4 CSS-first. Blue is used purposefully (focus, interactive states, the market bar, the navy backdrop);
+   captions and emphasis marks stay black/white. The 3D layer reads sRGB mirrors from palette.ts (same package)
+   (a test keeps them in sync with the OKLCH values below). */
+
+/* ---------- primitives (neutral ramp, zero chroma; not used by components directly) ---------- */
+:root {
+  --gray-0: oklch(0 0 0);
+  --gray-50: oklch(0.08 0 0);
+  --gray-100: oklch(0.13 0 0);
+  --gray-200: oklch(0.19 0 0);
+  --gray-300: oklch(0.27 0 0);
+  --gray-400: oklch(0.4 0 0);
+  --gray-500: oklch(0.55 0 0);
+  --gray-600: oklch(0.7 0 0);
+  --gray-700: oklch(0.82 0 0);
+  --gray-800: oklch(0.93 0 0);
+  --gray-900: oklch(1 0 0);
+
+  /* blue ramp, hue ~262 (near-black navy -> electric blue -> cyan glow). Chroma tapers at both ends and every
+     step is inside sRGB. Not used by components directly. */
+  --blue-50: oklch(0.11 0.045 263);
+  --blue-100: oklch(0.16 0.075 263);
+  --blue-200: oklch(0.22 0.11 263);
+  --blue-300: oklch(0.3 0.15 262);
+  --blue-400: oklch(0.4 0.17 262);
+  --blue-500: oklch(0.55 0.2 260);
+  --blue-600: oklch(0.6 0.19 257);
+  --blue-700: oklch(0.72 0.15 245);
+  --blue-800: oklch(0.82 0.11 225);
+  --blue-900: oklch(0.92 0.05 215);
+}
+
+/* ---------- semantic (dark-first; no light theme) ---------- */
+:root {
+  color-scheme: dark;
+  --background: var(--gray-0);
+  --surface: var(--gray-100);
+  --surface-raised: var(--gray-200);
+  --foreground: var(--gray-900);
+  --muted: var(--gray-200);
+  --muted-foreground: var(--gray-600); /* L0.70 on black is about 9:1 */
+  --border: var(--gray-400);
+  --border-strong: var(--gray-800);
+  /* focus ring: light cyan glow, 12:1 on black and 11:1 on navy */
+  --ring: var(--blue-800);
+  /* inverted emphasis: white block, black text */
+  --emphasis: var(--gray-900);
+  --emphasis-foreground: var(--gray-0);
+  /* caption backing over the 3D canvas: near-solid so AA holds on any frame */
+  --caption: oklch(0 0 0 / 0.8);
+  --caption-foreground: var(--gray-900);
+  --scrim: oklch(0 0 0 / 0.5);
+  /* hand-drawn layer: white ink on the black page, black ink on white (emphasis) blocks */
+  --ink: var(--gray-900);
+  --ink-inverse: var(--gray-0);
+
+  /* blue roles */
+  --surface-navy: var(--blue-100); /* deep navy surface: market bar track, panels */
+  --surface-navy-raised: var(--blue-200);
+  --accent: var(--blue-500); /* electric blue fill: Buy YES, chooser selected, CTA hover, market bar (4.2:1 on black) */
+  --accent-hover: oklch(from var(--accent) calc(l - 0.05) c h);
+  --accent-foreground: var(--gray-900); /* white on --accent: 5.1:1 */
+  --accent-text: var(--blue-700); /* blue text/marks on black or navy: 8.6:1 / 8.0:1 */
+  --border-accent: var(--blue-600); /* selected / active outline, 5.2:1 on black */
+  --glow: var(--blue-800); /* light cyan tint: glass edges, halos, focus */
+  --glow-soft: oklch(from var(--glow) l c h / 0.35);
+  /* page backdrop behind the 3D canvas: navy bloom rising from the lower right, fades to black */
+  --backdrop-navy:
+    radial-gradient(60% 55% at 78% 82%, oklch(from var(--blue-400) l c h / 0.5), transparent 70%),
+    radial-gradient(90% 80% at 70% 100%, oklch(from var(--blue-200) l c h / 0.7), transparent 75%);
+  /* web landing: CSS poster of the hero nebula mood (apps/web scene/nebula.ts, NEBULA_MOODS[0]) shown until the
+     WebGL nebula fades in over it. Each layer approximates one gaussian blob: radius 3r (r = mood radius x NEBULA.radiusScale), alpha = sRGB-encoded
+     density x NEBULA.gain; then fitted to screenshots of the rendered nebula (radius x0.85, density x0.7:
+     its warp and filaments thin the clouds). */
+  --backdrop-nebula:
+    radial-gradient(
+      circle 104vh at 84% 88%,
+      oklch(from var(--blue-500) l c h / 0.79) 0%,
+      oklch(from var(--blue-500) l c h / 0.7) 17%,
+      oklch(from var(--blue-500) l c h / 0.5) 33%,
+      oklch(from var(--blue-300) l c h / 0.28) 50%,
+      oklch(from var(--blue-300) l c h / 0.13) 67%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 73vh at 14% 10%,
+      oklch(from var(--blue-500) l c h / 0.55) 0%,
+      oklch(from var(--blue-500) l c h / 0.49) 17%,
+      oklch(from var(--blue-300) l c h / 0.35) 33%,
+      oklch(from var(--blue-300) l c h / 0.2) 50%,
+      oklch(from var(--blue-300) l c h / 0.09) 67%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 52vh at 60% 104%,
+      oklch(from var(--blue-500) l c h / 0.63) 0%,
+      oklch(from var(--blue-500) l c h / 0.56) 17%,
+      oklch(from var(--blue-300) l c h / 0.4) 33%,
+      oklch(from var(--blue-300) l c h / 0.23) 50%,
+      oklch(from var(--blue-300) l c h / 0.1) 67%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 52vh at 2% 82%,
+      oklch(from var(--blue-300) l c h / 0.42) 0%,
+      oklch(from var(--blue-300) l c h / 0.38) 17%,
+      oklch(from var(--blue-300) l c h / 0.27) 33%,
+      oklch(from var(--blue-300) l c h / 0.15) 50%,
+      oklch(from var(--blue-300) l c h / 0.07) 67%,
+      transparent 100%
+    ),
+    linear-gradient(var(--blue-50), var(--blue-50));
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ring: var(--ring);
+  --color-emphasis: var(--emphasis);
+  --color-emphasis-foreground: var(--emphasis-foreground);
+  --color-caption: var(--caption);
+  --color-caption-foreground: var(--caption-foreground);
+  --color-scrim: var(--scrim);
+  --color-ink: var(--ink);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-surface-navy: var(--surface-navy);
+  --color-surface-navy-raised: var(--surface-navy-raised);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-text: var(--accent-text);
+  --color-border-accent: var(--border-accent);
+  --color-glow: var(--glow);
+  --color-glow-soft: var(--glow-soft);
+  --shadow-glow: 0 0 0 1px var(--glow-soft), 0 0 28px 2px var(--glow-soft);
+}
+
+@theme {
+  --font-display: "Unbounded Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Tight Variable", ui-sans-serif, system-ui, sans-serif;
+  /* margin notes, trader-style; Caveat is a variable font (wght 400-700) */
+  --font-hand: "Caveat Variable", "Segoe Print", "Bradley Hand", cursive;
+
+  /* fluid display scale (display only; clamps keep 360px free of horizontal scroll) */
+  --text-hero: clamp(2.25rem, 0.5rem + 9.2vw, 9rem);
+  --text-hero--line-height: 0.98;
+  --text-hero--letter-spacing: -0.035em;
+  --text-title: clamp(1.75rem, 0.6rem + 5.4vw, 5.25rem);
+  --text-title--line-height: 1.02;
+  --text-title--letter-spacing: -0.03em;
+  --text-split: clamp(1.5rem, 0.5rem + 4.2vw, 3.75rem);
+  --text-split--line-height: 1.05;
+  --text-split--letter-spacing: -0.03em;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.35;
+  --text-caption--letter-spacing: 0.04em;
+  --text-lede: clamp(0.9375rem, 0.8rem + 0.5vw, 1.125rem);
+  --text-lede--line-height: 1.4;
+  --text-lede--letter-spacing: 0.03em;
+  --text-kicker: 0.75rem;
+  --text-kicker--line-height: 1;
+  --text-kicker--letter-spacing: 0.18em;
+
+  --spacing: 0.25rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-pill: 999px;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  /* a pen stroke: quick to start, fastest mid-stroke, slight settle at the end */
+  --ease-hand: cubic-bezier(0.4, 0.05, 0.3, 1);
+
+  /* blue glow layers (opacity only, the halo itself is a static --shadow-glow): bloom in, then settle */
+  --animate-glow-settle: glow-settle var(--dur-slower) var(--ease-decelerate) both;
+  @keyframes glow-settle {
+    0% {
+      opacity: 0;
+    }
+    40% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.6;
+    }
+  }
+}
+
+:root {
+  --dur-instant: 100ms;
+  --dur-fast: 180ms;
+  --dur-base: 260ms;
+  --dur-slow: 420ms;
+  --dur-slower: 700ms;
+  --dur-cinematic: 1400ms; /* 3D spatial moves only (hero object from depth) */
+  --distance-enter: 16px;
+  /* story texture + portal */
+  --portal-stroke: 1.5px;
+  --portal-halo: 10px;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --header-height: 3.5rem;
+  /* bottom dock: a floating pill, fixed to the bottom edge. Clearance = what chapters must leave free below
+     their content (dock height + a gap above and below + the device safe area). */
+  --dock-height: 3.5rem;
+  --dock-gap: 0.75rem;
+  /* the dock arrives once the hero intro has landed (INTRO.cta + --dur-slow in motion-tokens.ts, rounded) */
+  --dock-enter-delay: 1100ms;
+  --dock-clearance: calc(var(--dock-height) + var(--dock-gap) * 2 + env(safe-area-inset-bottom, 0px));
+  /* stacking: canvas 0 < chapters 10 < drawing hand 20 < header 30 < dock 40 < dock sheet (modal) 45 < pencil
+     overlay 50 (never intercepts input, so the cursor stays visible over everything). The hand draws on the page,
+     so the fixed site chrome stays above it. */
+  --z-hand: 20;
+  --z-header: 30;
+  --z-dock: 40;
+  --z-sheet: 45;
+  --z-pencil: 50;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --distance-enter: 0px;
+    --dur-slow: var(--dur-fast);
+    --dur-slower: var(--dur-fast);
+    --dur-cinematic: var(--dur-fast);
+    --dock-enter-delay: 0ms;
+  }
+}

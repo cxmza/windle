@@ -1,0 +1,6 @@
+# cdn.windle.fun: the landing page and the brand kit are meant to be found (images included).
+# /img/ is the signed on-the-fly transform endpoint: crawling it only burns imgproxy CPU.
+User-agent: *
+Allow: /
+Allow: /brand/
+Disallow: /img/

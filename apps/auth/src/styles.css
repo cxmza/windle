@@ -1,0 +1,233 @@
+@import "tailwindcss";
+@import "@windle/tokens/fonts.css";
+@import "@windle/tokens/tokens.css";
+
+/* shared components ship Tailwind classes from source: scan them too */
+@source "../../../packages/brand/src";
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--background);
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Navy bloom behind the page, same family as the landing backdrop. */
+@utility bg-aura {
+  background-image: var(--backdrop-navy);
+  background-color: var(--background);
+}
+
+/* ---------- brand panel: the 3D mark under heavy type ----------
+   Where the mark sits is declared here (unitless fractions of the panel) and read by the 3D scene too:
+   --mark-fw / --mark-fh  max width as a fraction of panel width / height
+   --mark-x / --mark-y    centre offset (right / up) as a fraction of panel width / height */
+.brand {
+  --mark-fw: 0.5;
+  --mark-fh: 0.86;
+  --mark-x: 0.22;
+  --mark-y: 0;
+  container-type: size;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 17.5rem;
+  background-color: var(--blue-50);
+  color: var(--foreground);
+  border-bottom: 2px solid var(--accent);
+}
+@media (min-width: 64rem) {
+  .brand {
+    --mark-fw: 0.86;
+    --mark-fh: 0.66;
+    --mark-x: 0;
+    --mark-y: 0.09;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    border-bottom: 0;
+    border-right: 2px solid var(--accent);
+  }
+}
+
+.brand-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* The single strong light behind the mark. */
+.brand-light {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(
+      closest-side at calc(50% + var(--mark-x) * 100%) calc(50% - var(--mark-y) * 100%),
+      oklch(from var(--accent) l c h / 0.5),
+      oklch(from var(--accent) l c h / 0.14) 55%,
+      transparent
+    ),
+    linear-gradient(to bottom, transparent 55%, oklch(0 0 0 / 0.75));
+}
+
+/* Fine film grain over everything but the type: breaks up gradient banding on the near-black. */
+.brand-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+}
+
+.brand-poster {
+  position: absolute;
+  left: calc(50% + var(--mark-x) * 100%);
+  top: calc(50% - var(--mark-y) * 100%);
+  width: min(calc(var(--mark-fw) * 100cqw * 1.35), calc(var(--mark-fh) * 100cqh * 1.35));
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  filter: drop-shadow(0 0 3rem oklch(from var(--accent) l c h / 0.35));
+}
+
+.brand-canvas {
+  opacity: 0;
+  cursor: grab;
+  transition: opacity var(--dur-slow) var(--ease-standard);
+}
+.brand-canvas canvas {
+  touch-action: pan-y;
+}
+.brand-canvas:has(canvas[data-dragging="true"]) {
+  cursor: grabbing;
+}
+.brand[data-live] .brand-canvas {
+  opacity: 1;
+}
+.brand[data-live] .brand-poster {
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-standard);
+}
+
+.brand-meta,
+.brand-hint {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  gap: 0.6em;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: oklch(from var(--foreground) l c h / 0.72);
+  pointer-events: none;
+}
+.brand-meta {
+  top: 1.25rem;
+  left: var(--gutter);
+}
+.brand-hint {
+  display: none;
+}
+@media (min-width: 64rem) {
+  .brand-meta {
+    top: 2rem;
+    left: 3rem;
+    font-size: 0.75rem;
+  }
+  .brand-hint {
+    display: block;
+    right: 3rem;
+    bottom: 2.25rem;
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease-standard);
+  }
+  .brand[data-live] .brand-hint {
+    opacity: 1;
+  }
+}
+@media (hover: none) {
+  .brand-hint {
+    display: none;
+  }
+}
+
+.brand-headline {
+  position: absolute;
+  z-index: 1;
+  left: var(--gutter);
+  bottom: 1.25rem;
+  max-width: 62%;
+  margin: 0;
+  pointer-events: none;
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  font-size: min(15cqw, 26cqh);
+  text-wrap: balance;
+}
+.brand-headline span {
+  display: block;
+}
+.brand-headline span:last-child {
+  color: var(--accent-text, var(--blue-700));
+}
+@media (min-width: 64rem) {
+  .brand-headline {
+    left: 3rem;
+    bottom: 2.25rem;
+    max-width: none;
+    font-size: min(17cqw, 14.5cqh);
+    text-shadow: 0 0.04em 0.5em oklch(0 0 0 / 0.6);
+  }
+}
+
+/* ---------- sign-in column: editorial labels, hairline rows ---------- */
+
+/* Same voice as the brand panel's "SOLANA / COLLATERAL / VERDICT" line. */
+.label {
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: oklch(from var(--foreground) l c h / 0.72);
+}
+
+/* Inline spinner used inside the pressed wallet button (static ring under reduced motion). */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .spinner {
+    animation: spin 0.8s linear infinite;
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@windle/brand",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "windle mark: React component, raw SVG and favicon source.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./favicon.svg": "./assets/favicon.svg",
+    "./windle-mark.svg": "./assets/windle-mark.svg"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.7.0"
+  },
+  "peerDependencies": {
+    "react": "^19.3.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "jsdom": "^28.1.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

@@ -1,0 +1,63 @@
+name: Bug report
+description: Something on windle doesn't work as it should.
+title: '[bug] '
+labels: [bug, needs triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Security issues go to [private vulnerability reporting](https://github.com/cxmza/windle/security/advisories/new), not here.**
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options:
+        - www.windle.fun — landing
+        - app.windle.fun — product app
+        - oauth.windle.fun — sign-in
+        - docs.windle.fun — docs
+        - api.windle.fun — API
+        - cdn.windle.fun — CDN
+        - This repository (build, scripts, CI)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+      placeholder: After connecting Phantom, the sign-in button stays disabled…
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open https://oauth.windle.fun
+        2. Click …
+        3. See …
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Browser, OS and wallet
+      placeholder: Chrome 141 on macOS 26, Phantom 26.x
+  - type: input
+    id: request-id
+    attributes:
+      label: Request id
+      description: For API errors, the `requestId` from the error body or the `X-Request-Id` header.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots, logs, anything else
+      description: Drag images or a short screen recording here. Never paste private keys or seed phrases.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true

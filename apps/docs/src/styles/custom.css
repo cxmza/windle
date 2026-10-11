@@ -1,0 +1,237 @@
+/* windle docs theme: maps Starlight's --sl-* variables onto @windle/tokens primitives.
+   Dark-only (ThemeProvider.astro pins data-theme="dark"); the light selector is mapped too so nothing breaks if a
+   stale data-theme="light" ever survives. Starlight's own styles sit in @layer starlight, so these unlayered rules win. */
+@import "@windle/tokens/fonts.css";
+
+/* Primitives copied from packages/tokens/src/tokens.css (only the plain :root blocks; that file also carries Tailwind
+   @theme blocks, which mean nothing outside Tailwind). Keep in sync with tokens.css / palette.ts. */
+:root {
+  --gray-0: oklch(0 0 0);
+  --gray-50: oklch(0.08 0 0);
+  --gray-100: oklch(0.13 0 0);
+  --gray-200: oklch(0.19 0 0);
+  --gray-300: oklch(0.27 0 0);
+  --gray-400: oklch(0.4 0 0);
+  --gray-500: oklch(0.55 0 0);
+  --gray-600: oklch(0.7 0 0);
+  --gray-700: oklch(0.82 0 0);
+  --gray-800: oklch(0.93 0 0);
+  --gray-900: oklch(1 0 0);
+  --blue-50: oklch(0.11 0.045 263);
+  --blue-100: oklch(0.16 0.075 263);
+  --blue-200: oklch(0.22 0.11 263);
+  --blue-300: oklch(0.3 0.15 262);
+  --blue-400: oklch(0.4 0.17 262);
+  --blue-500: oklch(0.55 0.2 260);
+  --blue-600: oklch(0.6 0.19 257);
+  --blue-700: oklch(0.72 0.15 245);
+  --blue-800: oklch(0.82 0.11 225);
+  --blue-900: oklch(0.92 0.05 215);
+
+  /* docs-local roles */
+  --wl-font-display: "Unbounded Variable", ui-sans-serif, system-ui, sans-serif;
+  --wl-navy: var(--blue-50);
+  --wl-navy-line: oklch(from var(--blue-300) l c h / 0.7);
+  --wl-glow-soft: oklch(from var(--blue-800) l c h / 0.35);
+}
+
+:root,
+:root[data-theme="light"],
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --sl-font: "Inter Tight Variable", ui-sans-serif, system-ui, sans-serif;
+  --sl-font-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+
+  /* accent: navy (low) -> electric blue -> sky (text, 8.6:1 on black) */
+  --sl-color-accent-low: var(--blue-200);
+  --sl-color-accent: var(--blue-500);
+  --sl-color-accent-high: var(--blue-700);
+
+  /* neutral ramp, zero chroma like the brand; gray-6 is the deep navy used for nav/sidebar/hairlines */
+  --sl-color-white: var(--gray-900);
+  --sl-color-gray-1: var(--gray-800);
+  --sl-color-gray-2: var(--gray-700);
+  --sl-color-gray-3: var(--gray-600);
+  --sl-color-gray-4: var(--gray-500);
+  --sl-color-gray-5: var(--gray-300);
+  --sl-color-gray-6: var(--blue-50);
+  --sl-color-black: var(--gray-0);
+
+  --sl-color-text: var(--gray-700);
+  --sl-color-text-accent: var(--blue-700);
+  --sl-color-text-invert: var(--gray-0);
+  --sl-color-bg: var(--gray-0);
+  --sl-color-bg-nav: var(--gray-0);
+  --sl-color-bg-sidebar: var(--gray-0);
+  --sl-color-bg-inline-code: var(--blue-100);
+  --sl-color-bg-accent: var(--blue-700);
+  --sl-color-hairline: var(--wl-navy-line);
+  --sl-color-hairline-light: var(--blue-300);
+  --sl-color-hairline-shade: var(--gray-0);
+  --sl-color-backdrop-overlay: oklch(0 0 0 / 0.7);
+
+  /* aside palette: note/tip in brand blues; caution (orange) and danger (red) keep Starlight's warm hues on purpose,
+     because risk notices must read as warnings */
+  --sl-color-blue-low: var(--blue-200);
+  --sl-color-blue: var(--blue-600);
+  --sl-color-blue-high: var(--blue-800);
+  --sl-color-purple-low: var(--blue-100);
+  --sl-color-purple: var(--blue-800);
+  --sl-color-purple-high: var(--blue-900);
+}
+
+/* ---------- typography ---------- */
+h1#_top,
+.sl-markdown-content :is(h1, h2, h3, h4),
+.hero h1,
+.site-title {
+  font-family: var(--wl-font-display);
+  letter-spacing: -0.02em;
+}
+h1#_top {
+  font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+.sl-markdown-content h2 {
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem);
+  font-weight: 600;
+}
+.sl-markdown-content h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.sl-markdown-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.sl-markdown-content {
+  line-height: 1.7;
+}
+.sl-markdown-content a:not(.not-content a) {
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+.sl-markdown-content strong {
+  color: var(--sl-color-white);
+}
+.site-title {
+  gap: 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--sl-color-white);
+}
+.site-title img {
+  height: 1.75rem;
+  width: auto;
+}
+
+/* ---------- chrome ---------- */
+/* current page: navy fill + sky bar instead of Starlight's solid accent block */
+.sidebar-content a[aria-current="page"],
+.sidebar-content a[aria-current="page"]:hover,
+.sidebar-content a[aria-current="page"]:focus {
+  background: var(--blue-200);
+  color: var(--gray-900);
+  box-shadow: inset 2px 0 0 var(--blue-700);
+}
+.sl-banner {
+  background: var(--blue-200);
+  color: var(--gray-900);
+  border-bottom: 1px solid var(--blue-400);
+}
+.sl-banner a {
+  color: var(--blue-800);
+}
+/* primary button = electric blue fill, white text (5.1:1), like the landing CTA */
+.sl-link-button.primary {
+  background: var(--blue-500);
+  border-color: var(--blue-500);
+  color: var(--gray-900);
+}
+.sl-link-button.primary:hover {
+  background: oklch(from var(--blue-500) calc(l - 0.05) c h);
+  border-color: oklch(from var(--blue-500) calc(l - 0.05) c h);
+  color: var(--gray-900);
+}
+.header {
+  border-bottom-color: var(--wl-navy-line);
+  background: oklch(0 0 0 / 0.85);
+  backdrop-filter: blur(10px);
+}
+:focus-visible {
+  outline-color: var(--blue-800);
+}
+::selection {
+  background: var(--blue-400);
+  color: var(--gray-900);
+}
+.sl-markdown-content table {
+  border-collapse: collapse;
+}
+.sl-markdown-content :is(th, td) {
+  border-color: var(--wl-navy-line);
+}
+.sl-markdown-content th {
+  background: var(--wl-navy);
+  color: var(--sl-color-white);
+}
+
+/* ---------- splash / hero ---------- */
+[data-has-hero] .main-frame {
+  background:
+    radial-gradient(55% 45% at 82% 18%, oklch(from var(--blue-400) l c h / 0.32), transparent 70%),
+    radial-gradient(70% 55% at 75% 0%, oklch(from var(--blue-200) l c h / 0.6), transparent 75%), var(--gray-0);
+}
+.hero h1#_top {
+  font-size: clamp(2.25rem, 1rem + 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+.hero .tagline {
+  color: var(--sl-color-gray-2);
+}
+.wl-hero-mark {
+  display: grid;
+  place-items: center;
+  color: var(--blue-500);
+  filter: drop-shadow(0 0 2.5rem var(--wl-glow-soft));
+}
+.wl-hero-mark svg {
+  width: clamp(7rem, 32vw, 18rem);
+  height: auto;
+}
+
+/* ---------- shared building blocks used in MDX ---------- */
+.wl-kicker {
+  font-family: var(--wl-font-display);
+  font-size: var(--sl-text-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sl-color-accent-high);
+}
+.card,
+.sl-markdown-content .card-grid > .card {
+  --sl-card-border: var(--blue-600);
+  --sl-card-bg: var(--blue-200);
+  border-color: var(--wl-navy-line);
+  background: var(--wl-navy);
+}
+.card .icon {
+  color: var(--blue-800);
+}
+.card .title {
+  font-family: var(--wl-font-display);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.sl-link-card {
+  border-color: var(--wl-navy-line);
+  background: var(--wl-navy);
+}
+.sl-link-card:hover {
+  border-color: var(--blue-600);
+}

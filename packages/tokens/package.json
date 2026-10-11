@@ -1,0 +1,29 @@
+{
+  "name": "@windle/tokens",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "windle design tokens: Tailwind 4 CSS-first tokens (tokens.css), font loading (fonts.css), sRGB palette mirrors for three.js/canvas (palette.ts).",
+  "exports": {
+    ".": "./src/palette.ts",
+    "./tokens.css": "./src/tokens.css",
+    "./fonts.css": "./src/fonts.css"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource-variable/caveat": "^5.3.0",
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

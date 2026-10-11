@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://docs.windle.fun
+    about: How windle works — promises, collateral, markets, resolution, the API.
+  - name: Questions & ideas
+    url: https://github.com/cxmza/windle/discussions
+    about: Ask a question or discuss the protocol design.
+  - name: Report a security vulnerability
+    url: https://github.com/cxmza/windle/security/advisories/new
+    about: Please report security issues privately, never in a public issue.

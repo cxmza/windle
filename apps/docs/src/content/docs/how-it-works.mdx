@@ -1,0 +1,63 @@
+---
+title: How it works
+description: The lifecycle of a windle promise, from an onchain-verifiable claim to collateral, a YES/NO market and a verdict read from the chain.
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import FlowDiagram from '../../components/FlowDiagram.astro';
+
+:::caution[Design, subject to change]
+This page describes the intended design. windle is pre-launch; no promise, market or collateral exists onchain yet.
+:::
+
+<FlowDiagram />
+
+## The lifecycle
+
+<Steps>
+
+1. **A team makes a promise.**
+   The team writes a claim as a condition a program can evaluate from Solana state, plus a deadline. For example:
+   _"A program is deployed and executable at a declared address on mainnet before Dec 1."_
+   A tweet saying "mainnet soon" is not a promise; a condition over accounts is.
+   → [Promise](/concepts/promise/)
+
+2. **They lock collateral behind it.**
+   The team deposits collateral into a program-controlled account. Until resolution, neither the team nor windle can
+   withdraw it. The amount is public, so everyone can see how much the team stands to lose.
+   → [Collateral](/concepts/collateral/)
+
+3. **The market prices it.**
+   A YES/NO market opens on the promise. Buy YES if you believe the team ships, NO if you don't. The YES price,
+   between 0 and 1, reads as the market's probability that the promise is kept.
+   → [Market & pricing](/concepts/market/)
+
+4. **At the deadline, the chain decides.**
+   After the deadline, anyone can trigger resolution. The program reads the accounts named in the promise and
+   checks the condition. There is no vote and no dispute window in this design: the result is whatever the chain
+   state says.
+   → [Resolution](/concepts/resolution/)
+
+5. **Two endings.**
+   **Ship**: collateral returned to the team, YES paid.
+   **Slash**: collateral slashed to NO holders.
+   → [Ship vs slash payouts](/concepts/payouts/)
+
+</Steps>
+
+## Who does what
+
+| Role | Does | Can't do |
+| --- | --- | --- |
+| **Team** | Writes the promise, locks collateral, can trade like anyone else (subject to limits still being designed). | Withdraw collateral before resolution, change the condition or the deadline after the market opens. |
+| **Trader** | Buys and sells YES or NO; holds positions until resolution or exits early at the market price. | Influence the verdict other than through what the team does onchain. |
+| **Program** | Holds collateral, runs the market, evaluates the condition, pays out. | Read anything that isn't onchain. |
+| **windle (the team behind the protocol)** | Builds the programs and interfaces. | Decide outcomes. The design keeps resolution in the program, not with us. |
+
+## Why "the only insider is the team"
+
+The outcome of a promise depends on one party's actions: the team's. That makes the team the only real insider. The
+design goal is that their best strategy is to deliver, because delivering returns their collateral and missing costs
+it. Where that goal could break (a team betting NO against itself with more than its collateral is worth), the
+protocol needs explicit limits. Those limits are not final; see
+[Collateral → open questions](/concepts/collateral/#open-questions).

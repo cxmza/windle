@@ -1,0 +1,23 @@
+# Categories for auto-generated release notes (Releases → Draft a new release → Generate release notes).
+changelog:
+  exclude:
+    labels: [skip changelog, duplicate, invalid, wontfix]
+  categories:
+    - title: Breaking changes
+      labels: [breaking]
+    - title: Features
+      labels: [feature]
+    - title: Fixes
+      labels: [bug]
+    - title: Design & motion
+      labels: [design]
+    - title: API
+      labels: [api]
+    - title: Docs
+      labels: [docs]
+    - title: Infra & CI
+      labels: [infra, ci]
+    - title: Dependencies
+      labels: [dependencies]
+    - title: Other changes
+      labels: ['*']

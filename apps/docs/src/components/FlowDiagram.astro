@@ -1,0 +1,147 @@
+---
+// Promise -> collateral -> market -> verdict, then the two endings. Plain HTML + CSS (no diagram library): it reads
+// as an ordered list to screen readers, is indexed by search and reflows to a column on narrow screens.
+const steps = [
+  { n: '01', title: 'Promise', body: 'A team publishes a claim with a deadline that a program can check onchain.' },
+  { n: '02', title: 'Collateral', body: 'The team locks funds behind it. They lose them if the claim fails.' },
+  { n: '03', title: 'Market', body: 'Anyone buys YES or NO. The YES price reads as the crowd’s odds.' },
+  { n: '04', title: 'Verdict', body: 'After the deadline, the program reads chain state and resolves.' },
+];
+---
+
+<figure class="wl-flow not-content">
+  <ol class="wl-flow__steps">
+    {
+      steps.map((s) => (
+        <li class="wl-flow__step">
+          <span class="wl-flow__n" aria-hidden="true">
+            {s.n}
+          </span>
+          <strong class="wl-flow__title">{s.title}</strong>
+          <span class="wl-flow__body">{s.body}</span>
+        </li>
+      ))
+    }
+  </ol>
+  <ul class="wl-flow__fork" aria-label="Two endings">
+    <li class="wl-flow__end wl-flow__end--ship">
+      <strong>SHIP</strong>
+      <span>Condition met: collateral returned to the team, YES holders paid.</span>
+    </li>
+    <li class="wl-flow__end wl-flow__end--slash">
+      <strong>SLASH</strong>
+      <span>Condition missed: collateral slashed to NO holders.</span>
+    </li>
+  </ul>
+  <figcaption>The lifecycle of a windle promise. Design, subject to change.</figcaption>
+</figure>
+
+<style>
+  .wl-flow {
+    margin-block: 2rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .wl-flow__steps,
+  .wl-flow__fork {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .wl-flow__steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .wl-flow__step {
+    position: relative;
+    margin: 0;
+    padding: 1rem;
+    display: grid;
+    gap: 0.375rem;
+    align-content: start;
+    background: var(--wl-navy);
+    border: 1px solid var(--wl-navy-line);
+    border-radius: 0.25rem;
+  }
+  /* connector into the next step */
+  .wl-flow__step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -1.5rem;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--sl-color-accent-high);
+  }
+  .wl-flow__n {
+    font-family: var(--wl-font-display);
+    font-size: var(--sl-text-xs);
+    letter-spacing: 0.18em;
+    color: var(--sl-color-accent-high);
+  }
+  .wl-flow__title {
+    font-family: var(--wl-font-display);
+    font-weight: 600;
+    font-size: var(--sl-text-base);
+    color: var(--sl-color-white);
+  }
+  .wl-flow__body {
+    font-size: var(--sl-text-sm);
+    line-height: 1.45;
+    color: var(--sl-color-gray-2);
+  }
+  .wl-flow__fork {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--wl-navy-line);
+  }
+  .wl-flow__end {
+    margin: 0;
+    padding: 1rem;
+    display: grid;
+    gap: 0.375rem;
+    border-radius: 0.25rem;
+    font-size: var(--sl-text-sm);
+    line-height: 1.45;
+  }
+  .wl-flow__end strong {
+    color: inherit;
+    font-family: var(--wl-font-display);
+    font-size: var(--sl-text-lg);
+    letter-spacing: 0.04em;
+  }
+  /* SHIP = inverted emphasis (white block, black text); SLASH = outlined. Brand has no red/green semantics. */
+  .wl-flow__end--ship {
+    background: var(--sl-color-white);
+    color: var(--sl-color-black);
+  }
+  .wl-flow__end--slash {
+    border: 1px solid var(--sl-color-white);
+    color: var(--sl-color-white);
+  }
+  .wl-flow figcaption {
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+  @media (max-width: 50rem) {
+    .wl-flow__steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+    }
+    .wl-flow__step:not(:last-child)::after {
+      top: auto;
+      bottom: -1rem;
+      right: auto;
+      left: 1.5rem;
+      width: 1px;
+      height: 1rem;
+    }
+    .wl-flow__fork {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+    }
+  }
+</style>

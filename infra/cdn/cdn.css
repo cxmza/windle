@@ -1,0 +1,392 @@
+/* cdn.windle.fun landing. Brand colours are the sRGB hex of the packages/tokens OKLCH tokens (see
+   packages/tokens/src/palette.ts, kept in sync by its test): --background, --accent, --accent-text, --glow, blue-200. */
+:root {
+  --bg: #000000;
+  --surface: #0c0e12;
+  --line: #1c2029;
+  --fg: #eef1f6;
+  --muted: #8b93a3;
+  --accent: #1c69e3; /* --blue-500 oklch(0.55 0.2 260) */
+  --accent-text: #43acfb; /* --blue-700 oklch(0.72 0.15 245) */
+  --glow: #6cd3fa; /* --blue-800 oklch(0.82 0.11 225) */
+  --navy: #00124c; /* --blue-200 oklch(0.22 0.11 263) */
+  --radius: 14px;
+  --mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background:
+    radial-gradient(60% 40% at 80% -5%, color-mix(in oklab, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(50% 35% at 0% 0%, color-mix(in oklab, var(--navy) 80%, transparent), transparent 70%), var(--bg);
+  background-repeat: no-repeat;
+  color: var(--fg);
+  font:
+    400 16px / 1.6 ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a {
+  color: var(--accent-text);
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--glow);
+}
+a:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  color: var(--glow);
+}
+
+.top,
+main,
+.foot {
+  width: min(1080px, 100% - 32px);
+  margin-inline: auto;
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 0;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+  filter: drop-shadow(0 0 14px color-mix(in oklab, var(--accent) 60%, transparent));
+}
+.brand-sub {
+  color: var(--muted);
+  font-weight: 500;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+.nav {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+}
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.nav a:hover {
+  color: var(--fg);
+}
+
+.hero {
+  padding: clamp(48px, 9vw, 112px) 0 clamp(40px, 6vw, 72px);
+  max-width: 760px;
+}
+.eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--glow);
+}
+h1 {
+  margin: 14px 0 0;
+  font-size: clamp(36px, 6.4vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 680;
+}
+.lede {
+  margin: 22px 0 0;
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.block {
+  padding: 56px 0;
+  border-top: 1px solid var(--line);
+}
+h2 {
+  margin: 0 0 24px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h3 {
+  margin: 10px 0 6px;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+.note {
+  color: var(--muted);
+  max-width: 72ch;
+  margin: 24px 0 0;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--surface) 90%, transparent), var(--bg));
+}
+.card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+.card .meta {
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: color-mix(in oklab, var(--glow) 75%, var(--muted));
+  overflow-wrap: anywhere;
+}
+.path {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--navy) 70%, transparent);
+  font-size: 13px;
+}
+
+.anatomy {
+  margin: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font: 14px / 1.6 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+}
+.a-host {
+  color: var(--fg);
+}
+.a-sig {
+  color: #f0a46f;
+}
+.a-opt {
+  color: var(--glow);
+}
+.a-src {
+  color: #9be38f;
+}
+.a-fmt {
+  color: #c9a2ff;
+}
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px 24px;
+  margin: 22px 0 0;
+}
+.legend dt {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.legend dd {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+figure {
+  margin: 0;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.demo-hero {
+  margin-top: 36px;
+}
+.demo-hero img,
+.variants img {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  width: 100%;
+}
+figcaption {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.variants {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.layers {
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  counter-reset: layer;
+}
+.layers li {
+  counter-increment: layer;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 15px;
+}
+.layers li::before {
+  content: counter(layer);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--glow);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+}
+.layers strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.kit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.tile {
+  padding: 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+.tile img {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 18px;
+}
+.tile h3 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+.tile p {
+  margin: 0;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+.tile-dark {
+  background: radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--navy) 60%, transparent), var(--surface));
+}
+.tile-light {
+  background: #eef1f6;
+  color: #000000;
+  border-color: #d5dae3;
+}
+.tile-light a {
+  color: #093da1; /* --blue-400 */
+}
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 32px;
+  margin: 28px 0 0;
+}
+.swatches dt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.swatches dd {
+  margin: 4px 0 0 30px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.sw {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+.sw-blue {
+  background: var(--accent);
+}
+.sw-glow {
+  background: var(--glow);
+}
+.sw-ink {
+  background: var(--bg);
+}
+
+.foot {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 0 48px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--muted);
+}
+.foot a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.foot a:hover {
+  color: var(--fg);
+}
+
+@media (max-width: 640px) {
+  .nav {
+    display: none;
+  }
+  .variants {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

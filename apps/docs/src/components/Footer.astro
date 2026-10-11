@@ -1,0 +1,23 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+---
+
+<Default><slot /></Default>
+<p class="wl-footer-note">
+  windle is pre-launch. Mechanics described here are design and may change. Nothing on this site is financial, legal or
+  investment advice. Read the <a href="/legal/risk/">risk disclosure</a>.
+</p>
+
+<style>
+  .wl-footer-note {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--sl-color-hairline);
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    line-height: 1.5;
+  }
+  .wl-footer-note a {
+    color: var(--sl-color-gray-2);
+  }
+</style>

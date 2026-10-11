@@ -1,0 +1,50 @@
+---
+title: windle docs
+description: windle is a Solana protocol for promises with collateral. A team locks funds behind an onchain-verifiable claim, a YES/NO market prices it, and the chain resolves it at the deadline.
+template: splash
+banner:
+  content: windle is pre-launch. Everything here describes the design, which may change before mainnet.
+hero:
+  title: Ship or slash.
+  tagline: Promises with collateral behind them, markets pricing them, the chain as the judge. This is how windle works, and what is still undecided.
+  image:
+    html: '<span class="wl-hero-mark" aria-hidden="true"><svg viewBox="0 0 120 120"><path fill="currentColor" d="M30 14H32.5L44 58L55.5 14H64.5L76 58L87.5 14H90A16 16 0 0 1 106 30V90A16 16 0 0 1 90 106H73.3L60 70L46.7 106H30A16 16 0 0 1 14 90V30A16 16 0 0 1 30 14Z"/></svg></span>'
+  actions:
+    - text: How it works
+      link: /how-it-works/
+      icon: right-arrow
+    - text: Introduction
+      link: /introduction/
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## Talk is cheap. Collateral isn't.
+
+<CardGrid>
+  <Card title="A promise" icon="pencil">
+    A team states something a program can check onchain: a deployment, an untouched vesting account, revenue into a
+    treasury. With a deadline.
+  </Card>
+  <Card title="Collateral" icon="seti:lock">
+    They lock funds behind it. Miss the deadline and the collateral goes to the people who bet against them.
+  </Card>
+  <Card title="A market" icon="random">
+    Anyone can buy YES or NO. The price reads as the market's odds that the team delivers.
+  </Card>
+  <Card title="A verdict" icon="approve-check-circle">
+    At the deadline the program reads chain state. No oracle votes, no disputes. Ship or slash.
+  </Card>
+</CardGrid>
+
+## Start reading
+
+<CardGrid>
+  <LinkCard title="Introduction" description="What windle is, and why the incentive design matters." href="/introduction/" />
+  <LinkCard title="How it works" description="Promise → collateral → market → verdict, end to end." href="/how-it-works/" />
+  <LinkCard title="Market & pricing" description="How YES/NO prices move, with a worked LMSR example." href="/concepts/market/" />
+  <LinkCard title="Sign in with Solana" description="What you sign, and why it cannot move your funds." href="/guides/sign-in/" />
+  <LinkCard title="API" description="Early, unstable HTTP API: auth and session endpoints." href="/api/overview/" />
+  <LinkCard title="Risk disclosure" description="Read this before you put money into any market." href="/legal/risk/" />
+</CardGrid>

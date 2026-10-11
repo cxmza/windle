@@ -1,0 +1,33 @@
+{
+  "name": "windle",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev:web": "npm run dev -w @windle/web",
+    "dev:app": "npm run dev -w @windle/app",
+    "dev:auth": "npm run dev -w @windle/auth",
+    "dev:docs": "npm run dev -w @windle/docs",
+    "dev:api": "npm run dev -w @windle/api",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "test": "npm run test --workspaces --if-present",
+    "e2e": "npm run e2e -w @windle/web",
+    "brand:cdn": "node infra/scripts/build-brand.mjs",
+    "brand:check": "node infra/scripts/build-brand.mjs --check"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "typescript": "^7.0.2"
+  }
+}
