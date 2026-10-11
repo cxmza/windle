@@ -4,7 +4,8 @@ import { Euler, type Group, MeshPhysicalMaterial, PerspectiveCamera, Quaternion,
 import { CHAPTERS, LOGO_SLOT_IDS, type LogoSlotId } from '../chapters';
 import { logoSlotElement, markLogoExtruded, onLogoSketched, resetLogo } from '../hand/logo-sketch';
 import { applyEngraving } from './engrave';
-import { createLogoParts, type LogoPartTone } from './logo-geometry';
+import type { LogoPartTone } from './logo-geometry';
+import { PREPARED } from './prepared';
 import { ENGRAVE, LOGO, LOGO_TINT, SCENE_COLOR } from './scene-tokens';
 
 export interface PointerState {
@@ -103,7 +104,8 @@ export function Logos({ reduced, shownChapter, pointer }: LogosProps) {
   const size = useThree((s) => s.size);
   const invalidate = useThree((s) => s.invalidate);
 
-  const parts = useMemo(() => createLogoParts(), []);
+  // usually built in an idle slot before the Canvas mounted (prepared.ts)
+  const parts = useMemo(() => PREPARED.logos.take(), []);
   const mats = useMemo(
     () => ({ primary: createFace('primary'), accent: createFace('accent'), side: createSide() }),
     [],

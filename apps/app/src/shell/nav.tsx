@@ -19,8 +19,13 @@ const svg = (children: ReactElement) => (
 export const NAV_ITEMS: readonly NavItem[] = [
   {
     to: '/',
-    label: 'Dashboard',
+    label: 'Markets',
     end: true,
+    icon: svg(<path d="M4 20V11M10 20V6M16 20v-6M22 20H2" strokeLinecap="round" />),
+  },
+  {
+    to: '/dashboard',
+    label: 'Dashboard',
     icon: svg(
       <>
         <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
@@ -39,11 +44,6 @@ export const NAV_ITEMS: readonly NavItem[] = [
         <path d="M6 5h11l-2.5 4L17 13H6" strokeLinejoin="round" />
       </>,
     ),
-  },
-  {
-    to: '/markets',
-    label: 'Markets',
-    icon: svg(<path d="M4 20V11M10 20V6M16 20v-6M22 20H2" strokeLinecap="round" />),
   },
   {
     to: '/account',

@@ -58,7 +58,7 @@ describe('session gate', () => {
   it('renders the shell with a placeholder while the session loads, then the page', async () => {
     let release: (r: Response) => void = () => {};
     stubApi((path) => (path === '/v1/auth/session' ? new Promise<Response>((r) => (release = r)) : signedIn(path)));
-    renderAt('/');
+    renderAt('/dashboard');
 
     // first test of the file pays for cold module loading
     expect(await screen.findByRole('status', {}, { timeout: 5000 })).toHaveTextContent('Checking your session');
@@ -75,7 +75,8 @@ describe('session gate', () => {
     const fetchMock = stubApi((path) => json(path === '/v1/auth/session' ? { authenticated: false } : {}));
     renderAt('/');
 
-    await waitFor(() => expect(mocks.redirectTo).toHaveBeenCalledTimes(1));
+    // "/" is a lazy route: the router resolves its module (cold in a fresh worker) before the gate renders
+    await waitFor(() => expect(mocks.redirectTo).toHaveBeenCalledTimes(1), { timeout: 5000 });
     const target = new URL(String(mocks.redirectTo.mock.calls[0]?.[0]));
     expect(`${target.origin}`).toBe(new URL(AUTH_URL).origin);
     expect(target.searchParams.get('return_to')).toBe(window.location.href);
@@ -89,7 +90,7 @@ describe('session gate', () => {
       if (!up) throw new TypeError('Failed to fetch');
       return signedIn(path);
     });
-    renderAt('/');
+    renderAt('/dashboard');
 
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('Can’t reach windle');
@@ -114,7 +115,7 @@ describe('shell and pages', () => {
     stubApi(signedIn);
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
-    renderAt('/');
+    renderAt('/dashboard');
 
     await screen.findByRole('heading', { level: 1, name: 'Dashboard' });
     const banner = shellHeader();
@@ -126,14 +127,14 @@ describe('shell and pages', () => {
 
   it('dashboard: honest empty state, disabled call to action, no invented data', async () => {
     stubApi(signedIn);
-    renderAt('/');
+    renderAt('/dashboard');
     expect(await screen.findByRole('heading', { level: 2, name: 'Your promises' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Make a promise/ })).toBeDisabled();
   });
 
   it('navigates between Promises, Markets and Account (aria-current follows)', async () => {
     stubApi(signedIn);
-    renderAt('/');
+    renderAt('/dashboard');
     await screen.findByRole('heading', { level: 1, name: 'Dashboard' });
 
     fireEvent.click(screen.getAllByRole('link', { name: 'Promises' })[0] as HTMLElement);
@@ -141,7 +142,7 @@ describe('shell and pages', () => {
     expect(screen.getAllByRole('link', { name: 'Promises' })[0]).toHaveAttribute('aria-current', 'page');
 
     fireEvent.click(screen.getAllByRole('link', { name: 'Markets' })[0] as HTMLElement);
-    expect(await screen.findByText('No open markets')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'markets' })).toBeInTheDocument();
   });
 
   it('account: lists wallets from /v1/me and session info', async () => {
@@ -193,6 +194,60 @@ describe('shell and pages', () => {
     stubApi(signedIn);
     renderAt('/nope/nothing');
     expect(await screen.findByRole('heading', { level: 1, name: 'Page not found' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Back to the dashboard' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'Back to markets' })).toHaveAttribute('href', '/');
+  });
+});
+
+describe('markets home', () => {
+  // jsdom has no WebGL: the home falls back to the list, which is also the accessible view of the scene
+  it('"/" shows the markets list with its own chrome, sample data labelled', async () => {
+    stubApi(signedIn);
+    renderAt('/');
+    expect(await screen.findByRole('heading', { level: 1, name: 'markets' }, { timeout: 5000 })).toBeInTheDocument();
+    const open = screen.getByRole('region', { name: /Open/ });
+    expect(within(open).getAllByRole('listitem')).toHaveLength(10);
+    expect(screen.getByRole('region', { name: /Settled/ })).toBeInTheDocument();
+    expect(screen.getByText(/sample data/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Scene' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'List' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('link', { name: 'Markets' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('opens a market from the list, Esc closes it and focus returns to the row', async () => {
+    stubApi(signedIn);
+    renderAt('/');
+    const row = await screen.findByRole('button', { name: /KSTL/ }, { timeout: 5000 });
+    fireEvent.click(row);
+    const panel = await screen.findByRole('dialog', { name: /withdrawal queue/ });
+    expect(within(panel).getByRole('button', { name: /^Ship/ })).toHaveTextContent('0.72');
+    expect(within(panel).getByRole('button', { name: /^Slash/ })).toHaveTextContent('0.28');
+    expect(within(panel).getByText(/init_queue/)).toBeInTheDocument();
+    await waitFor(() => expect(within(panel).getByRole('heading', { level: 2 })).toHaveFocus());
+
+    fireEvent.click(within(panel).getByRole('button', { name: /^Ship/ }));
+    expect(within(panel).getByRole('status')).toHaveTextContent('Trading is not live yet');
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(screen.getByRole('button', { name: /KSTL/ })).toHaveFocus());
+  });
+
+  it('arrow keys move between rows', async () => {
+    stubApi(signedIn);
+    renderAt('/');
+    const rows = await screen.findAllByRole('button', { name: /\$[A-Z]+/ }, { timeout: 5000 });
+    const first = rows[0] as HTMLElement;
+    first.focus();
+    fireEvent.keyDown(first, { key: 'ArrowDown' });
+    expect(rows[1]).toHaveFocus();
+    // roving stays inside a section: End goes to the last open market, not into "Settled"
+    fireEvent.keyDown(rows[1] as HTMLElement, { key: 'End' });
+    expect(rows[9]).toHaveFocus();
+  });
+
+  it('the old /markets page redirects to the list view of the home', async () => {
+    stubApi(signedIn);
+    renderAt('/markets');
+    expect(await screen.findByRole('heading', { level: 1, name: 'markets' }, { timeout: 5000 })).toBeInTheDocument();
   });
 });

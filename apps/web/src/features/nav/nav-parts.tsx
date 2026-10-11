@@ -7,20 +7,15 @@ import { APP_URL, type ProtocolItem, SIGN_IN_URL } from './nav-data';
 const hoverText =
   'transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none [@media(hover:hover)]:hover:text-foreground active:text-foreground';
 
-/** The 2px electric-blue underline under a bar link: grows from the left on hover, and stays on the active one. */
-const underline = cn(
-  'after:pointer-events-none after:absolute after:inset-x-3 after:bottom-2 after:h-0.5 after:origin-left after:scale-x-0 after:bg-accent after:transition-transform after:duration-(--dur-fast) after:ease-decelerate motion-reduce:after:transition-none',
-  '[@media(hover:hover)]:hover:after:scale-x-100 active:after:scale-x-100 data-active:after:scale-x-100 aria-[current]:after:scale-x-100 data-[state=open]:after:scale-x-100',
-);
+/** Hover / active / open state of a bar link: a soft glass pill behind the label (colour only, no layout). */
+const pillState =
+  '[@media(hover:hover)]:hover:bg-(--nav-hover) active:bg-(--nav-hover) data-active:bg-(--nav-hover) aria-[current]:bg-(--nav-hover) data-[state=open]:bg-(--nav-hover)';
 
-const monoLabel = 'font-mono text-xs font-medium tracking-[0.14em] whitespace-nowrap uppercase';
-
-/** Top-level bar item (trigger or link): mono uppercase 12px, blue underline on hover / active / open. */
+/** Top-level bar item (trigger or link): clean sans 14px medium, rounded-full hover / active / open pill. */
 export const navItemClass = cn(
   hoverText,
-  underline,
-  monoLabel,
-  'relative inline-flex h-10 items-center gap-1.5 px-3 text-muted-foreground',
+  pillState,
+  'relative inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-sm font-medium whitespace-nowrap text-muted-foreground',
   'data-active:text-foreground aria-[current]:text-foreground data-[state=open]:text-foreground',
 );
 
@@ -32,15 +27,14 @@ export function SignInLink({ className, ...props }: ComponentPropsWithRef<'a'>) 
   );
 }
 
-/** Solid white rectangle, black mono label; hover turns it electric blue with white text. */
+/** Pill CTA: light fill with a top highlight, dark label; hover turns it electric blue with white text. */
 export function LaunchLink({ className, ...props }: ComponentPropsWithRef<'a'>) {
   return (
     <a
       href={APP_URL}
       data-dock-cta
       className={cn(
-        monoLabel,
-        'inline-flex h-10 shrink-0 items-center justify-center gap-2 bg-foreground px-4 font-semibold text-background transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-accent-hover active:text-accent-foreground [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground',
+        'inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-foreground px-5 text-sm font-semibold whitespace-nowrap text-background shadow-[inset_0_1px_0_var(--nav-specular)] transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-accent-hover active:text-accent-foreground [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground',
         className,
       )}
       {...props}
@@ -58,7 +52,7 @@ type ProtocolRowProps = Omit<ComponentPropsWithRef<'a'>, 'href'> & {
   size?: 'menu' | 'sheet';
 };
 
-/** One chapter row: mono number, heavy Unbounded title, muted one-line description (menu only). Links to the chapter's clean path. */
+/** One chapter row: number, heavy Unbounded title, muted one-line description (menu only). Links to the chapter's clean path. */
 export function ProtocolRow({ item, current, size = 'menu', className, ...props }: ProtocolRowProps) {
   const sheet = size === 'sheet';
   return (
@@ -66,10 +60,9 @@ export function ProtocolRow({ item, current, size = 'menu', className, ...props 
       href={chapterPath(item.id)}
       data-dock-link={item.id}
       className={cn(
-        'relative flex items-center gap-4 outline-offset-[-2px] transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none [@media(hover:hover)]:hover:bg-foreground/6 active:bg-foreground/10',
-        'before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:origin-top before:scale-y-0 before:bg-accent before:transition-transform before:duration-(--dur-fast) before:ease-decelerate motion-reduce:before:transition-none',
-        '[@media(hover:hover)]:hover:before:scale-y-100 aria-[current]:before:scale-y-100',
-        sheet ? 'min-h-12 py-1.5' : 'px-4 py-3',
+        'relative flex items-center gap-4 rounded-2xl outline-offset-[-2px] transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none [@media(hover:hover)]:hover:bg-foreground/6 active:bg-foreground/10',
+        'aria-[current]:bg-foreground/8',
+        sheet ? 'min-h-12 px-3 py-1.5' : 'px-3 py-2.5',
         className,
       )}
       {...props}
@@ -79,7 +72,7 @@ export function ProtocolRow({ item, current, size = 'menu', className, ...props 
       <span
         aria-hidden="true"
         className={cn(
-          'w-6 shrink-0 font-mono text-xs font-medium tracking-[0.14em] tabular-nums',
+          'w-6 shrink-0 text-xs font-medium tabular-nums',
           current ? 'text-accent-text' : 'text-muted-foreground',
         )}
       >

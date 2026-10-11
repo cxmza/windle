@@ -11,6 +11,7 @@ import {
   moodState,
 } from './nebula';
 import { NEBULA } from './scene-tokens';
+import type { OffscreenPass } from './warmup';
 
 const noRaycast = () => {};
 
@@ -107,7 +108,11 @@ export function Nebula({ reduced, shownChapter, lite = false }: Props) {
       renderOrder={-1}
       frustumCulled={false}
       raycast={noRaycast}
-      userData={{ warmFirst: true }}
+      // the cloud pass is compiled with the backdrop, before the loop starts (warmup.ts, OffscreenPass)
+      userData={{
+        warmFirst: true,
+        warmOffscreen: { scene: res.cloudScene, camera: res.camera, target: res.target } satisfies OffscreenPass,
+      }}
     />
   );
 }

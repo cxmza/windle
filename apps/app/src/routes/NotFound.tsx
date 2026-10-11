@@ -10,7 +10,7 @@ export function NotFound() {
           to="/"
           className="inline-flex min-h-11 items-center rounded-pill bg-accent px-6 text-sm font-semibold text-accent-foreground transition-colors duration-(--dur-fast) hover:bg-accent-hover"
         >
-          Back to the dashboard
+          Back to markets
         </Link>
       </p>
     </>

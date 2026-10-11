@@ -1,5 +1,6 @@
 import {
   BackSide,
+  BoxGeometry,
   BufferAttribute,
   BufferGeometry,
   type Camera,
@@ -17,6 +18,7 @@ import {
   type WebGLRenderTarget,
 } from 'three';
 import { SCENE_COLOR, STUDIO_FORMERS } from './scene-tokens';
+import { idle } from './warmup';
 
 /** Gradient stops of the dome by height (−1 bottom .. 1 top): navy bloom low, black overhead. */
 const DOME_STOPS: ReadonlyArray<readonly [number, string]> = [
@@ -55,12 +57,21 @@ interface PmremInternals {
 }
 
 /**
- * Compiles the PMREM blur + GGX filter programs with KHR_parallel_shader_compile (renderer.compileAsync polls instead
- * of blocking). Measured before (cold GPU cache, RTX 3080 / D3D11): the GGX program linked synchronously on its first
- * use inside fromScene — one 1.0-1.1 s main-thread freeze right after first paint (getProgramParameter in
- * WebGLUniforms). fromScene then reuses the same materials (same size => _allocateTargets keeps them).
+ * Compiles every program fromScene will use with KHR_parallel_shader_compile (renderer.compileAsync polls instead of
+ * blocking): the PMREM blur + GGX filters, the studio's own materials and fromScene's background box. Measured before
+ * (cold GPU cache, RTX 3080 / D3D11): the GGX program linked synchronously on its first use inside fromScene — one
+ * 1.0-1.1 s main-thread freeze right after first paint (getProgramParameter in WebGLUniforms); later the studio and
+ * background programs still linked inside the bake (~75 ms of it, mobile-4x). fromScene then reuses the same filter
+ * materials (same size => _allocateTargets keeps them); the other programs are shared through three's program cache
+ * (same material parameters => same program).
  */
-async function precompilePmrem(gl: WebGLRenderer, pmrem: PMREMGenerator, size: number): Promise<void> {
+async function precompilePmrem(
+  gl: WebGLRenderer,
+  pmrem: PMREMGenerator,
+  size: number,
+  studio: Scene,
+  clearBox: Mesh,
+): Promise<void> {
   const p = pmrem as unknown as PmremInternals;
   if (typeof p._setSize !== 'function' || typeof p._allocateTargets !== 'function') return;
   p._setSize(size);
@@ -75,16 +86,20 @@ async function precompilePmrem(gl: WebGLRenderer, pmrem: PMREMGenerator, size: n
     ggx.needsUpdate = true;
   }
   const mats = [p._blurMaterial, p._ggxMaterial].filter((m): m is Material => m != null);
-  if (mats.length === 0) return;
   const warm = new Scene();
+  // The filters are ShaderMaterials, whose program key includes `hasPositionAttribute`: an attribute-less geometry
+  // compiled a different program, and fromScene then linked the real one synchronously (measured: one 190 ms
+  // getProgramParameter freeze, desktop 1x; ~240 ms mobile-4x). The LOD planes fromScene draws carry a position.
   const geo = new BufferGeometry();
+  geo.setAttribute('position', new BufferAttribute(new Float32Array(9), 3));
   for (const m of mats) warm.add(new Mesh(geo, m));
   const cam: Camera = new OrthographicCamera();
   const prev = gl.getRenderTarget();
   let pending: Promise<unknown>;
   try {
+    // the cube faces and the filter passes all render into half-float targets like this one
     gl.setRenderTarget(target);
-    pending = gl.compileAsync(warm, cam);
+    pending = Promise.all([gl.compileAsync(warm, cam), gl.compileAsync(studio, cam), gl.compileAsync(clearBox, cam)]);
   } finally {
     gl.setRenderTarget(prev);
   }
@@ -104,16 +119,11 @@ async function precompilePmrem(gl: WebGLRenderer, pmrem: PMREMGenerator, size: n
  * Resolves with the render target (the caller owns it: dispose on unmount), or null when cancelled meanwhile.
  */
 export async function bakeStudioEnv(gl: WebGLRenderer, isCancelled: () => boolean): Promise<WebGLRenderTarget | null> {
+  // Called from the Canvas mount's effects: start in the next idle period instead of extending the mount task
+  // (studio geometry + the precompile's program setup were ~125 ms of it, mobile-4x).
+  await idle();
+  if (isCancelled()) return null;
   const pmrem = new PMREMGenerator(gl);
-  try {
-    await precompilePmrem(gl, pmrem, ENV_SIZE);
-  } catch {
-    // compile errors surface in fromScene; never block the env on the precompile
-  }
-  if (isCancelled()) {
-    pmrem.dispose();
-    return null;
-  }
   const scene = new Scene();
   const dome = new SphereGeometry(20, 32, 16);
   const pos = dome.getAttribute('position');
@@ -144,12 +154,33 @@ export async function bakeStudioEnv(gl: WebGLRenderer, isCancelled: () => boolea
     m.lookAt(0, 0, 0);
     scene.add(m);
   }
+  // fromScene clears each cube face by drawing a back-faced box in the clear colour (PMREM.Background, created inside
+  // the call, rendered on its own): this equivalent mesh compiles the same program. It must stay alive until the bake
+  // is done — disposing its material releases the program, and fromScene would link it again.
+  const clearBox = new Mesh(
+    new BoxGeometry(),
+    new MeshBasicMaterial({ side: BackSide, depthWrite: false, depthTest: false }),
+  );
+  const dispose = () => {
+    pmrem.dispose();
+    clearBox.geometry.dispose();
+    clearBox.material.dispose();
+    dome.dispose();
+    domeMat.dispose();
+    plane.dispose();
+    for (const m of formerMats) m.dispose();
+  };
 
+  try {
+    await precompilePmrem(gl, pmrem, ENV_SIZE, scene, clearBox);
+  } catch {
+    // compile errors surface in fromScene; never block the env on the precompile
+  }
+  if (isCancelled()) {
+    dispose();
+    return null;
+  }
   const target = pmrem.fromScene(scene, 0, 0.1, 100, { size: ENV_SIZE });
-  pmrem.dispose();
-  dome.dispose();
-  domeMat.dispose();
-  plane.dispose();
-  for (const m of formerMats) m.dispose();
+  dispose();
   return target;
 }

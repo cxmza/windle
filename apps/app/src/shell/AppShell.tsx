@@ -33,7 +33,7 @@ export function AppShell({ address, onSignOut, signingOut = false, notice, child
       </a>
 
       <header className="sticky top-0 z-(--z-header) flex h-(--header-height) items-center justify-between gap-3 border-b border-border/30 bg-caption px-(--gutter) backdrop-blur-xl">
-        <NavLink to="/" aria-label="windle, dashboard" className="flex items-center gap-2.5 rounded-md">
+        <NavLink to="/" aria-label="windle, markets" className="flex items-center gap-2.5 rounded-md">
           {/* TODO(motion): reuse the "Классика" jelly on the header mark */}
           <WindleMark decorative size={28} />
           <span className="font-display text-sm font-black lowercase tracking-tight max-sm:sr-only">windle</span>

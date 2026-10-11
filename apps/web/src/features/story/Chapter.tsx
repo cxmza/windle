@@ -50,6 +50,9 @@ export function Chapter({ chapter, stageClassName, className, children, ref, ...
       // Phones / touch: no dive — the iris cut through text and cost frames on mobile GPUs. A short scroll-linked
       // fade-and-lift of the stage hands over to the next scene instead (linear, ≤ DISTANCE_ENTER px, no scale).
       mm.add(MOBILE_MOTION_QUERY, () => {
+        // quickSetter, not gsap.set: this runs on every scroll update, and gsap.set built a new tween each time
+        // (measured: tween construction + init was the largest JS item of the mobile scroll profile after the render loop)
+        const setStageY = gsap.quickSetter(stage, 'y', 'px');
         ScrollTrigger.create({
           trigger: section,
           start: 'bottom bottom',
@@ -57,7 +60,7 @@ export function Chapter({ chapter, stageClassName, className, children, ref, ...
           onUpdate: (self) => {
             const p = self.progress;
             stage.style.opacity = p >= 1 ? '0' : String(1 - p);
-            gsap.set(stage, { y: -DISTANCE_ENTER * p });
+            setStageY(-DISTANCE_ENTER * p);
           },
         });
         return () => {

@@ -14,7 +14,7 @@ const wordmarkClass =
   'max-md:sr-only max-w-28 overflow-hidden text-base font-extrabold tracking-[-0.03em] uppercase transition-[max-width,margin,opacity] duration-(--nav-dur) ease-decelerate motion-reduce:transition-none md:group-data-[nav-state=compact]/nav:-ml-2 md:group-data-[nav-state=compact]/nav:max-w-0 md:group-data-[nav-state=compact]/nav:opacity-0';
 
 /**
- * Top bar: the site's only navigation, a floating solid-black block with a 1px hairline (max 1100px, 16px from the top).
+ * Top bar: the site's only navigation, a floating liquid-glass pill (blur + saturate, specular rim) (max 1100px, 16px from the top).
  * Scroll states on [data-dock-root][data-nav-state]: full (top; also hover, keyboard focus, open menu) | compact (mark +
  * Launch app, once scrolled past 80px) | hidden (scrolling further down; any scroll up brings the compact bar back).
  * md+: lockup | Protocol menu, Docs, Ecosystem | Sign in, Launch app. Below md: mark | Launch app, Menu button + sheet.
@@ -41,11 +41,11 @@ export function SiteNav() {
     >
       <div
         data-dock
-        className="relative mx-auto h-(--topbar-height) w-full max-w-(--nav-w-full) border border-(--nav-line) bg-background transition-[max-width] duration-(--nav-dur) ease-decelerate motion-reduce:transition-none md:group-data-[nav-state=compact]/nav:max-w-(--nav-w-compact)"
+        className="relative mx-auto h-(--topbar-height) w-full max-w-(--nav-w-full) rounded-full transition-[max-width] duration-(--nav-dur) ease-decelerate motion-reduce:transition-none md:group-data-[nav-state=compact]/nav:max-w-(--nav-w-compact)"
       >
         <div
           data-dock-content
-          className="relative flex h-full items-center justify-between gap-2 pr-1.5 pl-4 md:group-data-[nav-state=compact]/nav:overflow-clip"
+          className="relative flex h-full items-center justify-between gap-2 pr-2 pl-5 md:group-data-[nav-state=compact]/nav:overflow-clip"
         >
           <a
             href={chapterPath('hero')}
@@ -73,15 +73,15 @@ export function SiteNav() {
                         </NavigationMenu.Trigger>
                         <NavigationMenu.Content
                           data-dock-menu
-                          className="absolute top-full left-1/2 -ml-[13.5rem] w-[27rem] max-w-[calc(100vw-2rem)] pt-[calc(0.5rem+1px)]"
+                          className="absolute top-full left-1/2 -ml-[13.5rem] w-[27rem] max-w-[calc(100vw-2rem)] pt-3"
                         >
-                          <div className="border border-(--nav-line) bg-background">
-                            <p className="border-b border-(--nav-line) px-4 py-2.5 font-mono text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
+                          <div className="overflow-hidden p-2">
+                            <p className="px-3 pt-2 pb-1.5 text-xs font-medium tracking-wide text-muted-foreground">
                               How windle works
                             </p>
-                            <ul className="flex flex-col">
+                            <ul className="flex flex-col gap-0.5">
                               {PROTOCOL_ITEMS.map((item) => (
-                                <li key={item.id} className="border-b border-(--nav-line) last:border-b-0">
+                                <li key={item.id}>
                                   <NavigationMenu.Link asChild>
                                     <ProtocolRow item={item} current={item.id === activeId} />
                                   </NavigationMenu.Link>
@@ -131,11 +131,11 @@ export function SiteNav() {
           </div>
         </div>
 
-        {/* scroll progress: a 2px blue line along the bar's bottom edge, inside the border */}
+        {/* scroll progress: a 2px blue line along the pill's bottom edge, inset from the curve */}
         <span
           data-dock-progress
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 overflow-hidden"
+          className="pointer-events-none absolute inset-x-7 bottom-px h-0.5 overflow-hidden rounded-full"
         >
           {/* fill: scroll-driven where supported, else follows --dock-progress (globals.css) */}
           <span

@@ -17,19 +17,12 @@ import { DUR, INTRO } from '@/lib/motion-tokens';
 import { REDUCED_MOTION_QUERY, useMediaQuery } from '@/lib/use-media-query';
 import { storyScroll, useActiveChapter, whenStoryReady } from '../story-scroll';
 import { applyEngraving } from './engrave';
-import {
-  createHalfGeometry,
-  createPortalGeometry,
-  createRingGeometry,
-  createShardGeometry,
-  createShardSeeds,
-  createSlabGeometry,
-} from './geometry';
+import { createShardGeometry, createShardSeeds } from './geometry';
 import { Logos, type PointerState } from './Logos';
-import { createMarkGeometry } from './mark-geometry';
 import { measureMarkSlots, sameSlots } from './mark-slots';
 import { Nebula } from './NebulaLayer';
 import { HALF_OFFSET, type LayoutCtx, type MarkSlots, poseAt, SLAB_COUNT, scenePose, type Xform } from './poses';
+import { PREPARED } from './prepared';
 import { QualityGovernor } from './quality';
 import {
   DPR,
@@ -50,6 +43,9 @@ import {
 import { bakeStudioEnv } from './studio-env';
 import { useMark } from './use-mark';
 import { precompileScene } from './warmup';
+
+// StoryCanvas builds the scene's geometries in idle slots between this chunk's arrival and the Canvas mount
+export { sceneWarmJobs } from './prepared';
 
 type Tier = 'high' | 'low';
 
@@ -148,13 +144,14 @@ function Rig({ reduced, tier, narrow, shownChapter, ready, pointer, slots }: Rig
 
   // useMemo here is about GPU resource lifetime (create once per tier, dispose in the effect below),
   // not render performance — identity must not depend on the compiler's memoization heuristics.
+  // The extruded/rounded ones were usually built in idle slots before the mount (prepared.ts).
   const geo = useMemo(
     () => ({
-      mark: createMarkGeometry(tier),
-      half: createHalfGeometry(),
-      slab: createSlabGeometry(),
-      ring: createRingGeometry(),
-      portal: createPortalGeometry(),
+      mark: PREPARED.mark[tier].take(),
+      half: PREPARED.half.take(),
+      slab: PREPARED.slab.take(),
+      ring: PREPARED.ring.take(),
+      portal: PREPARED.portal.take(),
       shard: createShardGeometry(),
       plane: new PlaneGeometry(1, 1),
     }),
@@ -226,12 +223,13 @@ function Rig({ reduced, tier, narrow, shownChapter, ready, pointer, slots }: Rig
   const shardCount = tier === 'high' ? SHARDS.high : SHARDS.low;
   const seeds = useMemo(() => createShardSeeds(shardCount), [shardCount]);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    // a mark prepared for the other tier (software GL picks low on a wide viewport) is never taken
+    for (const prepared of Object.values(PREPARED.mark)) prepared.drop();
+    return () => {
       for (const g of Object.values(geo)) g.dispose();
-    },
-    [geo],
-  );
+    };
+  }, [geo]);
   useEffect(
     () => () => {
       for (const m of Object.values(mat)) m.dispose();
@@ -475,6 +473,7 @@ function Warmup({ tier, enabled, onReady }: { tier: Tier; enabled: boolean; onRe
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
   const camera = useThree((s) => s.camera);
+  const invalidate = useThree((s) => s.invalidate);
   useEffect(() => {
     if (!enabled) return;
     let cancelled = false;
@@ -482,6 +481,7 @@ function Warmup({ tier, enabled, onReady }: { tier: Tier; enabled: boolean; onRe
       transmission: tier === 'high',
       isCancelled: () => cancelled,
       onFirstStage: () => onReady(tier),
+      onReveal: () => invalidate(),
     }).catch(() => {
       // compile errors surface on first render anyway; never keep the scene hidden because of the warmup
       if (!cancelled) onReady(tier);
@@ -489,7 +489,7 @@ function Warmup({ tier, enabled, onReady }: { tier: Tier; enabled: boolean; onRe
     return () => {
       cancelled = true;
     };
-  }, [gl, scene, camera, tier, enabled, onReady]);
+  }, [gl, scene, camera, tier, enabled, onReady, invalidate]);
   return null;
 }
 

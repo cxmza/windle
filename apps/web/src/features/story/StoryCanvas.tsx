@@ -1,9 +1,12 @@
 import { Component, lazy, type ReactNode, Suspense, useEffect, useState } from 'react';
 import { afterFirstPaint } from '@/lib/first-paint';
+import { whenIdle } from '@/lib/idle';
 
 // three + R3F + drei live in their own chunk, fetched after first paint.
 const loadScene = () => import('./scene/StoryScene');
 const StoryScene = lazy(loadScene);
+/** Same breakpoint as the scene's layout (scene/StoryScene.tsx): it picks the mark's geometry tier. */
+const NARROW_QUERY = '(max-width: 767px)';
 
 function canUseWebGL(): boolean {
   return typeof window !== 'undefined' && typeof window.WebGL2RenderingContext !== 'undefined';
@@ -31,21 +34,30 @@ export function StoryCanvas() {
 
   useEffect(() => {
     if (!canUseWebGL()) return;
-    let idle = 0;
-    let timer = 0;
-    // After first paint: start the chunk download right away, mount (WebGL context) in the next idle period.
-    // Creating the context in a cold browser stalls the GPU process (~0.6 s measured); before FCP it delayed the
-    // first frame's presentation.
+    let cancelled = false;
+    const jobs: Array<() => void> = [];
+    // After first paint: start the chunk download right away. Once it has arrived, build the scene's geometries one
+    // per idle period (scene/prepared.ts; they used to be built inside the mount task), then mount (WebGL context)
+    // in the idle period after. Creating the context in a cold browser stalls the GPU process (~0.6 s measured);
+    // before FCP it delayed the first frame's presentation.
     const cancel = afterFirstPaint(() => {
-      void loadScene();
-      if (typeof window.requestIdleCallback === 'function') {
-        idle = window.requestIdleCallback(() => setMount(true), { timeout: 600 });
-      } else timer = window.setTimeout(() => setMount(true), 200);
+      loadScene().then(
+        (scene) => {
+          if (cancelled) return;
+          const narrow = window.matchMedia(NARROW_QUERY).matches;
+          for (const job of scene.sceneWarmJobs(narrow)) jobs.push(whenIdle(job));
+          jobs.push(whenIdle(() => setMount(true)));
+        },
+        // the lazy import fails again on mount and SceneBoundary keeps the CSS poster
+        () => {
+          if (!cancelled) setMount(true);
+        },
+      );
     });
     return () => {
+      cancelled = true;
       cancel();
-      if (idle) window.cancelIdleCallback?.(idle);
-      window.clearTimeout(timer);
+      for (const cancelJob of jobs) cancelJob();
     };
   }, []);
 

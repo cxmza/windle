@@ -10,11 +10,11 @@ import { LaunchLink, ProtocolRow } from './nav-parts';
 
 const DESKTOP_QUERY = '(min-width: 48rem)'; // Tailwind `md`
 
-const groupLabel = 'font-mono text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase';
+const groupLabel = 'px-3 text-xs font-medium tracking-wide text-muted-foreground';
 const barButton =
-  'inline-flex h-10 shrink-0 items-center justify-center border border-(--nav-line) px-3 font-mono text-xs font-medium tracking-[0.14em] text-foreground uppercase transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-foreground/10 data-[state=open]:bg-foreground/6 [@media(hover:hover)]:hover:border-foreground';
+  'inline-flex h-10 shrink-0 items-center justify-center rounded-full bg-foreground/8 px-4 text-sm font-medium text-foreground shadow-[inset_0_1px_0_var(--nav-specular),inset_0_0_0_1px_var(--nav-line)] transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-foreground/16 data-[state=open]:bg-foreground/12 [@media(hover:hover)]:hover:bg-foreground/14';
 const plainRow =
-  'flex min-h-12 items-center justify-between gap-3 font-mono text-sm font-medium tracking-[0.14em] text-foreground uppercase transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-foreground/10 [@media(hover:hover)]:hover:bg-foreground/6';
+  'flex min-h-12 items-center justify-between gap-3 rounded-2xl px-3 text-base font-medium text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-foreground/10 [@media(hover:hover)]:hover:bg-foreground/6';
 
 /** < md: the menu button in the bar and the full-height sheet that drops from the top (Radix Dialog: focus trap, Esc, scroll lock, focus return). */
 export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
@@ -44,7 +44,7 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
           }}
           className="fixed inset-0 z-(--z-sheet) flex flex-col bg-background pt-[env(safe-area-inset-top,0px)] outline-none md:hidden"
         >
-          <div className="flex h-(--topbar-height) shrink-0 items-center justify-between border-b border-(--nav-line) px-(--gutter)">
+          <div className="flex h-(--topbar-height) shrink-0 items-center justify-between px-(--gutter)">
             <a
               href={chapterPath('hero')}
               onClick={close}
@@ -66,9 +66,9 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
               <h2 id="sheet-protocol" className={groupLabel}>
                 Protocol
               </h2>
-              <ul className="mt-2 flex flex-col border-t border-(--nav-line)">
+              <ul className="mt-2 flex flex-col gap-0.5">
                 {PROTOCOL_ITEMS.map((item) => (
-                  <li key={item.id} className="border-b border-(--nav-line)">
+                  <li key={item.id}>
                     <ProtocolRow item={item} current={item.id === activeId} size="sheet" onClick={close} />
                   </li>
                 ))}
@@ -79,8 +79,8 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
               <h2 id="sheet-more" className={groupLabel}>
                 More
               </h2>
-              <ul className="mt-2 flex flex-col border-t border-(--nav-line)">
-                <li className="border-b border-(--nav-line)">
+              <ul className="mt-2 flex flex-col gap-0.5">
+                <li>
                   <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className={plainRow}>
                     <span>
                       Docs<span className="sr-only"> (opens in a new tab)</span>
@@ -88,13 +88,13 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
                     <ArrowUpRightGlyph className="text-muted-foreground" />
                   </a>
                 </li>
-                <li className="border-b border-(--nav-line)">
+                <li>
                   <a href={SIGN_IN_URL} className={plainRow}>
                     Sign in
                   </a>
                 </li>
                 {X_LINK && (
-                  <li className="border-b border-(--nav-line)">
+                  <li>
                     <a
                       href={X_LINK.href}
                       target="_blank"
@@ -114,7 +114,7 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
             </section>
           </div>
 
-          <div className="shrink-0 border-t border-(--nav-line) px-(--gutter) pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+          <div className="shrink-0 px-(--gutter) pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
             <LaunchLink className="h-14 w-full text-sm" />
           </div>
         </Dialog.Content>

@@ -33,24 +33,39 @@ function PageSkeleton() {
   );
 }
 
-function SignedInLayout({ session }: { session: AuthedSession }) {
+function useSignOut() {
   const queryClient = useQueryClient();
-  const logout = useMutation({
+  return useMutation({
     mutationFn: () => api.logout(),
     onSuccess: () => {
       queryClient.clear();
       redirectTo(AUTH_URL);
     },
   });
+}
+
+function SignedInLayout({ session, layout }: { session: AuthedSession; layout: Layout }) {
+  const logout = useSignOut();
+  const signOut = {
+    run: () => logout.mutate(),
+    pending: logout.isPending || logout.isSuccess,
+    failed: logout.isError,
+  };
+
+  if (layout === 'bare') {
+    return (
+      <SessionContext value={{ session, signOut }}>
+        <Outlet />
+      </SessionContext>
+    );
+  }
 
   return (
-    <SessionContext
-      value={{ session, signOut: { run: () => logout.mutate(), pending: logout.isPending, failed: logout.isError } }}
-    >
+    <SessionContext value={{ session, signOut }}>
       <AppShell
         address={session.address}
-        onSignOut={() => logout.mutate()}
-        signingOut={logout.isPending || logout.isSuccess}
+        onSignOut={signOut.run}
+        signingOut={signOut.pending}
         notice={
           logout.isError ? (
             <div
@@ -68,14 +83,17 @@ function SignedInLayout({ session }: { session: AuthedSession }) {
   );
 }
 
+/** `shell`: header + side nav + dock (account pages). `bare`: the page draws its own chrome (full-bleed home). */
+type Layout = 'shell' | 'bare';
+
 /**
  * Layout route for everything that needs a session.
  *  - pending: the real shell with placeholders (no layout shift)
  *  - api unreachable: friendly banner with retry
  *  - anonymous: leave for the sign-in app, with `return_to` set to where the person was
- *  - authenticated: shell + the matched page
+ *  - authenticated: shell + the matched page (`layout="bare"`: the page alone, it draws its own chrome)
  */
-export function SessionGate() {
+export function SessionGate({ layout = 'shell' }: { layout?: Layout }) {
   const query = useQuery(sessionQuery());
   const data = query.data;
   const anonymous = data?.authenticated === false;
@@ -90,6 +108,16 @@ export function SessionGate() {
         <Centered>
           <ApiUnavailable error={query.error} onRetry={() => query.refetch()} retrying={query.isFetching} />
         </Centered>
+      );
+    }
+    if (layout === 'bare') {
+      // the home's poster: same backdrop the scene fades in over, so nothing flashes when the session resolves
+      return (
+        <div className="bg-nebula min-h-dvh">
+          <span role="status" className="sr-only">
+            Checking your session…
+          </span>
+        </div>
       );
     }
     return (
@@ -112,5 +140,5 @@ export function SessionGate() {
     );
   }
 
-  return <SignedInLayout session={data} />;
+  return <SignedInLayout session={data} layout={layout} />;
 }

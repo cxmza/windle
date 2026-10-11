@@ -56,7 +56,7 @@ export default defineConfig({
       expressiveCode: {
         themes: ['github-dark-default'],
         styleOverrides: {
-          borderRadius: '0.25rem',
+          borderRadius: '1rem',
           borderColor: 'var(--sl-color-gray-5)',
           codeBackground: BLUE[50],
           codeFontSize: '0.875rem',
@@ -66,7 +66,7 @@ export default defineConfig({
             editorActiveTabIndicatorTopColor: BLUE[700],
             terminalTitlebarBackground: BLUE[100],
             terminalBackground: BLUE[50],
-            frameBoxShadowCssValue: 'none',
+            frameBoxShadowCssValue: '0 0.5rem 1.75rem oklch(0 0 0 / 0.55)',
           },
         },
       },

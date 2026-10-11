@@ -333,6 +333,15 @@ function ChapterPlaceholder({ chapter }: { chapter: ChapterData }) {
   );
 }
 
+/** How far below the viewport (in viewports) a placeholder counts as about to be reached. */
+const MOUNT_AHEAD_VIEWPORTS = 2;
+
+/** True when the chapter's section (placeholder) starts within MOUNT_AHEAD_VIEWPORTS below the viewport, or above. */
+function isNearViewport(id: string): boolean {
+  const el = document.getElementById(id);
+  return el !== null && el.getBoundingClientRect().top < window.innerHeight * (1 + MOUNT_AHEAD_VIEWPORTS);
+}
+
 /**
  * How many chapters are mounted. First commit: the hero only (measured on mobile-4x: rendering + styling the whole
  * story in the first commit was ~1.2 s before first paint). After first paint the rest mount one per idle period —
@@ -346,7 +355,9 @@ function useDeferredChapters(): number {
     // transition: React renders the chapter in time slices (yielding to input); only its commit is one task
     const next = () => startTransition(() => setCount((n) => n + 1));
     if (count === 1) return afterFirstPaint(next);
-    return whenIdle(next);
+    // mid-scroll the mount waits for the scroll to settle (lib/idle.ts), unless the reader is about to reach it
+    const upcoming = CHAPTERS[count];
+    return whenIdle(next, { urgent: () => upcoming !== undefined && isNearViewport(upcoming.id) });
   }, [count]);
   const deferred = useRef(count < CHAPTERS.length);
   useEffect(() => {
