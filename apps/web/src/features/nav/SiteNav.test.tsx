@@ -1,20 +1,10 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CHAPTERS } from '../story/chapters';
 import { chapterPath } from '../story/routes';
 import { APP_URL, activeProtocolId, DOCS_URL, isProtocolActive, PROTOCOL_ITEMS, SIGN_IN_URL } from './nav-data';
-import {
-  COLLAPSE_AFTER,
-  FAST_SCROLL,
-  HIDE_AFTER,
-  HIDE_TRAVEL,
-  NAV_SCROLL_START,
-  navMode,
-  SHOW_TRAVEL,
-  scrollProgress,
-  stepNavScroll,
-} from './nav-scroll';
+import { scrollProgress } from './nav-scroll';
 import { SiteNav } from './SiteNav';
 
 const live = vi.hoisted(() => ({ active: 0 }));
@@ -73,9 +63,19 @@ describe('SiteNav', () => {
     expect(container.querySelector('[data-dock-protocol]')).not.toHaveAttribute('data-active');
   });
 
-  it('starts in the full state', () => {
+  it('keeps one size and state at every scroll position: nothing collapses, hides or re-labels the bar', () => {
     const { container } = render(<SiteNav />);
-    expect(container.querySelector('[data-dock-root]')).toHaveAttribute('data-nav-state', 'full');
+    const root = container.querySelector('[data-dock-root]');
+    const before = root?.outerHTML;
+    for (const y of [0, 200, 1400, 90]) {
+      act(() => {
+        window.scrollY = y;
+        window.dispatchEvent(new Event('scroll'));
+      });
+    }
+    expect(root?.outerHTML).toBe(before);
+    expect(root).not.toHaveAttribute('data-nav-state');
+    expect(container.querySelector('[data-dock-signin]')).toBeInTheDocument();
   });
 
   it('lights the Protocol trigger for a chapter that only lives inside the menu', () => {
@@ -165,41 +165,5 @@ describe('nav-scroll helpers', () => {
     expect(scrollProgress(2000, 1000)).toBe(1);
     expect(scrollProgress(-5, 1000)).toBe(0);
     expect(scrollProgress(10, 0)).toBe(0);
-  });
-
-  it('hides on scroll down past the threshold and returns on scroll up', () => {
-    let s = stepNavScroll(NAV_SCROLL_START, COLLAPSE_AFTER - 10, true);
-    expect(s.hidden).toBe(false);
-    s = stepNavScroll(s, HIDE_AFTER - 10, true); // scrolled, but not far enough to hide
-    s = stepNavScroll(s, HIDE_AFTER - 5, true);
-    expect(s.hidden).toBe(false);
-    s = stepNavScroll(s, HIDE_AFTER + HIDE_TRAVEL + 40, true);
-    expect(s.hidden).toBe(true);
-    s = stepNavScroll(s, s.y - 2, true); // a small jitter up does not bring it back
-    expect(s.hidden).toBe(true);
-    s = stepNavScroll(s, s.y - SHOW_TRAVEL - 1, true);
-    expect(s.hidden).toBe(false);
-  });
-
-  it('hides at once on a fling, even below the hide threshold', () => {
-    const s = stepNavScroll(NAV_SCROLL_START, COLLAPSE_AFTER + FAST_SCROLL + 1, true);
-    expect(s.hidden).toBe(true);
-  });
-
-  it('stays visible near the top and whenever it is pinned (reduced motion, open menu, focus)', () => {
-    expect(stepNavScroll(NAV_SCROLL_START, 50, true).hidden).toBe(false);
-    const hidden = { y: 500, anchor: 400, dir: 1 as const, hidden: true };
-    expect(stepNavScroll(hidden, 700, false).hidden).toBe(false);
-    expect(stepNavScroll(hidden, 20, true).hidden).toBe(false);
-  });
-
-  it('maps scroll state to full / compact / hidden; hover, focus or an open menu force full', () => {
-    const at = (y: number, hidden = false) => ({ y, anchor: y, dir: 0 as const, hidden });
-    expect(navMode(at(0), false)).toBe('full');
-    expect(navMode(at(COLLAPSE_AFTER), false)).toBe('full');
-    expect(navMode(at(COLLAPSE_AFTER + 1), false)).toBe('compact');
-    expect(navMode(at(900, true), false)).toBe('hidden');
-    expect(navMode(at(900, false), true)).toBe('full');
-    expect(navMode(at(900, true), true)).toBe('full');
   });
 });

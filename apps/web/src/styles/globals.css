@@ -9,31 +9,49 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Floating top bar: a 56px liquid-glass pill, --nav-offset below the top edge, max --nav-w-full wide; it
-   collapses to --nav-w-compact (md+) once scrolled. Web-only (apps/app keeps the shared --header-height / --dock-* tokens).
+/* Floating top bar: a 56px liquid-glass pill, --nav-offset below the top edge, max --nav-w-full wide, one size at every scroll
+   position. Web-only (apps/app keeps the shared --header-height / --dock-* tokens).
    --topbar-clearance is what the bar covers at the top of the viewport (+ the device safe area): chapter stages
    pad by it so sticky content never sits under the bar. --page-max is the content width shared by bar and footer. */
 :root {
   --topbar-height: 3.5rem;
   --nav-offset: 1rem;
   --nav-w-full: 68.75rem;
-  --nav-w-compact: 12rem;
-  --nav-dur: 200ms; /* collapse / hide: snappy ease-out, no bounce */
-  --nav-line: color-mix(in oklab, var(--foreground) 14%, transparent); /* hairline of the menu and sheet */
-  /* liquid glass: translucent tint + one blur on the bar only; menu and sheet use --nav-surface (no second blur) */
-  --nav-glass-tint: color-mix(in oklab, var(--background) 42%, transparent);
-  --nav-glass-fallback: color-mix(in oklab, var(--background) 88%, transparent);
-  --nav-surface: color-mix(in oklab, var(--background) 92%, var(--accent) 4%);
-  --nav-specular: color-mix(in oklab, var(--foreground) 38%, transparent); /* top specular edge */
-  --nav-sheen-top: color-mix(in oklab, var(--foreground) 14%, transparent);
-  --nav-sheen-bottom: color-mix(in oklab, var(--foreground) 2%, transparent);
-  --nav-hover: color-mix(in oklab, var(--foreground) 10%, transparent);
-  --nav-shadow:
-    0 10px 30px -8px color-mix(in oklab, var(--background) 80%, transparent),
-    0 2px 8px color-mix(in oklab, var(--background) 50%, transparent);
   --nav-radius-panel: 1.75rem;
   --page-max: 80rem;
   --topbar-clearance: calc(var(--topbar-height) + var(--nav-offset) + env(safe-area-inset-top, 0px));
+
+  /* liquid glass: near-clear body (a low white tint, no dark fill) + modest blur, strong saturation */
+  --nav-glass-tint: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --nav-glass-filter: blur(8px) saturate(1.7) brightness(1.06);
+  --nav-glass-fallback: color-mix(in oklab, var(--background) 72%, var(--accent) 6%);
+  --nav-solid: color-mix(in oklab, var(--background) 94%, var(--accent) 6%);
+  /* lens edge: bright rim at the top-left, fading to faint at the bottom-right */
+  --nav-rim-strong: color-mix(in oklab, var(--foreground) 85%, transparent);
+  --nav-rim-mid: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --nav-rim-faint: color-mix(in oklab, var(--foreground) 26%, transparent);
+  --nav-hl-top: color-mix(in oklab, var(--foreground) 60%, transparent);
+  --nav-hl-bottom: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --nav-sheen: color-mix(in oklab, var(--foreground) 16%, transparent);
+  --nav-glass-shadow:
+    inset 0 1px 0 var(--nav-hl-top),
+    inset 0 -1px 0 var(--nav-hl-bottom),
+    inset 0 0 14px color-mix(in oklab, var(--foreground) 7%, transparent),
+    0 6px 20px -8px color-mix(in oklab, var(--background) 45%, transparent),
+    0 1px 2px color-mix(in oklab, var(--background) 25%, transparent);
+  --nav-text: color-mix(in oklab, var(--foreground) 88%, transparent);
+  --nav-text-shadow: 0 1px 6px color-mix(in oklab, var(--background) 55%, transparent);
+  /* hover / active / open: a smaller glass bubble inside the bar */
+  --nav-bubble: color-mix(in oklab, var(--foreground) 11%, transparent);
+  --nav-bubble-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--foreground) 40%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, var(--foreground) 16%, transparent);
+  /* dropdown panel and mobile sheet: the same glass, denser so text stays AA over any backdrop */
+  --nav-panel: color-mix(in oklab, var(--background) 72%, transparent);
+  --nav-panel-filter: blur(18px) saturate(1.6) brightness(1.04);
+  --nav-sheet: color-mix(in oklab, var(--background) 80%, transparent);
+  --nav-sheet-filter: blur(22px) saturate(1.6);
+  --nav-sheen-corner: radial-gradient(90% 55% at 15% 0%, var(--nav-sheen), transparent 70%);
 }
 
 @layer base {
@@ -94,26 +112,51 @@
 }
 
 /* ---------- liquid glass bar ----------
-   One backdrop-filter in the whole nav (the bar); static layers only, nothing here animates blur. Layers: the ::before
-   gradient rim (specular top-left, accent glint bottom-right), a vertical sheen, then the translucent tint. */
+   One backdrop-filter on the bar (a sibling layer, [data-dock-glass], so the dropdown inside the bar can blur the page
+   itself) plus one on the dropdown / mobile sheet while open; static layers only, nothing here animates the filter.
+   Layers: backdrop (blur, saturate, and in Chromium an edge-only SVG displacement, LiquidGlassDefs.tsx), the faint
+   white tint, the ::after specular sheen, the ::before masked gradient rim, inset highlights in box-shadow. */
 @layer components {
   [data-dock] {
+    isolation: isolate;
     border-radius: var(--radius-pill);
-    background: linear-gradient(180deg, var(--nav-sheen-top), var(--nav-sheen-bottom) 55%), var(--nav-glass-fallback);
-    box-shadow:
-      inset 0 1px 0 var(--nav-specular),
-      inset 0 -1px 0 color-mix(in oklab, var(--foreground) 6%, transparent),
-      var(--nav-shadow);
+    background: var(--nav-glass-fallback);
+    box-shadow: var(--nav-glass-shadow);
+    text-shadow: var(--nav-text-shadow);
+  }
+  [data-dock] [data-dock-cta] {
+    text-shadow: none;
+  }
+  [data-dock-glass] {
+    z-index: -1;
   }
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     [data-dock] {
-      background: linear-gradient(180deg, var(--nav-sheen-top), var(--nav-sheen-bottom) 55%), var(--nav-glass-tint);
-      -webkit-backdrop-filter: blur(18px) saturate(1.8) brightness(1.05);
-      backdrop-filter: blur(18px) saturate(1.8) brightness(1.05);
+      background: transparent;
+    }
+    [data-dock-glass] {
+      background: var(--nav-glass-tint);
+      -webkit-backdrop-filter: var(--nav-glass-filter);
+      backdrop-filter: var(--nav-glass-filter);
+    }
+    @media (min-width: 48rem) and (hover: hover) and (pointer: fine) {
+      [data-dock]:has([data-dock-lens]) [data-dock-glass] {
+        backdrop-filter: url(#dock-lens) var(--nav-glass-filter);
+      }
     }
   }
-  /* gradient hairline rim: a masked ring, so the middle stays see-through */
-  [data-dock]::before {
+  [data-dock]::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 1px 14px auto;
+    height: 46%;
+    border-radius: var(--radius-pill);
+    pointer-events: none;
+    background: linear-gradient(180deg, var(--nav-sheen), transparent);
+  }
+  [data-dock]::before,
+  [data-dock-menu] > div::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -121,11 +164,11 @@
     padding: 1px;
     pointer-events: none;
     background: linear-gradient(
-      160deg,
-      color-mix(in oklab, var(--foreground) 50%, transparent),
-      color-mix(in oklab, var(--foreground) 6%, transparent) 40%,
-      color-mix(in oklab, var(--foreground) 4%, transparent) 60%,
-      color-mix(in oklab, var(--accent) 45%, transparent)
+      135deg,
+      var(--nav-rim-strong),
+      var(--nav-rim-mid) 32%,
+      var(--nav-rim-mid) 68%,
+      var(--nav-rim-faint)
     );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
@@ -135,19 +178,79 @@
       linear-gradient(#000 0 0) content-box exclude,
       linear-gradient(#000 0 0);
   }
-  /* dropdown panel: near-solid (the bar's blur does not reach out here), same rim idea */
   [data-dock-menu] > div {
+    position: relative;
     border-radius: var(--nav-radius-panel);
-    background: linear-gradient(180deg, var(--nav-sheen-top), var(--nav-sheen-bottom) 40%), var(--nav-surface);
+    background: var(--nav-sheen-corner), var(--nav-panel);
+    -webkit-backdrop-filter: var(--nav-panel-filter);
+    backdrop-filter: var(--nav-panel-filter);
     box-shadow:
-      inset 0 1px 0 var(--nav-specular),
-      inset 0 0 0 1px var(--nav-line),
-      var(--nav-shadow);
+      inset 0 1px 0 var(--nav-hl-top),
+      0 14px 36px -12px color-mix(in oklab, var(--background) 70%, transparent);
+  }
+  [data-dock-sheet] {
+    background: var(--nav-sheet);
+    -webkit-backdrop-filter: var(--nav-sheet-filter);
+    backdrop-filter: var(--nav-sheet-filter);
+  }
+
+  /* hover / active / open: a smaller inner glass bubble, not a solid fill */
+  .dock-item,
+  .dock-row,
+  .dock-bubble {
+    --bubble-bg: transparent;
+    --bubble-shadow: none;
+    background: var(--bubble-bg);
+    box-shadow: var(--bubble-shadow);
+  }
+  .dock-bubble {
+    --bubble-bg: var(--nav-bubble);
+    --bubble-shadow: var(--nav-bubble-shadow);
+  }
+  .dock-item:active,
+  .dock-item[data-active],
+  .dock-item[aria-current],
+  .dock-item[data-state="open"],
+  .dock-row:active,
+  .dock-row[aria-current],
+  .dock-bubble:active,
+  .dock-bubble[data-state="open"] {
+    --bubble-bg: var(--nav-bubble);
+    --bubble-shadow: var(--nav-bubble-shadow);
+  }
+  @media (hover: hover) {
+    .dock-item:hover,
+    .dock-row:hover,
+    .dock-bubble:hover {
+      --bubble-bg: var(--nav-bubble);
+      --bubble-shadow: var(--nav-bubble-shadow);
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    [data-dock] {
+      background: var(--nav-solid);
+    }
+    [data-dock-glass],
+    [data-dock]:has([data-dock-lens]) [data-dock-glass],
+    [data-dock-menu] > div {
+      background: transparent;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+    [data-dock-menu] > div {
+      background: var(--nav-solid);
+    }
+    [data-dock-sheet] {
+      background: var(--nav-solid);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
   }
 }
 
 /* ---------- top bar + logo motion (nav/SiteNav.tsx, brand/use-jelly.ts) ----------
-   Reduced motion: the bar never hides and nothing animates between full and compact; the menu panel and the sheet only fade. */
+   Reduced motion: the menu panel and the sheet only fade. */
 @layer components {
   /* bar enter (orientation): the bar fades in once the hero intro has landed */
   [data-dock] {
@@ -156,22 +259,6 @@
     transition: opacity var(--dur-base) var(--ease-standard);
   }
 
-  /* scroll states: hidden = slides up and fades; visibility drops focusability once it has left */
-  [data-dock-root] {
-    transition:
-      transform var(--nav-dur) var(--ease-decelerate),
-      visibility 0s linear 0s;
-  }
-  [data-dock-root][data-nav-state="hidden"] {
-    transform: translateY(-100%);
-    visibility: hidden;
-    transition:
-      transform var(--nav-dur) var(--ease-accelerate),
-      visibility 0s linear var(--nav-dur);
-  }
-  [data-dock-root][data-nav-state="hidden"] [data-dock] {
-    opacity: 0;
-  }
   /* focus: 2px white ring, 2px off the edge, on the bar, the menu and the sheet */
   [data-dock-root] :focus-visible,
   [data-dock-sheet] :focus-visible {
@@ -182,27 +269,6 @@
   [data-dock-menu] a:focus-visible,
   [data-dock-sheet] a[data-dock-link]:focus-visible {
     border-radius: 1rem;
-  }
-
-  /* collapse (md+): the links fade first, then their column folds (grid 1fr -> 0fr) while the pill narrows */
-  [data-dock-extras] {
-    grid-template-columns: 1fr;
-    transition: grid-template-columns var(--nav-dur) var(--ease-decelerate);
-  }
-  [data-dock-extras] > div > div {
-    transition: opacity var(--dur-fast) linear var(--dur-fast);
-  }
-  @media (min-width: 48rem) {
-    [data-nav-state="compact"] [data-dock-extras] {
-      grid-template-columns: 0fr;
-    }
-    [data-nav-state="compact"] [data-dock-extras] > div > div {
-      opacity: 0;
-      visibility: hidden;
-      transition:
-        opacity var(--dur-instant) linear,
-        visibility 0s linear var(--dur-instant);
-    }
   }
 
   /* Protocol menu (orientation): drops out of the bar; exits are keyframes because Radix Presence waits for animationend */
@@ -258,11 +324,6 @@
 @media (prefers-reduced-motion: reduce) {
   [data-dock] {
     animation: dock-fade-in var(--dur-instant) var(--ease-standard) backwards;
-  }
-  [data-dock-root],
-  [data-dock-extras],
-  [data-dock-extras] > div > div {
-    transition: none;
   }
   [data-dock-menu][data-state="open"],
   [data-dock-sheet][data-state="open"] {

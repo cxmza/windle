@@ -10,14 +10,17 @@ import Default from '@astrojs/starlight/components/Footer.astro';
 
 <style>
   .wl-footer-note {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--sl-color-hairline);
+    margin-top: 1.75rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid oklch(1 0 0 / 0.06);
+    border-radius: 1rem;
+    background: oklch(1 0 0 / 0.025);
     color: var(--sl-color-gray-3);
     font-size: var(--sl-text-xs);
-    line-height: 1.5;
+    line-height: 1.55;
   }
   .wl-footer-note a {
     color: var(--sl-color-gray-2);
+    text-underline-offset: 0.2em;
   }
 </style>

@@ -12,9 +12,9 @@ const DESKTOP_QUERY = '(min-width: 48rem)'; // Tailwind `md`
 
 const groupLabel = 'px-3 text-xs font-medium tracking-wide text-muted-foreground';
 const barButton =
-  'inline-flex h-10 shrink-0 items-center justify-center rounded-full bg-foreground/8 px-4 text-sm font-medium text-foreground shadow-[inset_0_1px_0_var(--nav-specular),inset_0_0_0_1px_var(--nav-line)] transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-foreground/16 data-[state=open]:bg-foreground/12 [@media(hover:hover)]:hover:bg-foreground/14';
+  'dock-bubble inline-flex h-10 shrink-0 items-center justify-center rounded-full px-4 text-sm font-medium text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
 const plainRow =
-  'flex min-h-12 items-center justify-between gap-3 rounded-2xl px-3 text-base font-medium text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none active:bg-foreground/10 [@media(hover:hover)]:hover:bg-foreground/6';
+  'dock-row flex min-h-12 items-center justify-between gap-3 rounded-2xl px-3 text-base font-medium text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
 
 /** < md: the menu button in the bar and the full-height sheet that drops from the top (Radix Dialog: focus trap, Esc, scroll lock, focus return). */
 export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
@@ -42,7 +42,7 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
             event.preventDefault();
             sheetRef.current?.focus();
           }}
-          className="fixed inset-0 z-(--z-sheet) flex flex-col bg-background pt-[env(safe-area-inset-top,0px)] outline-none md:hidden"
+          className="fixed inset-0 z-(--z-sheet) flex flex-col pt-[env(safe-area-inset-top,0px)] outline-none md:hidden"
         >
           <div className="flex h-(--topbar-height) shrink-0 items-center justify-between px-(--gutter)">
             <a

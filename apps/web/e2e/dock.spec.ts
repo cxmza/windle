@@ -8,8 +8,6 @@ test.describe('desktop top bar', () => {
     page,
   }) => {
     await page.goto('/');
-    const root = page.locator('[data-dock-root]');
-    await expect(root).toHaveAttribute('data-nav-state', 'full');
     const pill = await page.locator('[data-dock]').boundingBox();
     expect(pill).not.toBeNull();
     if (!pill) return;
@@ -82,49 +80,33 @@ test.describe('desktop top bar', () => {
     await expect(trigger).toBeFocused();
   });
 
-  test('collapses to a compact block, hides on the way down, returns compact on the way up, expands on hover', async ({
-    page,
-  }) => {
+  test('keeps one size, shape and position at every scroll offset, up and down', async ({ page }) => {
     await page.goto('/');
-    const reduced = await page.evaluate<boolean>("matchMedia('(prefers-reduced-motion: reduce)').matches");
-    const root = page.locator('[data-dock-root]');
+    await storyMounted(page);
     const pill = page.locator('[data-dock]');
-    await expect(root).toHaveAttribute('data-nav-state', 'full');
-    await page.evaluate('window.scrollTo(0, 200)');
-    await expect(root).toHaveAttribute('data-nav-state', 'compact');
-    await expect.poll(async () => Math.round((await pill.boundingBox())?.width ?? 0)).toBe(192);
-    await expect(page.locator('[data-dock-signin]')).toBeHidden();
-    await expect(page.locator('[data-dock-cta]')).toBeVisible();
-    await expect(page.locator('[data-header-logo]')).toBeVisible();
-    if (reduced) {
-      await page.evaluate('window.scrollTo(0, 1400)');
+    const measure = async () => {
+      const box = await pill.boundingBox();
+      return box && [box.x, box.y, box.width, box.height].map(Math.round);
+    };
+    const initial = await measure();
+    expect(initial?.slice(1)).toEqual([16, 1100, 56]);
+    for (const y of [200, 1400, 600, 0]) {
+      await page.evaluate(`window.scrollTo(0, ${y})`);
       await scrollSettled(page);
-      await expect(root).not.toHaveAttribute('data-nav-state', 'hidden');
-      return;
+      expect(await measure()).toEqual(initial);
+      await expect(page.locator('[data-dock-signin]')).toBeVisible();
+      await expect(page.locator('[data-dock-root]')).not.toHaveAttribute('data-nav-state', /.*/);
     }
-    await page.evaluate('window.scrollTo(0, 1400)');
-    await expect(root).toHaveAttribute('data-nav-state', 'hidden');
-    await scrollSettled(page);
-    await page.evaluate('window.scrollBy(0, -80)');
-    await expect(root).toHaveAttribute('data-nav-state', 'compact');
-    await pill.hover();
-    await expect(root).toHaveAttribute('data-nav-state', 'full');
-    await expect.poll(async () => Math.round((await pill.boundingBox())?.width ?? 0)).toBe(1100);
-    await expect(page.locator('[data-dock-signin]')).toBeVisible();
-    await page.mouse.move(700, 600);
-    await expect(root).toHaveAttribute('data-nav-state', 'compact');
-    await page.evaluate('window.scrollTo(0, 0)');
-    await expect(root).toHaveAttribute('data-nav-state', 'full');
   });
 
-  test('keyboard focus inside the bar forces it visible and full', async ({ page }) => {
+  test('is glass: a near-clear tint with a backdrop blur, not an opaque plate', async ({ page }) => {
     await page.goto('/');
-    await page.evaluate('window.scrollTo(0, 200)');
-    const root = page.locator('[data-dock-root]');
-    await expect(root).toHaveAttribute('data-nav-state', 'compact');
-    await page.keyboard.press('Tab'); // skip link first, then into the bar
-    await page.keyboard.press('Tab');
-    await expect(root).toHaveAttribute('data-nav-state', 'full');
+    const style = await page.evaluate<{ bg: string; filter: string }>(
+      "(() => { const cs = getComputedStyle(document.querySelector('[data-dock-glass]')); return { bg: cs.backgroundColor, filter: cs.backdropFilter }; })()",
+    );
+    const alpha = Number(/\/\s*([\d.]+)/.exec(style.bg)?.[1] ?? /,\s*([\d.]+)\)$/.exec(style.bg)?.[1] ?? 1);
+    expect(alpha).toBeLessThan(0.15);
+    expect(style.filter).toContain('blur');
   });
 
   test('keeps the lockup and actions inside the viewport at lg and tablet widths', async ({ page }) => {
