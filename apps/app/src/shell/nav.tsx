@@ -24,6 +24,16 @@ export const NAV_ITEMS: readonly NavItem[] = [
     icon: svg(<path d="M4 20V11M10 20V6M16 20v-6M22 20H2" strokeLinecap="round" />),
   },
   {
+    to: '/projects',
+    label: 'Projects',
+    icon: svg(
+      <>
+        <rect x="3.5" y="4" width="17" height="16" rx="5" />
+        <path d="M8 16V9l4 5 4-5v7" strokeLinecap="round" strokeLinejoin="round" />
+      </>,
+    ),
+  },
+  {
     to: '/dashboard',
     label: 'Dashboard',
     icon: svg(

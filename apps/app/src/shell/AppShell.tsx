@@ -111,7 +111,7 @@ export function AppShell({ address, onSignOut, signingOut = false, notice, child
       {/* Mobile: floating dock pill, same idea as the landing's bottom dock. */}
       <nav
         aria-label="Main, bottom bar"
-        className="fixed bottom-[calc(var(--dock-gap)+env(safe-area-inset-bottom,0px))] left-1/2 z-(--z-dock) grid h-(--dock-height) w-[min(calc(100%-2*var(--gutter)),26rem)] -translate-x-1/2 grid-cols-4 items-center rounded-pill border border-border-strong/30 bg-caption px-1.5 shadow-glow backdrop-blur-xl md:hidden"
+        className="fixed bottom-[calc(var(--dock-gap)+env(safe-area-inset-bottom,0px))] left-1/2 z-(--z-dock) grid h-(--dock-height) w-[min(calc(100%-2*var(--gutter)),26rem)] -translate-x-1/2 grid-cols-5 items-center rounded-pill border border-border-strong/30 bg-caption px-1.5 shadow-glow backdrop-blur-xl md:hidden"
       >
         {NAV_ITEMS.map((item) => (
           <NavLink key={item.to} to={item.to} end={item.end} className={dockLink}>

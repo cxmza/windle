@@ -204,7 +204,7 @@ describe('markets home', () => {
     stubApi(signedIn);
     renderAt('/');
     expect(await screen.findByRole('heading', { level: 1, name: 'markets' }, { timeout: 5000 })).toBeInTheDocument();
-    const open = screen.getByRole('region', { name: /Open/ });
+    const open = await screen.findByRole('region', { name: /Open/ });
     expect(within(open).getAllByRole('listitem')).toHaveLength(10);
     expect(screen.getByRole('region', { name: /Settled/ })).toBeInTheDocument();
     expect(screen.getByText(/sample data/)).toBeInTheDocument();
@@ -249,5 +249,58 @@ describe('markets home', () => {
     stubApi(signedIn);
     renderAt('/markets');
     expect(await screen.findByRole('heading', { level: 1, name: 'markets' }, { timeout: 5000 })).toBeInTheDocument();
+  });
+});
+
+describe('projects', () => {
+  it('/projects lists teams, filters through the url state and links to a project', async () => {
+    stubApi(signedIn);
+    renderAt('/projects?status=slashed&sort=record');
+    expect(await screen.findByRole('heading', { level: 1, name: 'projects' }, { timeout: 5000 })).toBeInTheDocument();
+    const catalog = await screen.findByRole('region', { name: 'Project catalog' });
+    expect(within(catalog).getAllByRole('link')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'slashed' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('combobox', { name: 'Sort' })).toHaveValue('record');
+    expect(screen.getByText(/sample data/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'slashed' }));
+    expect(within(catalog).getAllByRole('link')).toHaveLength(12);
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Search projects' }), { target: { value: 'qhbr' } });
+    const rows = within(catalog).getAllByRole('link');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toHaveAttribute('href', '/projects/quiet-harbor');
+  });
+
+  it('/projects/:slug shows the live promise, history and activity; trading stays off', async () => {
+    stubApi(signedIn);
+    renderAt('/projects/kestrel-protocol');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Kestrel Protocol' }, { timeout: 5000 }),
+    ).toBeInTheDocument();
+    const hero = screen.getByRole('region', { name: /withdrawal queue/ });
+    expect(within(hero).getByText(/init_queue/)).toBeInTheDocument();
+    fireEvent.click(within(hero).getByRole('button', { name: /^Ship/ }));
+    expect(within(hero).getByRole('status')).toHaveTextContent('Trading is not live yet');
+    expect(within(screen.getByRole('region', { name: 'Promise history' })).getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getByRole('region', { name: 'Recent activity' })).toBeInTheDocument();
+  });
+
+  it('/projects/:slug for an unknown slug says so and offers the way back', async () => {
+    stubApi(signedIn);
+    renderAt('/projects/nope');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'no such project' }, { timeout: 5000 }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /All projects/ })).toHaveAttribute('href', '/projects');
+  });
+
+  it('the market panel links to the project page', async () => {
+    stubApi(signedIn);
+    renderAt('/?view=list&m=kestrel-v2-vaults');
+    const panel = await screen.findByRole('dialog', { name: /withdrawal queue/ }, { timeout: 5000 });
+    expect(within(panel).getByRole('link', { name: /About Kestrel Protocol/ })).toHaveAttribute(
+      'href',
+      '/projects/kestrel-protocol',
+    );
   });
 });

@@ -1,5 +1,4 @@
 import { CanvasTexture, LinearMipmapLinearFilter, SRGBColorSpace } from 'three';
-import { deadlineLabel } from '../format';
 import type { Market } from '../types';
 import { LOOK, SLAB } from './scene-tokens';
 
@@ -52,7 +51,7 @@ function track(ctx: CanvasRenderingContext2D, px: number) {
   (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing = `${px}px`;
 }
 
-export function drawFace(canvas: HTMLCanvasElement, market: Market, now: number) {
+export function drawFace(canvas: HTMLCanvasElement, market: Market, label: string) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const k = canvas.width / FACE.width;
@@ -74,7 +73,7 @@ export function drawFace(canvas: HTMLCanvasElement, market: Market, now: number)
   track(ctx, px(0.066) * 0.03);
   ctx.fillStyle = market.status === 'settling' ? LOOK.cyan : LOOK.textMuted;
   ctx.textAlign = 'right';
-  ctx.fillText(deadlineLabel(market, now), right, top);
+  ctx.fillText(label, right, top);
 
   ctx.textAlign = 'left';
   ctx.fillStyle = LOOK.text;

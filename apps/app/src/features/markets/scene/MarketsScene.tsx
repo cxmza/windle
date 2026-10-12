@@ -15,6 +15,7 @@ import {
   SRGBColorSpace,
   WebGLRenderTarget,
 } from 'three';
+import { deadlineLabel } from '../format';
 import { poke, type SceneBridge } from '../scene-bridge';
 import type { Market } from '../types';
 import { createFaceTexture, drawFace, FACE, loadFaceFonts } from './face-texture';
@@ -26,7 +27,7 @@ import {
   createNebulaMaterial,
   NEBULA,
 } from './nebula';
-import { clamp, frameSlab, orbitPosition, type Spring, spring, stepSpring } from './rig';
+import { clamp, frameSlab, orbitPosition, pulseEnvelope, type Spring, spring, stepSpring } from './rig';
 import { CAMERA, DPR, FACE_Z, FOG, FRAME, LOOK, MOTION, ORBIT, SLAB, STUDIO } from './scene-tokens';
 import { createBladeGeometry, createEdgeRingGeometry, createSlabGeometry } from './slab-geometry';
 
@@ -57,6 +58,10 @@ interface SlabHandle {
   lift: Spring;
   ring: Spring;
   dim: Spring;
+  blade: Spring;
+  bladeTarget: number;
+  bladeMesh: Mesh;
+  pulseStart: number;
   ringMat: MeshBasicMaterial;
   faceMat: MeshBasicMaterial;
   bodyMat: MeshPhysicalMaterial;
@@ -212,6 +217,7 @@ interface SlabProps {
 
 function Slab({ market, placement, now, shared, registry, bridge, drag, onOpen }: SlabProps) {
   const group = useRef<Group>(null);
+  const blade = useRef<Mesh>(null);
   const gl = useThree((s) => s.gl);
   const invalidate = useThree((s) => s.invalidate);
   const [face] = useState(() => createFaceTexture(faceTextureWidth(), Math.min(8, gl.capabilities.getMaxAnisotropy())));
@@ -247,39 +253,58 @@ function Slab({ market, placement, now, shared, registry, bridge, drag, onOpen }
     [mats, face],
   );
 
+  const label = deadlineLabel(market, now);
   useEffect(() => {
-    drawFace(face.canvas, market, now);
+    drawFace(face.canvas, market, label);
     face.texture.needsUpdate = true;
     invalidate();
-  }, [face, market, now, invalidate]);
+  }, [face, market, label, invalidate]);
+
+  const id = market.id;
+  const p = market.shipProbability;
 
   useLayoutEffect(() => {
     const g = group.current;
-    if (!g) return;
-    const existing = registry.get(market.id);
+    const b = blade.current;
+    if (!g || !b) return;
+    const existing = registry.get(id);
     if (existing) {
       existing.placement = placement;
       existing.group = g;
+      existing.bladeMesh = b;
       return;
     }
+    const odds = p / 100;
     g.position.set(placement.x, placement.y, placement.z);
-    registry.set(market.id, {
-      id: market.id,
+    b.scale.set(Math.max(0.001, INNER_W * odds), 1, 1);
+    registry.set(id, {
+      id,
       group: g,
       placement,
       phase: placement.rank * 1.7,
       lift: spring(0),
       ring: spring(MOTION.hover.ring.idle),
       dim: spring(0),
+      blade: spring(odds),
+      bladeTarget: odds,
+      bladeMesh: b,
+      pulseStart: Number.NEGATIVE_INFINITY,
       ringMat: mats.ring,
       faceMat: mats.face,
       bodyMat: mats.body,
     });
-  }, [registry, market.id, placement, mats]);
-  useEffect(() => () => void registry.delete(market.id), [registry, market.id]);
+  }, [registry, id, placement, mats, p]);
+  useEffect(() => () => void registry.delete(id), [registry, id]);
 
-  const id = market.id;
-  const p = market.shipProbability;
+  useEffect(() => {
+    const h = registry.get(id);
+    const target = p / 100;
+    if (!h || h.bladeTarget === target) return;
+    h.bladeTarget = target;
+    h.pulseStart = performance.now();
+    invalidate();
+  }, [registry, id, p, invalidate]);
+
   const tilt = (placement.rank % 2 ? 1 : -1) * 0.11;
 
   const over = (e: ThreeEvent<PointerEvent>) => {
@@ -322,10 +347,10 @@ function Slab({ market, placement, now, shared, registry, bridge, drag, onOpen }
         raycast={noRaycast}
       />
       <mesh
+        ref={blade}
         geometry={shared.blade}
         material={shared.bladeMat}
         position={[LEFT, BLADE_Y, FACE_Z + 0.003]}
-        scale={[Math.max(0.001, (INNER_W * p) / 100), 1, 1]}
         raycast={noRaycast}
       />
     </group>
@@ -489,6 +514,7 @@ function Director({ bridge, reduced, registry, drag, nebula, onReady }: Director
     camera.lookAt(s.look[0].x, s.look[1].x, s.look[2].x);
 
     const R = MOTION.hover.ring;
+    const T = MOTION.trade;
     for (const h of registry.values()) {
       const active = bridge.hovered === h.id || bridge.focused === h.id || bridge.selected === h.id;
       const dim = bridge.selected !== null && !active;
@@ -504,12 +530,21 @@ function Director({ bridge, reduced, registry, drag, nebula, onReady }: Director
         if (stepSpring(h.ring, ringT, MOTION.hover.omega, dt)) transit = true;
         if (stepSpring(h.dim, dimT, MOTION.hover.omega, dt)) transit = true;
       }
+      if (reduced) {
+        h.blade.x = h.bladeTarget;
+        h.blade.v = 0;
+      } else if (stepSpring(h.blade, h.bladeTarget, T.bladeOmega, dt)) transit = true;
+      h.bladeMesh.scale.x = Math.max(0.001, INNER_W * h.blade.x);
+      const age = (now - h.pulseStart) / T.pulse.ms;
+      const glow = reduced ? 0 : pulseEnvelope(age, T.pulse.rise);
+      if (!reduced && age < 1) transit = true;
       h.faceMat.opacity = 1 - (1 - MOTION.dimFace) * h.dim.x;
       const p = h.placement;
       const bob = sway * D.bob * Math.sin(s.drift * D.bobRate + h.phase);
       h.group.position.set(p.x, p.y + bob, p.z + h.lift.x);
-      h.ringMat.opacity = h.ring.x;
-      h.bodyMat.emissiveIntensity = HOVER_EMISSIVE * Math.max(0, (h.ring.x - R.idle) / (R.hover - R.idle));
+      h.ringMat.opacity = Math.min(1, h.ring.x + T.pulse.ring * glow);
+      h.bodyMat.emissiveIntensity =
+        HOVER_EMISSIVE * Math.max(0, (h.ring.x - R.idle) / (R.hover - R.idle)) + T.pulse.emissive * glow;
     }
 
     nebula.time = s.drift;

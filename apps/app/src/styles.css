@@ -84,6 +84,8 @@
   --panel-radius: 1.75rem;
   --slash-warm: oklch(0.76 0.12 58);
   --chrome-bottom: calc(var(--nav-offset) + env(safe-area-inset-bottom, 0px));
+  --live-period: 2000ms;
+  --dur-glow: 1600ms;
 }
 
 @layer components {
@@ -168,14 +170,331 @@
     transition: translate var(--dur-base) var(--ease-standard);
   }
 
-  [data-market-row] {
+  [data-glass][data-dense] {
+    --nav-glass-tint: color-mix(in oklab, var(--background) 74%, transparent);
+    --nav-glass-fallback: color-mix(in oklab, var(--background) 94%, transparent);
+  }
+
+  [data-projects-menu] {
+    opacity: 0;
+    visibility: hidden;
+    scale: 0.96;
+    translate: 0 -0.25rem;
+    transform-origin: 50% 0;
+    transition:
+      scale var(--dur-fast) var(--ease-accelerate),
+      translate var(--dur-fast) var(--ease-accelerate),
+      opacity var(--dur-fast) var(--ease-accelerate),
+      visibility 0s linear var(--dur-fast);
+  }
+  [data-projects-menu][data-open] {
+    opacity: 1;
+    visibility: visible;
+    scale: 1;
+    translate: 0 0;
+    transition:
+      scale var(--dur-base) var(--ease-decelerate),
+      translate var(--dur-base) var(--ease-decelerate),
+      opacity var(--dur-fast) var(--ease-decelerate),
+      visibility 0s;
+  }
+  @media (max-width: 47.99rem) {
+    [data-projects-menu] {
+      scale: 1;
+      translate: 0 2.5rem;
+    }
+    [data-projects-menu][data-open] {
+      translate: 0 0;
+      transition:
+        translate var(--dur-slow) var(--ease-decelerate),
+        opacity var(--dur-fast) var(--ease-decelerate),
+        visibility 0s;
+    }
+  }
+  [data-projects-menu][data-open] [data-menu-row] {
+    animation: row-in var(--dur-base) var(--ease-decelerate) both;
+    animation-delay: calc(60ms + min(var(--i, 0), 7) * 40ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-projects-menu],
+    [data-projects-menu][data-open] {
+      scale: 1;
+      translate: 0 0;
+    }
+    [data-projects-menu][data-open] [data-menu-row] {
+      animation: row-fade var(--dur-fast) linear both;
+    }
+  }
+
+  [data-market-row],
+  [data-project-row] {
     animation: row-in var(--dur-base) var(--ease-decelerate) both;
     animation-delay: calc(min(var(--i, 0), 7) * 40ms);
   }
   @media (prefers-reduced-motion: reduce) {
-    [data-market-row] {
+    [data-market-row],
+    [data-project-row] {
       animation: row-fade var(--dur-fast) linear both;
     }
+  }
+
+  [data-rise] {
+    animation: rise-in var(--dur-slow) var(--ease-decelerate) both;
+    animation-delay: calc(var(--rise, 0) * 60ms);
+  }
+  [data-rise="fade"] {
+    animation-name: row-fade;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-rise] {
+      animation: row-fade var(--dur-fast) linear both;
+    }
+  }
+
+  [data-live-dot]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--glow);
+    opacity: 0;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-live-dot] {
+      animation: live-breathe var(--live-period) var(--ease-standard) infinite;
+    }
+    [data-live-dot]::after {
+      animation: live-halo var(--live-period) var(--ease-decelerate) infinite;
+    }
+  }
+  [data-live-dot][data-paused],
+  [data-live-dot][data-paused]::after {
+    animation: none;
+  }
+
+  [data-odds-fill] {
+    scale: var(--odds, 0) 1;
+    transition:
+      scale var(--dur-slow) var(--ease-standard),
+      filter var(--dur-fast) var(--ease-standard);
+  }
+  [data-odds-fill][data-enter] {
+    transition-duration: var(--dur-slower), var(--dur-fast);
+    transition-timing-function: var(--ease-decelerate), var(--ease-standard);
+    transition-delay: var(--enter-delay, 0ms), 0ms;
+  }
+  @starting-style {
+    [data-odds-fill][data-enter] {
+      scale: 0 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-odds-fill],
+    [data-odds-fill][data-enter] {
+      transition: filter var(--dur-fast) var(--ease-standard);
+    }
+  }
+
+  [data-digit] {
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-digit][data-new] {
+      animation: digit-up var(--dur-base) var(--ease-decelerate) both;
+    }
+    [data-digits][data-dir="down"] > [data-digit][data-new] {
+      animation-name: digit-down;
+    }
+    [data-seconds="odd"] {
+      animation: tick-a var(--dur-slow) var(--ease-standard);
+    }
+    [data-seconds="even"] {
+      animation: tick-b var(--dur-slow) var(--ease-standard);
+    }
+  }
+
+  [data-activity-row][data-fresh] {
+    position: relative;
+    display: grid;
+    animation: row-open var(--dur-slow) var(--ease-decelerate) both;
+  }
+  [data-activity-row][data-fresh] > * {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+  }
+  [data-activity-row][data-fresh] [data-activity-body] {
+    animation: rise-from-top var(--dur-slow) var(--ease-decelerate) both;
+  }
+  [data-activity-row][data-fresh]::before {
+    content: "";
+    position: absolute;
+    inset: 0 -0.75rem;
+    border-radius: 1rem;
+    background: color-mix(in oklab, var(--glow) 13%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    animation: row-glow var(--dur-glow) var(--ease-standard) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-activity-row][data-fresh] {
+      animation: row-fade var(--dur-fast) linear both;
+    }
+    [data-activity-row][data-fresh] [data-activity-body],
+    [data-activity-row][data-fresh]::before {
+      animation: none;
+    }
+  }
+
+  [data-row-arrow] {
+    opacity: 0;
+    translate: -0.5rem 0;
+    transition:
+      opacity var(--dur-base) var(--ease-standard),
+      translate var(--dur-base) var(--ease-standard);
+  }
+  [data-project-row] [data-monogram] {
+    transition: translate var(--dur-base) var(--ease-standard);
+  }
+  @media (hover: hover) {
+    [data-project-row] a:hover [data-row-arrow] {
+      opacity: 1;
+      translate: 0 0;
+    }
+    [data-project-row] a:hover [data-monogram] {
+      translate: 0 -3px;
+    }
+    [data-project-row] a:hover [data-odds-fill] {
+      filter: brightness(1.45);
+    }
+  }
+  [data-project-row] a:focus-visible [data-row-arrow] {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-row-arrow],
+    [data-project-row] a:hover [data-row-arrow] {
+      translate: 0 0;
+    }
+    [data-project-row] a:hover [data-monogram] {
+      translate: 0 0;
+    }
+  }
+
+  [data-ticker-item] {
+    animation: ticker-in var(--dur-base) var(--ease-decelerate) both;
+  }
+  [data-ticker-item][data-leaving] {
+    animation: ticker-out var(--dur-fast) var(--ease-accelerate) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-ticker-item] {
+      animation: row-fade var(--dur-fast) linear both;
+    }
+    [data-ticker-item][data-leaving] {
+      animation: fade-out var(--dur-fast) linear both;
+    }
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--distance-enter);
+  }
+}
+
+@keyframes live-breathe {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes live-halo {
+  0% {
+    opacity: 0.55;
+    scale: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    scale: 3;
+  }
+}
+
+@keyframes digit-up {
+  from {
+    opacity: 0;
+    translate: 0 0.3em;
+  }
+}
+
+@keyframes digit-down {
+  from {
+    opacity: 0;
+    translate: 0 -0.3em;
+  }
+}
+
+@keyframes tick-a {
+  from {
+    opacity: 0.55;
+  }
+}
+
+@keyframes tick-b {
+  from {
+    opacity: 0.55;
+  }
+}
+
+@keyframes row-open {
+  from {
+    grid-template-rows: 0fr;
+  }
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+
+@keyframes rise-from-top {
+  from {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+}
+
+@keyframes row-glow {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes ticker-in {
+  from {
+    opacity: 0;
+    translate: 0 100%;
+  }
+}
+
+@keyframes ticker-out {
+  to {
+    opacity: 0;
+    translate: 0 -100%;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
   }
 }
 

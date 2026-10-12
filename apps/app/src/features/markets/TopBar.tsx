@@ -1,7 +1,9 @@
 import { WindleMark } from '@windle/brand';
-import { NavLink } from 'react-router';
+import { useId, useRef, useState } from 'react';
+import { NavLink, useLocation } from 'react-router';
 import { shortAddress } from '@/lib/format';
 import { NAV_ITEMS } from '@/shell/nav';
+import { ProjectsMenu } from '../projects/ProjectsMenu';
 
 type Props = {
   address: string;
@@ -13,6 +15,18 @@ const item =
   'relative inline-flex h-10 items-center gap-1.5 rounded-full px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors duration-(--dur-instant) ease-(--ease-standard) aria-[current=page]:text-foreground [@media(hover:hover)]:hover:bg-(--nav-hover) [@media(hover:hover)]:hover:text-foreground md:px-4';
 
 export function TopBar({ address, onSignOut, signingOut }: Props) {
+  const { pathname } = useLocation();
+  const menuId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [openAt, setOpenAt] = useState<string | null>(null);
+  const menuOpen = openAt === pathname;
+  const onProjectsPage = pathname === '/projects' || pathname.startsWith('/projects/');
+
+  const closeMenu = ({ restoreFocus }: { restoreFocus: boolean }) => {
+    setOpenAt(null);
+    if (restoreFocus) triggerRef.current?.focus();
+  };
+
   return (
     <header
       data-topbar
@@ -35,14 +49,46 @@ export function TopBar({ address, onSignOut, signingOut }: Props) {
         </NavLink>
 
         <nav aria-label="Main" className="flex min-w-0 items-center">
-          {NAV_ITEMS.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={item} aria-label={n.label}>
-              <span className="text-accent-text md:hidden [&_svg]:size-5" aria-hidden="true">
-                {n.to === '/' ? null : n.icon}
-              </span>
-              <span className={n.to === '/' ? '' : 'max-md:hidden'}>{n.label}</span>
-            </NavLink>
-          ))}
+          {NAV_ITEMS.map((n) =>
+            n.to === '/projects' ? (
+              <button
+                key={n.to}
+                ref={triggerRef}
+                type="button"
+                aria-label="Projects"
+                aria-haspopup="dialog"
+                aria-expanded={menuOpen}
+                aria-controls={menuId}
+                aria-current={onProjectsPage ? 'page' : undefined}
+                onClick={() => setOpenAt(menuOpen ? null : pathname)}
+                className={`${item} aria-expanded:bg-(--nav-hover) aria-expanded:text-foreground`}
+              >
+                <span className="text-accent-text md:hidden [&_svg]:size-5" aria-hidden="true">
+                  {n.icon}
+                </span>
+                <span className="max-md:hidden">{n.label}</span>
+                <svg
+                  viewBox="0 0 12 12"
+                  width="10"
+                  height="10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  aria-hidden="true"
+                  className="max-md:hidden"
+                >
+                  <path d="M2.5 4.5L6 8l3.5-3.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            ) : (
+              <NavLink key={n.to} to={n.to} end={n.end} className={item} aria-label={n.label}>
+                <span className="text-accent-text md:hidden [&_svg]:size-5" aria-hidden="true">
+                  {n.to === '/' ? null : n.icon}
+                </span>
+                <span className={n.to === '/' ? '' : 'max-md:hidden'}>{n.label}</span>
+              </NavLink>
+            ),
+          )}
         </nav>
 
         <div className="flex shrink-0 items-center gap-1 max-md:hidden">
@@ -77,6 +123,7 @@ export function TopBar({ address, onSignOut, signingOut }: Props) {
           </button>
         </div>
       </div>
+      <ProjectsMenu id={menuId} open={menuOpen} onClose={closeMenu} triggerRef={triggerRef} />
     </header>
   );
 }

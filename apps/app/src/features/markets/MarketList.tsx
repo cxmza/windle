@@ -1,5 +1,7 @@
 import type { CSSProperties, KeyboardEvent } from 'react';
-import { deadlineLabel, formatSol } from './format';
+import { Digits } from '@/components/Digits';
+import { OddsNumber } from '@/components/OddsNumber';
+import { countdown, deadlineLabel, formatSol } from './format';
 import { OddsBlade } from './OddsBlade';
 import { StatusPill } from './StatusPill';
 import type { Market } from './types';
@@ -58,7 +60,7 @@ function Row({
             ${m.ticker}
           </span>
           <span className="font-mono text-sm text-muted-foreground tabular-nums md:hidden">
-            {deadlineLabel(m, now)}
+            {m.status === 'live' ? <Digits text={countdown(m.deadline, now)} dir="down" /> : deadlineLabel(m, now)}
           </span>
         </span>
 
@@ -71,7 +73,7 @@ function Row({
           <span
             className={`font-mono text-[1.75rem] leading-none tabular-nums ${resolved ? 'text-muted-foreground' : ''}`}
           >
-            {m.shipProbability}
+            <OddsNumber value={m.shipProbability} />
             <span className="text-base text-muted-foreground">%</span>
             <span className="sr-only"> odds it ships</span>
           </span>
@@ -86,7 +88,7 @@ function Row({
         <span className="flex items-center justify-end gap-2 max-md:hidden">
           {m.status === 'live' ? (
             <span className="font-mono text-base tabular-nums">
-              {deadlineLabel(m, now)}
+              <Digits text={countdown(m.deadline, now)} dir="down" />
               <span className="sr-only"> left</span>
             </span>
           ) : (

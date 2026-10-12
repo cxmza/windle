@@ -1,7 +1,12 @@
-import { type RefObject, useEffect, useId, useRef, useState } from 'react';
-import { useNow } from '@/lib/media';
-import { countdown, formatDeadline, formatSol, sidePrice } from './format';
+import { type RefObject, useEffect, useId, useRef } from 'react';
+import { Link } from 'react-router';
+import { OddsNumber } from '@/components/OddsNumber';
+import { useClock } from '@/lib/clock';
+import { projectPath, projectSlug } from '../projects/model';
+import { Countdown } from './Countdown';
+import { formatDeadline, formatSol } from './format';
 import { OddsBlade } from './OddsBlade';
+import { SideButtons } from './SideButtons';
 import { StatusPill } from './StatusPill';
 import type { Market } from './types';
 
@@ -13,14 +18,10 @@ type Props = {
   sample: boolean;
 };
 
-const sideButton =
-  'flex min-h-14 flex-1 items-center justify-between gap-3 rounded-full px-5 text-sm font-semibold transition-[background-color,border-color,color,translate] duration-(--dur-instant) ease-(--ease-standard) active:translate-y-px';
-
 export function MarketPanel({ market, open, onClose, panelRef, sample }: Props) {
   const titleId = useId();
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const now = useNow(1000, open && market?.status === 'live');
-  const [noteFor, setNoteFor] = useState<string | null>(null);
+  const now = useClock('second', open && market?.status === 'live');
   const marketId = market?.id;
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export function MarketPanel({ market, open, onClose, panelRef, sample }: Props) 
           <div className="flex flex-col gap-3">
             <div className="flex items-end justify-between gap-3">
               <p className="font-display text-[2.5rem] leading-none md:text-[3.25rem] font-bold tracking-[-0.04em] tabular-nums">
-                {market.shipProbability}
+                <OddsNumber key={market.id} value={market.shipProbability} />
                 <span className="text-[0.55em] text-muted-foreground">%</span>
               </p>
               <div className="flex flex-col items-end gap-1.5 pb-1">
@@ -88,7 +89,7 @@ export function MarketPanel({ market, open, onClose, panelRef, sample }: Props) 
                 <span className="text-xs text-muted-foreground">odds it ships</span>
               </div>
             </div>
-            <OddsBlade value={market.shipProbability} />
+            <OddsBlade key={market.id} value={market.shipProbability} />
           </div>
 
           <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-(--hairline) pt-5 text-sm">
@@ -105,7 +106,7 @@ export function MarketPanel({ market, open, onClose, panelRef, sample }: Props) 
               <dd className={`text-base tabular-nums ${live ? 'font-mono' : ''}`}>
                 {live ? (
                   <>
-                    <time dateTime={market.deadline}>{countdown(market.deadline, now)}</time>
+                    <Countdown key={market.id} deadline={market.deadline} now={now} />
                     <span className="sr-only">, until {formatDeadline(market.deadline)}</span>
                   </>
                 ) : (
@@ -115,34 +116,15 @@ export function MarketPanel({ market, open, onClose, panelRef, sample }: Props) 
             </div>
           </dl>
 
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setNoteFor(market.id)}
-                className={`${sideButton} bg-glow text-ink-inverse hover:bg-[color-mix(in_oklab,var(--glow)_88%,var(--foreground))]`}
-              >
-                <span className="tracking-[0.08em] uppercase">Ship</span>
-                <span className="font-mono tabular-nums">{sidePrice(market, 'ship')}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setNoteFor(market.id)}
-                className={`${sideButton} border border-(--slash-warm)/70 bg-background text-foreground hover:border-(--slash-warm) hover:bg-[color-mix(in_oklab,var(--slash-warm)_10%,var(--background))]`}
-              >
-                <span className="tracking-[0.08em] uppercase">Slash</span>
-                <span className="font-mono tabular-nums">{sidePrice(market, 'slash')}</span>
-              </button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Price per share in SOL; a share pays 1 SOL if its side wins.
-            </p>
-            <p role="status" className="min-h-4 text-xs text-accent-text">
-              {noteFor === market.id
-                ? `Trading is not live yet${sample ? ', this is sample data' : ''}. Nothing was placed.`
-                : null}
-            </p>
-          </div>
+          <SideButtons key={market.id} market={market} sample={sample} />
+
+          <Link
+            to={projectPath(projectSlug(market))}
+            className="inline-flex min-h-11 items-center justify-between gap-2 self-start rounded-full border border-(--hairline) px-5 text-sm font-medium text-foreground transition-colors duration-(--dur-instant) ease-(--ease-standard) [@media(hover:hover)]:hover:bg-(--nav-hover)"
+          >
+            <span>About {market.team}</span>
+            <span aria-hidden="true">→</span>
+          </Link>
         </div>
       ) : null}
     </aside>

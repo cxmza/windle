@@ -26,6 +26,13 @@ export function stepSpring(s: Spring, target: number, omega: number, dt: number)
   return true;
 }
 
+/** 0 → 1 → 0 over k ∈ [0, 1]: a quick ease-out rise, then a long quadratic fade. */
+export function pulseEnvelope(k: number, rise: number): number {
+  if (k <= 0 || k >= 1) return 0;
+  if (k < rise) return Math.sin(((k / rise) * Math.PI) / 2);
+  return (1 - (k - rise) / (1 - rise)) ** 2;
+}
+
 export const clamp = (v: number, max: number): number => Math.max(-max, Math.min(max, v));
 
 export function orbitPosition(

@@ -1,15 +1,19 @@
 import { queryOptions } from '@tanstack/react-query';
+import type { LiveFeed } from '../live/feed';
+import { sampleEpoch, sampleFeed } from '../live/sample';
 import { createFixtureMarkets } from './fixtures';
 import type { Market } from './types';
 
 export interface MarketsSource {
   readonly sample: boolean;
+  readonly live?: () => LiveFeed;
   list(signal?: AbortSignal): Promise<readonly Market[]>;
 }
 
 export const fixtureSource: MarketsSource = {
   sample: true,
-  list: async () => createFixtureMarkets(Date.now()),
+  live: sampleFeed,
+  list: async () => sampleFeed().applyMarkets(createFixtureMarkets(sampleEpoch())),
 };
 
 export const marketsQuery = (source: MarketsSource = fixtureSource) =>

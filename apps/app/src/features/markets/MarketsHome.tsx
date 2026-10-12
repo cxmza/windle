@@ -2,7 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useAuthedSession } from '@/features/session/session-context';
-import { useNow, useReducedMotion, webglAvailable } from '@/lib/media';
+import { useClock } from '@/lib/clock';
+import { useReducedMotion, webglAvailable } from '@/lib/media';
+import { LiveTicker } from '../live/LiveTicker';
+import { useLiveDriver } from '../live/use-live';
 import { deadlineLabel } from './format';
 import { MarketList } from './MarketList';
 import { MarketPanel } from './MarketPanel';
@@ -32,7 +35,7 @@ export function MarketsHome() {
   const [bridge] = useState(createSceneBridge);
   const panelRef = useRef<HTMLElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
-  const now = useNow(60_000);
+  useLiveDriver();
 
   const sceneAvailable = webgl && !failed;
   const requested = params.get('view');
@@ -47,6 +50,7 @@ export function MarketsHome() {
           ? 'scene'
           : 'list';
 
+  const now = useClock(view === 'scene' ? 'minute' : 'second');
   const markets = query.data ?? [];
   const open = markets.filter(isOpen).sort(byDeadline);
   const settled = markets.filter((m) => !isOpen(m)).sort((a, b) => byDeadline(b, a));
@@ -248,7 +252,8 @@ export function MarketsHome() {
       </main>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-(--z-dock) flex items-end justify-between gap-3 px-(--gutter) pb-(--chrome-bottom)">
-        <div className="pointer-events-auto flex min-w-0 flex-col gap-1.5 text-xs leading-snug text-muted-foreground">
+        <div className="pointer-events-none flex min-w-0 flex-1 flex-col gap-1.5 text-xs leading-snug text-muted-foreground">
+          <LiveTicker feed={source.live?.()} />
           {scene ? (
             <ul aria-label="How to read the scene" className="flex flex-col md:flex-row md:gap-2">
               <li>nearer = sooner</li>
@@ -262,7 +267,7 @@ export function MarketsHome() {
               <li>blade = ship odds</li>
             </ul>
           ) : null}
-          <p className="flex flex-wrap items-center gap-x-2 text-muted-foreground/80">
+          <p className="pointer-events-auto flex w-fit flex-wrap items-center gap-x-2 text-muted-foreground/80">
             {scene && !reduced ? <span className="max-md:hidden">drag to orbit ·</span> : null}
             {scene && source.sample ? <span>sample data</span> : null}
             {scene && settled.length > 0 ? (

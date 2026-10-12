@@ -76,6 +76,8 @@ export const MOTION = {
   dolly: { omega: 6.5 },
   drift: { yaw: 0.05, pitch: 0.02, yawRate: 0.13, pitchRate: 0.09, bob: 0.05, bobRate: 0.5 },
   idle: { throttleAfter: 4, stopAfter: 45, idleFps: 30 },
+  /** A trade on a slab: the blade eases to the new odds (omega 12 ≈ 0.55 s), the body and edge glow once and fade. */
+  trade: { bladeOmega: 12, pulse: { ms: 900, rise: 0.18, emissive: 0.16, ring: 0.45 } },
 } as const;
 
 export const FRAME = { fill: 0.36, fillNarrow: 0.5, maxWidthShare: 0.8, maxWidthShareNarrow: 0.7 } as const;
