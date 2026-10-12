@@ -30,6 +30,8 @@ export const STAGGER = {
   item: 0.06,
   /** Cap on a whole char sequence (a title): per-char stagger shrinks so the cascade never exceeds this. */
   charSpan: 0.45,
+  /** Cap on the hero kicker sweep (a short label: quicker than a title). */
+  kickerSpan: 0.28,
 } as const;
 
 /** Exits are quieter: reverse at this speed multiple (~60% of the enter duration). */

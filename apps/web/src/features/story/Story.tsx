@@ -10,6 +10,7 @@ import { Chapter, ChapterTitle, Kicker } from './Chapter';
 import { CtaLink } from './CtaLink';
 import { CHAPTERS, type Chapter as ChapterData, type ChapterKey, CTAS, OUTCOMES } from './chapters';
 import { Ecosystem } from './Ecosystem';
+import { HeroKicker } from './HeroKicker';
 import { AnchoredAnnotation } from './hand/AnchoredAnnotation';
 import { Annotation } from './hand/Annotation';
 import { addDrawOn, drawOn, playDraw, undraw } from './hand/draw-on';
@@ -67,7 +68,7 @@ function HeroSub({ text }: { text: string }) {
 function Hero({ chapter }: { chapter: ChapterData }) {
   const heroRef = useRef<HTMLElement>(null);
 
-  // Hero intro (attention): kicker, then the title assembles (ChapterTitle, h1 branch), then the sub and CTAs
+  // Hero intro (attention): kicker (CSS sweep, HeroKicker.tsx), then the title assembles (ChapterTitle, h1 branch), then the sub and CTAs
   // rise in. The 3D monolith arrives from depth in parallel (scene/StoryScene.tsx).
   useGSAP(
     () => {
@@ -75,11 +76,6 @@ function Hero({ chapter }: { chapter: ChapterData }) {
       mm.add(NO_MOTION_PREF_QUERY, () => {
         const tl = gsap
           .timeline()
-          .from(
-            '[data-hero-kicker]',
-            { opacity: 0, y: DISTANCE_ENTER / 2, duration: DUR.base, ease: 'decelerate' },
-            INTRO.kicker,
-          )
           .from('[data-hero-sub]', { opacity: 0, y: DISTANCE_ENTER, duration: DUR.slow, ease: 'decelerate' }, INTRO.sub)
           .from(
             '[data-cta-row] > *',
@@ -104,7 +100,7 @@ function Hero({ chapter }: { chapter: ChapterData }) {
   return (
     <Chapter ref={heroRef} chapter={chapter} stageClassName="items-center text-center">
       <div data-hero-kicker>
-        <Kicker>{chapter.kicker}</Kicker>
+        <HeroKicker text={chapter.kicker} />
       </div>
       {/* Safety-net scrim: a soft caption-coloured radial fade behind the title (does not touch the monolith pose). */}
       <div

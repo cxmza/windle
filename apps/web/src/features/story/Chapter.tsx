@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef, Fragment, useRef } from 'react';
+import { type ComponentPropsWithRef, Fragment, type ReactNode, useRef } from 'react';
 import { cn } from '@/lib/cn';
 import { gsap, primeTransforms, ScrollTrigger, useGSAP } from '@/lib/gsap';
 import { whenIdle } from '@/lib/idle';
@@ -300,7 +300,7 @@ export function ChapterTitle({ chapter, as: Tag = 'h2', size = 'title', classNam
   );
 }
 
-export function Kicker({ children, className }: { children: string; className?: string }) {
+export function Kicker({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <p
       className={cn(
