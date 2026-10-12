@@ -16,7 +16,6 @@
 :root {
   --topbar-height: 3.5rem;
   --nav-offset: 1rem;
-  --nav-radius-panel: 1.75rem;
   --page-max: 80rem;
   --topbar-clearance: calc(var(--topbar-height) + var(--nav-offset) + env(safe-area-inset-top, 0px));
 
@@ -54,12 +53,9 @@
   --nav-bubble-shadow:
     inset 0 1px 0 color-mix(in oklab, var(--foreground) 16%, transparent),
     inset 0 0 0 1px color-mix(in oklab, var(--foreground) 7%, transparent);
-  /* dropdown panel and mobile sheet: the same glass, denser so text stays AA over any backdrop */
-  --nav-panel: color-mix(in oklab, var(--background) 72%, transparent);
-  --nav-panel-filter: blur(18px) saturate(1.2);
+  /* mobile sheet: the same glass, denser so text stays AA over any backdrop */
   --nav-sheet: color-mix(in oklab, var(--background) 80%, transparent);
   --nav-sheet-filter: blur(22px) saturate(1.6);
-  --nav-sheen-corner: radial-gradient(90% 55% at 15% 0%, var(--glass-sheen), transparent 70%);
 
   /* hero kicker (story/HeroKicker.tsx): Solana brand gradient, mark at cap height (Inter Tight ~0.72em), a slow sheen */
   --solana-from: #9945ff;
@@ -145,8 +141,7 @@
 }
 
 /* ---------- liquid glass islands (nav/GlassIsland.tsx) ----------
-   Each island owns one backdrop-filter, on its [data-glass] layer (a sibling of the content, so the dropdown inside the
-   capsule can blur the page itself); static layers only, nothing here animates the filter. In Chromium on a fine pointer
+   Each island owns one backdrop-filter, on its [data-glass] layer (a sibling of the content, so the glass can blur the page itself); static layers only, nothing here animates the filter. In Chromium on a fine pointer
    the layer carries data-lens and an inline --glass-lens: url(#island filter) that bends the backdrop along the rim
    (LiquidGlassDefs.tsx). Elsewhere it is plain blur + saturate with the same rim and specular.
    Layers: backdrop, the faint white tint, inset bevel light and shadow, ::before the masked gradient rim, ::after the sheen. */
@@ -188,8 +183,7 @@
       backdrop-filter: var(--glass-lens) var(--glass-filter-lens);
     }
   }
-  [data-glass]::before,
-  [data-dock-menu] > div::before {
+  [data-glass]::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -221,16 +215,6 @@
     height: 44%;
     border-radius: var(--radius-pill);
     background: linear-gradient(180deg, var(--glass-sheen), transparent);
-  }
-  [data-dock-menu] > div {
-    position: relative;
-    border-radius: var(--nav-radius-panel);
-    background: var(--nav-sheen-corner), var(--nav-panel);
-    -webkit-backdrop-filter: var(--nav-panel-filter);
-    backdrop-filter: var(--nav-panel-filter);
-    box-shadow:
-      inset 0 1px 0 color-mix(in oklab, var(--foreground) 40%, transparent),
-      0 14px 36px -12px color-mix(in oklab, var(--background) 70%, transparent);
   }
   [data-dock-sheet] {
     background: var(--nav-sheet);
@@ -268,9 +252,9 @@
     box-shadow: var(--bubble-shadow);
   }
   .dock-item:active,
-  .dock-item[data-state="open"],
   .dock-row:active,
-  .dock-row[aria-current] {
+  .dock-row[aria-current],
+  .dock-row[data-active] {
     --bubble-bg: var(--nav-bubble);
     --bubble-shadow: var(--nav-bubble-shadow);
   }
@@ -287,14 +271,10 @@
       background: var(--glass-solid);
     }
     [data-glass],
-    [data-glass][data-lens],
-    [data-dock-menu] > div {
+    [data-glass][data-lens] {
       background: transparent;
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
-    }
-    [data-dock-menu] > div {
-      background: var(--glass-solid);
     }
     [data-dock-sheet] {
       background: var(--glass-solid);
@@ -310,7 +290,7 @@
 }
 
 /* ---------- top bar + logo motion (nav/SiteNav.tsx, brand/use-jelly.ts) ----------
-   Reduced motion: the menu panel and the sheet only fade. */
+   Reduced motion: the sheet only fades. */
 @layer components {
   /* bar enter (orientation): the islands and the lockup fade in once the hero intro has landed */
   [data-dock-island],
@@ -325,20 +305,8 @@
     outline-offset: 2px;
     border-radius: var(--radius-pill);
   }
-  [data-dock-menu] a:focus-visible,
-  [data-dock-sheet] a[data-dock-link]:focus-visible {
+  [data-dock-sheet] a:focus-visible {
     border-radius: 1rem;
-  }
-
-  /* Protocol menu (orientation): drops out of the bar; exits are keyframes because Radix Presence waits for animationend */
-  [data-dock-menu] {
-    transform-origin: 50% 0;
-  }
-  [data-dock-menu][data-state="open"] {
-    animation: dock-pop-in var(--dur-base) var(--ease-decelerate) backwards;
-  }
-  [data-dock-menu][data-state="closed"] {
-    animation: dock-pop-out var(--dur-fast) var(--ease-accelerate) both;
   }
 
   /* mobile sheet (orientation): drops down out of the bar and lifts back */
@@ -420,11 +388,9 @@
   [data-header-logo] {
     animation: dock-fade-in var(--dur-instant) var(--ease-standard) backwards;
   }
-  [data-dock-menu][data-state="open"],
   [data-dock-sheet][data-state="open"] {
     animation: dock-fade-in var(--dur-instant) var(--ease-standard) backwards;
   }
-  [data-dock-menu][data-state="closed"],
   [data-dock-sheet][data-state="closed"] {
     animation: dock-fade-out var(--dur-instant) var(--ease-standard) both;
   }
@@ -450,17 +416,6 @@
   to {
     opacity: 0;
     transform: translateY(calc(var(--distance-enter) * -0.5));
-  }
-}
-@keyframes dock-pop-in {
-  from {
-    opacity: 0;
-    transform: translateY(calc(var(--distance-enter) / -2));
-  }
-}
-@keyframes dock-pop-out {
-  to {
-    opacity: 0;
   }
 }
 @keyframes kicker-char-in {

@@ -1,32 +1,30 @@
 import { NavigationMenu } from 'radix-ui';
-import { useState } from 'react';
 import { WindleLogo } from '../story/brand/WindleLogo';
 import { chapterPath } from '../story/routes';
 import { useActiveChapter } from '../story/story-scroll';
 import { GlassIsland } from './GlassIsland';
 import { NavSheet } from './NavSheet';
 import { useNavBubble } from './nav-bubble';
-import { activeProtocolId, DOCS_URL, isProtocolActive, PROTOCOL_ITEMS } from './nav-data';
-import { ArrowUpRightGlyph, ChevronDownGlyph } from './nav-icons';
-import { LaunchLink, navItemClass, ProtocolRow, SignInLink } from './nav-parts';
+import { activeProtocolId, DOCS_URL, isProtocolActive, PROTOCOL_TARGET } from './nav-data';
+import { ArrowUpRightGlyph } from './nav-icons';
+import { LaunchLink, navItemClass, SignInLink } from './nav-parts';
 
 const wordmarkClass = 'text-base font-extrabold tracking-[-0.03em] uppercase max-lg:md:sr-only';
 
 /**
  * Top bar as three islands at a fixed size and position (nothing collapses on scroll): the lockup sits straight on the
- * page, a glass capsule in the middle holds Protocol (menu), Docs and Ecosystem, a second glass island on the right holds
+ * page, a glass capsule in the middle holds Protocol (link to chapter 01), Docs and Ecosystem, a second glass island on the right holds
  * Sign in and Launch app. Below md the capsule is gone and the right island holds Launch app and the menu button + sheet.
  * Hooks (stable, for motion and tests): [data-dock-root] fixed wrapper, [data-dock-island] every glass island
  * ([data-dock] the centre capsule, [data-dock-actions] the right one; [data-glass] its glass layer), [data-dock-bubble]
  * the sliding hover bubble, [data-header-logo] the lockup link ([data-logo-jelly] on its mark), [data-dock-link=<chapter
- * id>] (aria-current on the active one), [data-dock-protocol] the Protocol trigger, [data-dock-menu] its panel,
+ * id>] (aria-current on the active one), [data-dock-protocol] the Protocol link,
  * [data-dock-menu-button], [data-dock-sheet], [data-dock-signin], [data-dock-cta].
  */
 export function SiteNav() {
   const { active } = useActiveChapter();
   const activeId = activeProtocolId(active);
-  const [openValue, setOpenValue] = useState('');
-  const { rootRef, bubbleRef, handlers } = useNavBubble<HTMLElement>(`${activeId}|${openValue}`);
+  const { rootRef, bubbleRef, handlers } = useNavBubble<HTMLElement>(`${activeId}`);
 
   return (
     <header
@@ -44,46 +42,21 @@ export function SiteNav() {
         </a>
 
         <GlassIsland data-dock className="hidden h-full items-center justify-self-center p-1.5 md:flex">
-          <NavigationMenu.Root
-            ref={rootRef}
-            aria-label="Primary"
-            delayDuration={80}
-            skipDelayDuration={300}
-            onValueChange={setOpenValue}
-            className="relative"
-            {...handlers}
-          >
+          <NavigationMenu.Root ref={rootRef} aria-label="Primary" className="relative" {...handlers}>
             <span ref={bubbleRef} data-dock-bubble aria-hidden="true" />
             <NavigationMenu.List className="flex items-center">
               <NavigationMenu.Item>
-                <NavigationMenu.Trigger
-                  data-dock-item
-                  data-dock-protocol
-                  data-active={isProtocolActive(activeId) ? '' : undefined}
-                  className={`${navItemClass} group/trigger`}
-                >
-                  Protocol
-                  <ChevronDownGlyph className="transition-transform duration-(--dur-fast) ease-standard group-data-[state=open]/trigger:rotate-180 motion-reduce:transition-none" />
-                </NavigationMenu.Trigger>
-                <NavigationMenu.Content
-                  data-dock-menu
-                  className="absolute top-full left-1/2 -ml-[13.5rem] w-[27rem] max-w-[calc(100vw-2rem)] pt-3"
-                >
-                  <div className="overflow-hidden p-2">
-                    <p className="px-3 pt-2 pb-1.5 text-xs font-medium tracking-wide text-muted-foreground">
-                      How windle works
-                    </p>
-                    <ul className="flex flex-col gap-0.5">
-                      {PROTOCOL_ITEMS.map((item) => (
-                        <li key={item.id}>
-                          <NavigationMenu.Link asChild>
-                            <ProtocolRow item={item} current={item.id === activeId} />
-                          </NavigationMenu.Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </NavigationMenu.Content>
+                <NavigationMenu.Link asChild>
+                  <a
+                    href={chapterPath(PROTOCOL_TARGET)}
+                    data-dock-item
+                    data-dock-protocol
+                    data-active={isProtocolActive(activeId) ? '' : undefined}
+                    className={navItemClass}
+                  >
+                    Protocol
+                  </a>
+                </NavigationMenu.Link>
               </NavigationMenu.Item>
 
               <NavigationMenu.Item>

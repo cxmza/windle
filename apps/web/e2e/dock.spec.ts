@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openProtocolMenu, scrollSettled, storyMounted } from './story.ts';
+import { scrollSettled, storyMounted } from './story.ts';
 
 test.describe('desktop top bar', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
@@ -57,40 +57,25 @@ test.describe('desktop top bar', () => {
     expect(new URL(page.url()).hash).toBe('');
   });
 
-  test('the Protocol menu lists the chapters, navigates by path', async ({ page }) => {
+  test('Protocol is a plain link: it scrolls to chapter 01 and the URL is its clean path', async ({ page }) => {
     await page.goto('/');
-    const menu = await openProtocolMenu(page);
-    await expect(menu.locator('[data-dock-link]')).toHaveCount(7);
-    await page
-      .locator('[data-dock-menu]')
-      .getByRole('link', { name: /Collateral/ })
-      .click();
-    await page.mouse.move(700, 700); // a pointer left over the trigger would re-open the menu on hover
+    await storyMounted(page);
+    const protocol = page.locator('[data-dock]').getByRole('link', { name: 'Protocol' });
+    await expect(protocol).toHaveAttribute('href', '/promise');
     await expect(page.locator('[data-dock-menu]')).toHaveCount(0);
-    await expect.poll(() => new URL(page.url()).pathname, { timeout: 15_000 }).toBe('/collateral');
-  });
-
-  test('the Protocol menu opens under the capsule and moves with the keyboard', async ({ page }) => {
-    await page.goto('/');
-    const trigger = page.getByRole('button', { name: 'Protocol' });
-    await trigger.focus();
-    await page.keyboard.press('Enter');
-    const menu = page.locator('[data-dock-menu]');
-    await expect(menu).toBeVisible();
-    const capsule = await page.locator('[data-dock]').boundingBox();
+    await expect(protocol.locator('svg')).toHaveCount(0);
+    await protocol.click();
+    await expect.poll(() => new URL(page.url()).pathname, { timeout: 15_000 }).toBe('/promise');
+    expect(new URL(page.url()).hash).toBe('');
+    await expect(page.locator('[data-dock-menu]')).toHaveCount(0);
     await expect
-      .poll(async () => {
-        const box = await menu.boundingBox();
-        return box && capsule ? Math.abs(box.x + box.width / 2 - (capsule.x + capsule.width / 2)) : 99;
-      })
-      .toBeLessThan(4);
-    await page.keyboard.press('ArrowDown');
-    await expect(menu.locator('[data-dock-link]').first()).toBeFocused();
-    await page.keyboard.press('ArrowDown');
-    await expect(menu.locator('[data-dock-link]').nth(1)).toBeFocused();
-    await page.keyboard.press('Escape');
-    await expect(menu).toHaveCount(0);
-    await expect(trigger).toBeFocused();
+      .poll(
+        () =>
+          page.evaluate<number>("Math.round(document.getElementById('promise')?.getBoundingClientRect().top ?? 9999)"),
+        { timeout: 15_000 },
+      )
+      .toBeLessThan(40);
+    await expect(page.locator('[data-dock-protocol]')).toHaveAttribute('data-active', '');
   });
 
   test('keeps one size, shape and position of every island at every scroll offset, up and down', async ({ page }) => {
@@ -114,13 +99,13 @@ test.describe('desktop top bar', () => {
     }
   });
 
-  test('is glass: a near-clear tint with a small backdrop blur, not an opaque plate', async ({ page }) => {
+  test('is glass: a light tint with a small backdrop blur, not an opaque plate', async ({ page }) => {
     await page.goto('/');
     const style = await page.evaluate<{ bg: string; filter: string }>(
       "(() => { const cs = getComputedStyle(document.querySelector('[data-dock] [data-glass]')); return { bg: cs.backgroundColor, filter: cs.backdropFilter }; })()",
     );
     const alpha = Number(/\/\s*([\d.]+)/.exec(style.bg)?.[1] ?? /,\s*([\d.]+)\)$/.exec(style.bg)?.[1] ?? 1);
-    expect(alpha).toBeLessThan(0.15);
+    expect(alpha).toBeLessThan(0.5);
     expect(style.filter).toContain('blur');
   });
 
@@ -150,6 +135,8 @@ test.describe('desktop top bar', () => {
     await page.locator('[data-dock-docs]').hover();
     await expect(bubble).toHaveAttribute('data-visible', '');
     await expect.poll(offset('[data-dock-docs]')).toBeLessThan(2);
+    await page.locator('[data-dock-protocol]').hover();
+    await expect.poll(offset('[data-dock-protocol]')).toBeLessThan(2);
     await page.locator('[data-dock] [data-dock-link=ecosystem]').hover();
     await expect.poll(offset('[data-dock] [data-dock-link=ecosystem]')).toBeLessThan(2);
     await page.mouse.move(100, 600);
@@ -202,14 +189,17 @@ test.describe('390px', () => {
     await expect(sheet.getByRole('link', { name: /Ecosystem/ })).toBeVisible();
     await expect(sheet.getByRole('link', { name: 'Sign in' })).toBeVisible();
     await expect(sheet.getByRole('link', { name: 'Launch app' })).toBeVisible();
-    const row = await sheet.getByRole('link', { name: /Collateral/ }).boundingBox();
+    await expect(sheet.getByRole('link', { name: 'Protocol' })).toHaveAttribute('href', '/promise');
+    await expect(sheet.getByRole('link', { name: /^Docs/ })).toBeVisible();
+    await expect(sheet.getByRole('link', { name: /Collateral|Judge/ })).toHaveCount(0);
+    const row = await sheet.getByRole('link', { name: 'Protocol' }).boundingBox();
     expect(row?.height).toBeGreaterThanOrEqual(44);
     await page.keyboard.press('Escape');
     await expect(sheet).toHaveCount(0);
     await expect(menuButton).toBeFocused();
   });
 
-  test('the sheet covers the viewport and a chapter link closes it and navigates', async ({ page }) => {
+  test('the sheet covers the viewport and Protocol closes it and navigates to chapter 01', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Open menu' }).click();
     const sheet = page.locator('[data-dock-sheet]');
@@ -221,9 +211,9 @@ test.describe('390px', () => {
         return box && [box.x, box.y, box.width, box.height].map(Math.round);
       })
       .toEqual([0, 0, 390, 780]);
-    await sheet.getByRole('link', { name: /Judge/ }).click();
+    await sheet.getByRole('link', { name: 'Protocol' }).click();
     await expect(sheet).toHaveCount(0);
-    await expect.poll(() => new URL(page.url()).pathname, { timeout: 15_000 }).toBe('/judge');
+    await expect.poll(() => new URL(page.url()).pathname, { timeout: 15_000 }).toBe('/promise');
   });
 
   test('ends with the information footer, flush with the page bottom (no dead space)', async ({ page }) => {

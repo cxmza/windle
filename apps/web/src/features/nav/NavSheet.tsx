@@ -4,13 +4,12 @@ import { useMediaQuery } from '@/lib/use-media-query';
 import { WindleLogo } from '../story/brand/WindleLogo';
 import type { ChapterKey } from '../story/chapters';
 import { chapterPath } from '../story/routes';
-import { DOCS_URL, PROTOCOL_ITEMS, SIGN_IN_URL, X_LINK } from './nav-data';
+import { DOCS_URL, isProtocolActive, PROTOCOL_TARGET, SIGN_IN_URL, X_LINK } from './nav-data';
 import { ArrowUpRightGlyph, CloseGlyph, MenuGlyph, XGlyph } from './nav-icons';
-import { LaunchLink, ProtocolRow } from './nav-parts';
+import { LaunchLink } from './nav-parts';
 
 const DESKTOP_QUERY = '(min-width: 48rem)'; // Tailwind `md`
 
-const groupLabel = 'px-3 text-xs font-medium tracking-wide text-muted-foreground';
 const barButton =
   'dock-item inline-flex size-11 shrink-0 items-center justify-center rounded-full text-foreground transition-colors duration-(--dur-instant) ease-standard motion-reduce:transition-none';
 const plainRow =
@@ -62,56 +61,60 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
           </div>
 
           <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-(--gutter) py-4">
-            <section aria-labelledby="sheet-protocol" className="flex flex-col">
-              <h2 id="sheet-protocol" className={groupLabel}>
-                Protocol
-              </h2>
-              <ul className="mt-2 flex flex-col gap-0.5">
-                {PROTOCOL_ITEMS.map((item) => (
-                  <li key={item.id}>
-                    <ProtocolRow item={item} current={item.id === activeId} size="sheet" onClick={close} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section aria-labelledby="sheet-more" className="flex flex-col">
-              <h2 id="sheet-more" className={groupLabel}>
-                More
-              </h2>
-              <ul className="mt-2 flex flex-col gap-0.5">
+            <ul className="flex flex-col gap-0.5">
+              <li>
+                <a
+                  href={chapterPath(PROTOCOL_TARGET)}
+                  data-dock-protocol
+                  data-active={isProtocolActive(activeId) ? '' : undefined}
+                  onClick={close}
+                  className={plainRow}
+                >
+                  Protocol
+                </a>
+              </li>
+              <li>
+                <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className={plainRow}>
+                  <span>
+                    Docs<span className="sr-only"> (opens in a new tab)</span>
+                  </span>
+                  <ArrowUpRightGlyph className="text-muted-foreground" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href={chapterPath('ecosystem')}
+                  data-dock-link="ecosystem"
+                  aria-current={activeId === 'ecosystem' ? 'location' : undefined}
+                  onClick={close}
+                  className={plainRow}
+                >
+                  Ecosystem
+                </a>
+              </li>
+              <li>
+                <a href={SIGN_IN_URL} className={plainRow}>
+                  Sign in
+                </a>
+              </li>
+              {X_LINK && (
                 <li>
-                  <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className={plainRow}>
+                  <a
+                    href={X_LINK.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-dock-x
+                    data-href-placeholder={X_LINK.placeholder || undefined}
+                    className={plainRow}
+                  >
                     <span>
-                      Docs<span className="sr-only"> (opens in a new tab)</span>
+                      Follow on X<span className="sr-only"> (opens in a new tab)</span>
                     </span>
-                    <ArrowUpRightGlyph className="text-muted-foreground" />
+                    <XGlyph width={16} height={16} className="text-muted-foreground" />
                   </a>
                 </li>
-                <li>
-                  <a href={SIGN_IN_URL} className={plainRow}>
-                    Sign in
-                  </a>
-                </li>
-                {X_LINK && (
-                  <li>
-                    <a
-                      href={X_LINK.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-dock-x
-                      data-href-placeholder={X_LINK.placeholder || undefined}
-                      className={plainRow}
-                    >
-                      <span>
-                        Follow on X<span className="sr-only"> (opens in a new tab)</span>
-                      </span>
-                      <XGlyph width={16} height={16} className="text-muted-foreground" />
-                    </a>
-                  </li>
-                )}
-              </ul>
-            </section>
+              )}
+            </ul>
           </div>
 
           <div className="shrink-0 px-(--gutter) pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">

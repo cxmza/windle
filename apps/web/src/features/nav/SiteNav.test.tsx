@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CHAPTERS } from '../story/chapters';
 import { chapterPath } from '../story/routes';
 import { buildLensMap, LENS_BEZEL } from './LiquidGlassDefs';
-import { APP_URL, activeProtocolId, DOCS_URL, isProtocolActive, PROTOCOL_ITEMS, SIGN_IN_URL } from './nav-data';
+import { APP_URL, activeProtocolId, DOCS_URL, isProtocolActive, PROTOCOL_TARGET, SIGN_IN_URL } from './nav-data';
 import { SiteNav } from './SiteNav';
 
 const live = vi.hoisted(() => ({ active: 0 }));
@@ -22,7 +22,8 @@ describe('SiteNav', () => {
   it('is the primary navigation with Protocol, Docs and Ecosystem', () => {
     render(<SiteNav />);
     const nav = screen.getByRole('navigation', { name: 'Primary' });
-    expect(within(nav).getByRole('button', { name: 'Protocol' })).toBeInTheDocument();
+    expect(within(nav).getByRole('link', { name: 'Protocol' })).toHaveAttribute('href', '/promise');
+    expect(within(nav).queryByRole('button', { name: 'Protocol' })).toBeNull();
     expect(within(nav).getByRole('link', { name: /^Docs/ })).toHaveAttribute('href', DOCS_URL);
     expect(within(nav).getByRole('link', { name: 'Ecosystem' })).toHaveAttribute('href', '/ecosystem');
   });
@@ -90,45 +91,34 @@ describe('SiteNav', () => {
     expect(container.querySelector('[data-dock-signin]')).toBeInTheDocument();
   });
 
-  it('lights the Protocol trigger for a chapter that only lives inside the menu', () => {
+  it('lights the Protocol link for any chapter 01-06', () => {
     live.active = chapterIndex('judge');
     const { container } = render(<SiteNav />);
     expect(container.querySelector('[data-dock-protocol]')).toHaveAttribute('data-active');
   });
 
-  it('opens the Protocol menu with a row per chapter, marks the active one and closes on Escape', async () => {
-    live.active = chapterIndex('collateral');
+  it('has no dropdown: Protocol is a plain link to chapter 01 and nothing opens on click', async () => {
     const user = userEvent.setup();
-    render(<SiteNav />);
-    const trigger = screen.getByRole('button', { name: 'Protocol' });
-    await user.click(trigger);
-    const menu = document.querySelector<HTMLElement>('[data-dock-menu]');
-    expect(menu).not.toBeNull();
-    if (!menu) return;
-    for (const item of PROTOCOL_ITEMS) {
-      const row = menu.querySelector(`[data-dock-link=${item.id}]`);
-      expect(row).toHaveAttribute('href', chapterPath(item.id));
-      expect(row).toHaveTextContent(item.label);
-      expect(row).toHaveTextContent(item.summary);
-    }
-    expect(menu.querySelectorAll('[aria-current]')).toHaveLength(1);
-    expect(menu.querySelector('[data-dock-link=collateral]')).toHaveAttribute('aria-current', 'location');
-    await user.keyboard('{Escape}');
-    expect(document.querySelector('[data-dock-menu]')).toBeNull();
+    const { container } = render(<SiteNav />);
+    const link = screen.getByRole('link', { name: 'Protocol' });
+    expect(link).toHaveAttribute('href', chapterPath(PROTOCOL_TARGET));
+    expect(PROTOCOL_TARGET).toBe('promise');
+    expect(link).not.toHaveAttribute('aria-haspopup');
+    expect(link).not.toHaveAttribute('aria-expanded');
+    expect(link.querySelector('svg')).toBeNull();
+    await user.click(link);
+    expect(container.querySelector('[data-dock-menu]')).toBeNull();
   });
 
-  it('opens the mobile sheet with every group, traps focus, closes on Escape and returns focus', async () => {
+  it('opens the mobile sheet with the same items as the bar, traps focus, closes on Escape and returns focus', async () => {
     const user = userEvent.setup();
     render(<SiteNav />);
     const button = screen.getByRole('button', { name: 'Open menu' });
     await user.click(button);
     const sheet = await screen.findByRole('dialog', { name: 'Menu' });
-    for (const item of PROTOCOL_ITEMS) {
-      expect(within(sheet).getByRole('link', { name: new RegExp(item.label) })).toHaveAttribute(
-        'href',
-        chapterPath(item.id),
-      );
-    }
+    expect(within(sheet).getByRole('link', { name: 'Protocol' })).toHaveAttribute('href', chapterPath('promise'));
+    expect(within(sheet).getByRole('link', { name: 'Ecosystem' })).toHaveAttribute('href', chapterPath('ecosystem'));
+    expect(within(sheet).queryByRole('link', { name: /Judge|Collateral/ })).toBeNull();
     expect(within(sheet).getByRole('link', { name: /^Docs/ })).toHaveAttribute('href', DOCS_URL);
     expect(within(sheet).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', SIGN_IN_URL);
     expect(within(sheet).getByRole('link', { name: /Follow on X/ })).toBeInTheDocument();
@@ -139,22 +129,17 @@ describe('SiteNav', () => {
     expect(button).toHaveFocus();
   });
 
-  it('closes the sheet when a chapter is chosen', async () => {
+  it('closes the sheet when Protocol is chosen', async () => {
     const user = userEvent.setup();
     render(<SiteNav />);
     await user.click(screen.getByRole('button', { name: 'Open menu' }));
     const sheet = await screen.findByRole('dialog');
-    await user.click(within(sheet).getByRole('link', { name: /Judge/ }));
+    await user.click(within(sheet).getByRole('link', { name: 'Protocol' }));
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
 
 describe('nav-data helpers', () => {
-  it('lists every narrative chapter between the hero and the final CTA, nothing else', () => {
-    expect(PROTOCOL_ITEMS.map((i) => i.id)).toEqual(CHAPTERS.slice(1, -1).map((c) => c.id));
-    expect(PROTOCOL_ITEMS.every((i) => i.summary.length > 0)).toBe(true);
-  });
-
   it('maps the active chapter index to a menu id, or null outside the narrative', () => {
     expect(activeProtocolId(0)).toBeNull();
     expect(activeProtocolId(chapterIndex('ecosystem'))).toBe('ecosystem');

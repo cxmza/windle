@@ -24,12 +24,3 @@ export async function revealNav(page: Page) {
   await expect.poll(async () => Math.round((await page.locator('[data-dock-root]').boundingBox())?.y ?? -99)).toBe(0);
   await page.locator('[data-dock]').hover();
 }
-
-/** Open the Protocol menu and return its panel. */
-export async function openProtocolMenu(page: Page) {
-  const trigger = page.getByRole('button', { name: 'Protocol' });
-  await trigger.click();
-  const menu = page.locator('[data-dock-menu]');
-  await expect(menu).toBeVisible();
-  return menu;
-}

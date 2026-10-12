@@ -1,6 +1,6 @@
 import { expect, type Page, test } from '@playwright/test';
 import { CHAPTER_SEO } from '../scripts/chapter-seo.ts';
-import { openProtocolMenu, revealNav, scrollSettled, storyMounted } from './story.ts';
+import { revealNav, scrollSettled, storyMounted } from './story.ts';
 
 test.use({ viewport: { width: 1440, height: 900 } });
 
@@ -13,7 +13,7 @@ test.describe('clean chapter paths', () => {
     await page.goto('/judge');
     await storyMounted(page);
     await expect.poll(() => sectionTop(page, 'judge'), { timeout: 15_000 }).toBeLessThan(40);
-    // judge lives inside the Protocol menu: the trigger is the active top-level item
+    // judge is one of chapters 01-06: the Protocol link is the active top-level item
     await expect(page.locator('[data-dock-protocol]')).toHaveAttribute('data-active', '');
     expect(pathname(page)).toBe('/judge');
     await expect(page).toHaveTitle(CHAPTER_SEO.judge.title);
@@ -24,23 +24,15 @@ test.describe('clean chapter paths', () => {
   }) => {
     await page.goto('/');
     await storyMounted(page);
-    await openProtocolMenu(page);
-    await page
-      .locator('[data-dock-menu]')
-      .getByRole('link', { name: /Market/ })
-      .click();
-    await expect.poll(() => pathname(page)).toBe('/market');
+    await page.locator('[data-dock]').getByRole('link', { name: 'Protocol' }).click();
+    await expect.poll(() => pathname(page), { timeout: 15_000 }).toBe('/promise');
     await revealNav(page);
-    await openProtocolMenu(page);
-    await page
-      .locator('[data-dock-menu]')
-      .getByRole('link', { name: /Outcome/ })
-      .click();
-    await expect.poll(() => pathname(page), { timeout: 15_000 }).toBe('/outcome');
+    await page.locator('[data-dock]').getByRole('link', { name: 'Ecosystem' }).click();
+    await expect.poll(() => pathname(page), { timeout: 15_000 }).toBe('/ecosystem');
     await page.goBack();
-    await expect.poll(() => pathname(page)).toBe('/market');
-    await expect(page).toHaveTitle(CHAPTER_SEO.market.title);
-    await expect.poll(() => sectionTop(page, 'market'), { timeout: 15_000 }).toBeLessThan(40);
+    await expect.poll(() => pathname(page)).toBe('/promise');
+    await expect(page).toHaveTitle(CHAPTER_SEO.promise.title);
+    await expect.poll(() => sectionTop(page, 'promise'), { timeout: 15_000 }).toBeLessThan(40);
     // let the programmatic (smooth) scroll finish before the free scroll: it would otherwise win
     await scrollSettled(page);
     const entries = await page.evaluate<number>('history.length');

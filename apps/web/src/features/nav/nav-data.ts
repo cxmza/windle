@@ -1,24 +1,12 @@
 import { CHAPTERS, type Chapter, type ChapterKey, ECOSYSTEM } from '../story/chapters';
 
-export interface ProtocolItem {
-  id: ChapterKey;
-  /** Two-digit chapter number shown in the menu. */
-  number: string;
-  label: string;
-  summary: string;
-}
-
-const LABELS: Partial<Record<ChapterKey, string>> = { promise: 'How it works' };
-
 const chapters: readonly Chapter[] = CHAPTERS;
 
-/** Every narrative chapter (between the hero and the final CTA), in page order: the rows of the Protocol menu. */
-export const PROTOCOL_ITEMS: readonly ProtocolItem[] = chapters.slice(1, -1).map((chapter) => ({
-  id: chapter.id,
-  number: String(chapter.index).padStart(2, '0'),
-  label: LABELS[chapter.id] ?? chapter.name,
-  summary: chapter.summary ?? chapter.caption,
-}));
+/** Narrative chapters between the hero and the final CTA, in page order. */
+const NARRATIVE_IDS: readonly ChapterKey[] = chapters.slice(1, -1).map((chapter) => chapter.id);
+
+/** Where the Protocol link goes: chapter 01, "How it works". */
+export const PROTOCOL_TARGET: ChapterKey = chapters[1]?.id ?? 'promise';
 
 export const DOCS_URL = 'https://docs.windle.fun';
 export const SIGN_IN_URL = 'https://oauth.windle.fun';
@@ -28,16 +16,16 @@ export const APP_URL = 'https://app.windle.fun';
 /** The project's X link: the same (placeholder) entry the ecosystem chapter uses, so there is one source of truth. */
 export const X_LINK = ECOSYSTEM.find((item) => item.slot === 'x');
 
-/** Chapters that have their own top-level link in the bar; they do not light up the Protocol trigger. */
+/** Chapters that have their own top-level link in the bar; they do not light up the Protocol link. */
 const OWN_LINK: readonly ChapterKey[] = ['ecosystem'];
 
 /** Id of the narrative chapter that matches the active chapter index, or null (hero, final CTA). */
 export function activeProtocolId(active: number): ChapterKey | null {
   const id = chapters[active]?.id;
-  return PROTOCOL_ITEMS.some((item) => item.id === id) ? (id ?? null) : null;
+  return id !== undefined && NARRATIVE_IDS.includes(id) ? id : null;
 }
 
-/** Pure: whether the Protocol trigger is the active top-level item. */
+/** Pure: whether the Protocol link is the active top-level item. */
 export function isProtocolActive(activeId: ChapterKey | null): boolean {
   return activeId !== null && !OWN_LINK.includes(activeId);
 }

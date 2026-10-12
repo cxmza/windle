@@ -1,13 +1,13 @@
 import { type FocusEvent, type PointerEvent, useLayoutEffect, useRef } from 'react';
 
 const ITEM = '[data-dock-item]';
-const RESTING = '[data-dock-item][data-state="open"], [data-dock-item][aria-current], [data-dock-item][data-active]';
+const RESTING = '[data-dock-item][aria-current], [data-dock-item][data-active]';
 const BASE_WIDTH = 96;
 
 /**
- * One glass bubble that slides between the capsule's items: under the pointer or focus, else under the open or active
+ * One glass bubble that slides between the capsule's items: under the pointer or focus, else under the active
  * item, else hidden. Moves with transform only (translateX + scaleX, written as custom properties on the bubble, no
- * React state). `restKey` re-settles it when the active or open item changes.
+ * React state). `restKey` re-settles it when the active item changes.
  */
 export function useNavBubble<R extends HTMLElement>(restKey: string) {
   const rootRef = useRef<R>(null);
