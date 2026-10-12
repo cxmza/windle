@@ -3,10 +3,10 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 /** Rim width (px) over which the lens bends the backdrop; the centre of the island stays flat. */
 export const LENS_BEZEL = 15;
 /** feDisplacementMap scale (px): the rim samples up to half of this far from its own position. */
-export const LENS_SCALE = 44;
+export const LENS_SCALE = 18;
 /** Share of the green and blue displacement relative to red: a thin chromatic split on the rim. */
-export const LENS_CHROMA = [1, 0.94, 0.88] as const;
-const LENS_MAGNIFY = 0.16;
+export const LENS_CHROMA = [1, 0.98, 0.96] as const;
+const LENS_MAGNIFY = 0.05;
 
 interface LensMapOptions {
   width: number;
