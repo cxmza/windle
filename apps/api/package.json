@@ -29,7 +29,7 @@
     "@fastify/swagger": "^9.9.2",
     "@noble/curves": "^2.4.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@scalar/fastify-api-reference": "^1.73.1",
+    "@scalar/fastify-api-reference": "^1.76.0",
     "@windle/shared": "*",
     "bs58": "^6.0.0",
     "drizzle-orm": "^0.45.4",
