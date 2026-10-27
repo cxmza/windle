@@ -6,6 +6,7 @@ import type { EphemeralStore, RevokeReason, SessionAuditEntry, SessionRecord, Us
 export class MemoryEphemeralStore implements EphemeralStore {
   private readonly nonces = new Map<string, { value: SiwsSignInInput; expiresAt: number }>();
   private readonly sessions = new Map<string, { value: SessionRecord; expiresAt: number }>();
+  private readonly leases = new Map<string, { value: string; expiresAt: number }>();
   /** Set to make every call fail, to exercise dependency-down paths. */
   failing = false;
 
@@ -63,6 +64,19 @@ export class MemoryEphemeralStore implements EphemeralStore {
   async deleteSession(hash: string) {
     await this.guard();
     this.sessions.delete(hash);
+  }
+
+  async acquireLease(key: string, owner: string, ttlMs: number) {
+    await this.guard();
+    const held = this.live(this.leases, key);
+    if (held && held.value !== owner) return false;
+    this.leases.set(key, { value: owner, expiresAt: this.now() + ttlMs });
+    return true;
+  }
+
+  async releaseLease(key: string, owner: string) {
+    await this.guard();
+    if (this.live(this.leases, key)?.value === owner) this.leases.delete(key);
   }
 
   async ping() {

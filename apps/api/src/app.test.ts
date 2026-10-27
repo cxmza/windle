@@ -16,15 +16,23 @@ describe('config', () => {
 
   it('applies production defaults and requires its backing services', () => {
     expect(() => loadConfig({ NODE_ENV: 'production' })).toThrow(/DATABASE_URL is required/);
+    expect(() => loadConfig({ NODE_ENV: 'production' })).toThrow(/IMGPROXY_KEY is required/);
     const c = loadConfig({
       NODE_ENV: 'production',
       DATABASE_URL: 'postgres://u:p@postgres:5432/windle',
       REDIS_URL: 'redis://redis:6379/0',
+      IMGPROXY_KEY: 'ab'.repeat(64),
+      IMGPROXY_SALT: 'cd'.repeat(64),
     });
     expect(c.cookie).toEqual({ domain: '.windle.fun', secure: true });
     expect(c.corsOrigins).not.toContain('http://localhost:5175');
     expect(c.siws).toMatchObject({ domain: 'oauth.windle.fun', uri: 'https://oauth.windle.fun', chainId: 'mainnet' });
     expect(c.trustProxy).toEqual(['127.0.0.1', '::1', '172.16.0.0/12']);
+    expect(c.media).toMatchObject({
+      root: '/srv/windle/media',
+      cdnOrigin: 'https://cdn.windle.fun',
+      urlFormat: 'webp',
+    });
   });
 
   it('accepts the infra env file names', () => {
@@ -43,7 +51,9 @@ describe('config', () => {
       CORS_ALLOWED_ORIGINS: 'https://www.windle.fun,https://app.windle.fun',
       AUTH_SIWS_ENABLED: 'true',
       AUTH_EMAIL_ENABLED: 'false',
-      IMGPROXY_KEY: 'k',
+      IMGPROXY_KEY: 'ab'.repeat(64),
+      IMGPROXY_SALT: 'cd'.repeat(64),
+      MEDIA_ROOT: '/srv/windle/media',
     });
     expect(c.databaseMigrationUrl).toContain('windle_owner');
     expect(c.redisRateLimitUrl).toMatch(/\/1$/);
@@ -57,6 +67,8 @@ describe('config', () => {
     [{ AUTH_EMAIL_ENABLED: 'maybe' }, /AUTH_EMAIL_ENABLED/],
     [{ SESSION_COOKIE_NAME: 'sid' }, /SESSION_COOKIE_NAME/],
     [{ TRUST_PROXY: 'nginx' }, /TRUST_PROXY/],
+    [{ IMGPROXY_KEY: 'not-hex' }, /IMGPROXY_KEY must be hex/],
+    [{ CF_ZONE_ID: 'z' }, /CF_ZONE_ID and CF_API_TOKEN/],
   ])('rejects %o', (env, pattern) => {
     expect(() => {
       const { app } = makeTestApp({ env });
@@ -167,7 +179,13 @@ describe('errors', () => {
 
   it('never exposes internal error messages in production', async () => {
     const { app } = makeTestApp({
-      env: { NODE_ENV: 'production', DATABASE_URL: 'postgres://x@y/z', REDIS_URL: 'redis://y' },
+      env: {
+        NODE_ENV: 'production',
+        DATABASE_URL: 'postgres://x@y/z',
+        REDIS_URL: 'redis://y',
+        IMGPROXY_KEY: 'ab',
+        IMGPROXY_SALT: 'cd',
+      },
     });
     app.get('/boom', async () => {
       throw new Error('secret driver detail at /srv/app.js:42');

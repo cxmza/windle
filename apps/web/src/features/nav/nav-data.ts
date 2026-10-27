@@ -1,4 +1,4 @@
-import { CHAPTERS, type Chapter, type ChapterKey, ECOSYSTEM } from '../story/chapters';
+import { CHAPTERS, type Chapter, type ChapterKey } from '../story/chapters';
 
 const chapters: readonly Chapter[] = CHAPTERS;
 
@@ -12,9 +12,6 @@ export const DOCS_URL = 'https://docs.windle.fun';
 export const SIGN_IN_URL = 'https://oauth.windle.fun';
 /** The real app. The in-page final chapter (/launch) stays reachable by scrolling; it is not the Launch button's target. */
 export const APP_URL = 'https://app.windle.fun';
-
-/** The project's X link: the same (placeholder) entry the ecosystem chapter uses, so there is one source of truth. */
-export const X_LINK = ECOSYSTEM.find((item) => item.slot === 'x');
 
 /** Chapters that have their own top-level link in the bar; they do not light up the Protocol link. */
 const OWN_LINK: readonly ChapterKey[] = ['ecosystem'];

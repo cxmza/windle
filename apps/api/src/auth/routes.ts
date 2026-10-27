@@ -166,8 +166,12 @@ export async function authRoutes(app: FastifyInstance, ctx: AppContext) {
       await dep('redis', () => ctx.store.putSession(hash, record, ttl));
       setSessionCookie(reply, ctx, token, ttl);
 
-      const me = await dep('postgres', () => ctx.repo.getMe(userId));
-      if (!me) throw new HttpError(503, 'service_unavailable', 'Account was not readable after sign-in');
+      const [account, avatar] = await Promise.all([
+        dep('postgres', () => ctx.repo.getMe(userId)),
+        dep('postgres', () => ctx.media.avatarOf(userId)),
+      ]);
+      if (!account) throw new HttpError(503, 'service_unavailable', 'Account was not readable after sign-in');
+      const me = { ...account, avatar };
       ctx.metrics.authEvents.inc({ event: 'siws_verify', result: 'ok' });
       request.log.info({ userId, address: body.address, newUser: created }, 'siws sign-in');
       return {
@@ -233,7 +237,8 @@ export async function authRoutes(app: FastifyInstance, ctx: AppContext) {
         tags: ['Account'],
         summary: 'Get the signed-in user',
         description:
-          'The account behind the session cookie and its linked wallets. `401 unauthenticated` without a session.',
+          'The account behind the session cookie, its linked wallets and its `avatar` (null when none). ' +
+          '`401 unauthenticated` without a session.',
         security: [{ session: [] }],
         response: { 200: Me, 401: ApiError, 503: ApiError },
       },
@@ -244,7 +249,10 @@ export async function authRoutes(app: FastifyInstance, ctx: AppContext) {
         if (stale) clearSessionCookie(reply, ctx);
         throw new HttpError(401, 'unauthenticated', 'Sign in first');
       }
-      const me = await dep('postgres', () => ctx.repo.getMe(session.record.userId));
+      const [me, avatar] = await Promise.all([
+        dep('postgres', () => ctx.repo.getMe(session.record.userId)),
+        dep('postgres', () => ctx.media.avatarOf(session.record.userId)),
+      ]);
       if (!me) {
         // The account was deleted under a live session: end it.
         await dep('redis', () => ctx.store.deleteSession(session.hash));
@@ -252,7 +260,7 @@ export async function authRoutes(app: FastifyInstance, ctx: AppContext) {
         throw new HttpError(401, 'unauthenticated', 'Sign in first');
       }
       await renewSession(reply, ctx, session);
-      return me;
+      return { ...me, avatar };
     },
   );
 

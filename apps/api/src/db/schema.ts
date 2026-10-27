@@ -1,7 +1,24 @@
 // Drizzle schema. `npm run db:generate -w @windle/api` diffs this file against ./drizzle and writes the next SQL
 // migration; `node dist/migrate.js` applies them (explicit deploy step, never at api startup).
+import type { Collateral, ProjectRef, TweetSnapshot } from '@windle/shared';
 import { sql } from 'drizzle-orm';
-import { bigint, check, index, inet, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  type AnyPgColumn,
+  bigint,
+  boolean,
+  check,
+  doublePrecision,
+  index,
+  inet,
+  integer,
+  jsonb,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 const timestamptz = (name: string) => timestamp(name, { withTimezone: true, mode: 'date' });
 
@@ -13,6 +30,9 @@ const timestamptz = (name: string) => timestamp(name, { withTimezone: true, mode
 export const users = pgTable('users', {
   id: uuid('id').primaryKey(),
   createdAt: timestamptz('created_at').notNull().defaultNow(),
+  /** House market bot (see markets/bots): never ranked, never counted as a trader, has no wallet and cannot sign in. */
+  isBot: boolean('is_bot').notNull().default(false),
+  avatarMediaId: text('avatar_media_id').references((): AnyPgColumn => media.id, { onDelete: 'set null' }),
 });
 
 /** Wallets proven by a SIWS signature. One wallet belongs to exactly one user; a user may link several later. */
@@ -62,5 +82,272 @@ export const sessionsAudit = pgTable(
     check('sessions_audit_method_check', sql`${t.method} in ('siws', 'email', 'x', 'google')`),
     check('sessions_audit_session_hash_check', sql`${t.sessionHash} ~ '^[0-9a-f]{64}$'`),
     check('sessions_audit_user_agent_check', sql`char_length(${t.userAgent}) <= 512`),
+  ],
+);
+
+// --- practice exchange ------------------------------------------------------------------------------------------
+// Points are practice points with no value. Point amounts are integer micro-points (bigint, 1 pt = 1_000_000):
+// balances, costs, payouts and volume add up exactly. Shares, LMSR inventory and prices are float8: they come out of
+// exp/log in @windle/shared/lmsr.ts, and float8 stores a JS number bit for bit, so server and client price alike.
+
+const micro = (name: string) => bigint(name, { mode: 'number' });
+
+/** One practice balance per user, created lazily (STARTING_BALANCE_PTS) on first portfolio read or trade. */
+export const accounts = pgTable(
+  'accounts',
+  {
+    userId: uuid('user_id')
+      .primaryKey()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    balanceMicro: micro('balance_micro').notNull(),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+    updatedAt: timestamptz('updated_at').notNull().defaultNow(),
+  },
+  (t) => [check('accounts_balance_check', sql`${t.balanceMicro} >= 0`)],
+);
+
+/**
+ * Markets. `status` is open | resolved | voided; "closed" is derived (open and closes_at passed), so no job has to
+ * flip it. `q_yes`/`q_no`/`liquidity_b` are the LMSR state, `prob_yes` its price cached for listing and ranking.
+ */
+export const markets = pgTable(
+  'markets',
+  {
+    id: uuid('id').primaryKey(),
+    slug: text('slug').notNull(),
+    tier: text('tier').notNull(),
+    status: text('status').notNull().default('open'),
+    project: jsonb('project').$type<ProjectRef>().notNull(),
+    statement: text('statement').notNull(),
+    criteria: text('criteria').notNull(),
+    closesAt: timestamptz('closes_at').notNull(),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+    durationPreset: text('duration_preset'),
+    creatorId: uuid('creator_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    creatorAddress: text('creator_address').notNull(),
+    sourceTweetId: text('source_tweet_id'),
+    source: jsonb('source').$type<TweetSnapshot>(),
+    collateral: jsonb('collateral').$type<Collateral>(),
+    liquidityB: doublePrecision('liquidity_b').notNull(),
+    qYes: doublePrecision('q_yes').notNull(),
+    qNo: doublePrecision('q_no').notNull(),
+    probYes: doublePrecision('prob_yes').notNull(),
+    openProbYes: doublePrecision('open_prob_yes').notNull(),
+    volumeMicro: micro('volume_micro').notNull().default(0),
+    traders: integer('traders').notNull().default(0),
+    tradeCount: integer('trade_count').notNull().default(0),
+    buyCount: integer('buy_count').notNull().default(0),
+    botVolumeMicro: micro('bot_volume_micro').notNull().default(0),
+    botTradeCount: integer('bot_trade_count').notNull().default(0),
+    outcome: text('outcome'),
+    resolvedAt: timestamptz('resolved_at'),
+    resolvedBy: uuid('resolved_by').references(() => users.id, { onDelete: 'set null' }),
+    resolutionMethod: text('resolution_method'),
+    resolutionNote: text('resolution_note'),
+    imageId: text('image_id').references((): AnyPgColumn => media.id, { onDelete: 'set null' }),
+    updatedAt: timestamptz('updated_at').notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('markets_slug_key').on(t.slug),
+    uniqueIndex('markets_source_tweet_id_key').on(t.sourceTweetId),
+    index('markets_created_at_idx').on(t.createdAt),
+    index('markets_status_closes_at_idx').on(t.status, t.closesAt),
+    index('markets_creator_id_idx').on(t.creatorId),
+    index('markets_image_id_idx').on(t.imageId),
+    check('markets_slug_check', sql`${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' and char_length(${t.slug}) <= 80`),
+    check('markets_tier_check', sql`${t.tier} in ('community', 'backed')`),
+    check('markets_status_check', sql`${t.status} in ('open', 'resolved', 'voided')`),
+    check(
+      'markets_outcome_check',
+      sql`(${t.status} = 'open' and ${t.outcome} is null and ${t.resolvedAt} is null) or (${t.status} = 'resolved' and ${t.outcome} in ('yes', 'no') and ${t.resolvedAt} is not null) or (${t.status} = 'voided' and ${t.outcome} = 'void' and ${t.resolvedAt} is not null)`,
+    ),
+    check('markets_resolution_method_check', sql`${t.resolutionMethod} in ('creator', 'admin')`),
+    check('markets_liquidity_check', sql`${t.liquidityB} > 0`),
+    check('markets_prob_check', sql`${t.probYes} between 0 and 1 and ${t.openProbYes} between 0 and 1`),
+    check('markets_counters_check', sql`${t.volumeMicro} >= 0 and ${t.traders} >= 0 and ${t.tradeCount} >= 0`),
+    check(
+      'markets_bot_counters_check',
+      sql`${t.botVolumeMicro} between 0 and ${t.volumeMicro} and ${t.botTradeCount} between 0 and ${t.tradeCount}`,
+    ),
+    check('markets_buy_count_check', sql`${t.buyCount} between 0 and ${t.tradeCount}`),
+  ],
+);
+
+/** Append-only trade ledger. `cost_micro` is points paid (buy) or received (sell). */
+export const trades = pgTable(
+  'trades',
+  {
+    id: bigint('id', { mode: 'number' }).primaryKey().generatedAlwaysAsIdentity(),
+    marketId: uuid('market_id')
+      .notNull()
+      .references(() => markets.id, { onDelete: 'restrict' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    walletAddress: text('wallet_address').notNull(),
+    action: text('action').notNull(),
+    side: text('side').notNull(),
+    shares: doublePrecision('shares').notNull(),
+    costMicro: micro('cost_micro').notNull(),
+    priceBefore: doublePrecision('price_before').notNull(),
+    priceAfter: doublePrecision('price_after').notNull(),
+    bot: boolean('bot').notNull().default(false),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    index('trades_market_id_id_idx').on(t.marketId, t.id),
+    index('trades_market_id_created_at_idx').on(t.marketId, t.createdAt),
+    index('trades_user_id_id_idx').on(t.userId, t.id),
+    check('trades_action_check', sql`${t.action} in ('buy', 'sell')`),
+    check('trades_side_check', sql`${t.side} in ('yes', 'no')`),
+    check('trades_amounts_check', sql`${t.shares} > 0 and ${t.costMicro} >= 0`),
+  ],
+);
+
+/**
+ * Current holding per (user, market), written in the same transaction as each trade: the average-cost basis is
+ * path-dependent, so reading it here beats replaying the ledger for every portfolio, leaderboard and settlement.
+ */
+export const positions = pgTable(
+  'positions',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    marketId: uuid('market_id')
+      .notNull()
+      .references(() => markets.id, { onDelete: 'restrict' }),
+    yesShares: doublePrecision('yes_shares').notNull().default(0),
+    noShares: doublePrecision('no_shares').notNull().default(0),
+    yesCostMicro: micro('yes_cost_micro').notNull().default(0),
+    noCostMicro: micro('no_cost_micro').notNull().default(0),
+    realizedMicro: micro('realized_micro').notNull().default(0),
+    payoutMicro: micro('payout_micro'),
+    settledAt: timestamptz('settled_at'),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+    updatedAt: timestamptz('updated_at').notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ name: 'positions_pkey', columns: [t.userId, t.marketId] }),
+    index('positions_market_id_idx').on(t.marketId),
+    index('positions_user_id_updated_at_idx').on(t.userId, t.updatedAt),
+    check(
+      'positions_amounts_check',
+      sql`${t.yesShares} >= 0 and ${t.noShares} >= 0 and ${t.yesCostMicro} >= 0 and ${t.noCostMicro} >= 0`,
+    ),
+    check('positions_settled_check', sql`(${t.settledAt} is null) = (${t.payoutMicro} is null)`),
+  ],
+);
+
+/** Audit row per settlement: who resolved, how, and what was paid out (the market row holds the same outcome). */
+export const marketResolutions = pgTable(
+  'market_resolutions',
+  {
+    marketId: uuid('market_id')
+      .primaryKey()
+      .references(() => markets.id, { onDelete: 'restrict' }),
+    outcome: text('outcome').notNull(),
+    method: text('method').notNull(),
+    resolvedBy: uuid('resolved_by').references(() => users.id, { onDelete: 'set null' }),
+    walletAddress: text('wallet_address').notNull(),
+    note: text('note'),
+    positions: integer('positions').notNull(),
+    payoutMicro: micro('payout_micro').notNull(),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    check('market_resolutions_outcome_check', sql`${t.outcome} in ('yes', 'no', 'void')`),
+    check('market_resolutions_method_check', sql`${t.method} in ('creator', 'admin')`),
+  ],
+);
+
+/**
+ * Latent state of the house market bots per market (markets/bots/model.ts), all in log-odds: `x` the fair value the
+ * bots trade toward, `mu` its anchor, `human_x` the post-trade price of the last human trade. `stepped_at` is when `x`
+ * was last advanced. Written under the market's row lock, by bot steps and by human trades.
+ */
+export const marketBotState = pgTable('market_bot_state', {
+  marketId: uuid('market_id')
+    .primaryKey()
+    .references(() => markets.id, { onDelete: 'cascade' }),
+  x: doublePrecision('x').notNull(),
+  mu: doublePrecision('mu').notNull(),
+  humanX: doublePrecision('human_x').notNull(),
+  steppedAt: timestamptz('stepped_at').notNull(),
+});
+
+// --- user images ------------------------------------------------------------------------------------------------
+// One row per normalized master on disk (<MEDIA_ROOT>/<id[0:2]>/<id>.webp). `id` is sha256 of the master, so the
+// same image uploaded twice is one row; `media_uploads` records everyone who uploaded it (ownership for attaching).
+// A takedown flips `status` to removed and deletes the file; the row stays so the same bytes cannot come back.
+
+export const media = pgTable(
+  'media',
+  {
+    id: text('id').primaryKey(),
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    kind: text('kind').notNull(),
+    width: integer('width').notNull(),
+    height: integer('height').notNull(),
+    bytes: integer('bytes').notNull(),
+    thumbhash: text('thumbhash').notNull(),
+    status: text('status').notNull().default('active'),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+    removedAt: timestamptz('removed_at'),
+    removedBy: uuid('removed_by').references(() => users.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    index('media_owner_id_created_at_idx').on(t.ownerId, t.createdAt),
+    index('media_status_idx').on(t.status),
+    check('media_id_check', sql`${t.id} ~ '^[0-9a-f]{64}$'`),
+    check('media_kind_check', sql`${t.kind} in ('market', 'avatar')`),
+    check('media_status_check', sql`${t.status} in ('active', 'removed')`),
+    check('media_size_check', sql`${t.width} between 1 and 4096 and ${t.height} between 1 and 4096 and ${t.bytes} > 0`),
+    check('media_removed_check', sql`(${t.status} = 'removed') = (${t.removedAt} is not null)`),
+  ],
+);
+
+export const mediaUploads = pgTable(
+  'media_uploads',
+  {
+    mediaId: text('media_id')
+      .notNull()
+      .references(() => media.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ name: 'media_uploads_pkey', columns: [t.mediaId, t.userId] }),
+    index('media_uploads_user_id_idx').on(t.userId),
+  ],
+);
+
+export const mediaReports = pgTable(
+  'media_reports',
+  {
+    mediaId: text('media_id')
+      .notNull()
+      .references(() => media.id, { onDelete: 'cascade' }),
+    reporterId: uuid('reporter_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    reason: text('reason').notNull(),
+    note: text('note'),
+    createdAt: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ name: 'media_reports_pkey', columns: [t.mediaId, t.reporterId] }),
+    index('media_reports_created_at_idx').on(t.createdAt),
+    check(
+      'media_reports_reason_check',
+      sql`${t.reason} in ('csam', 'sexual', 'violence', 'hate', 'impersonation', 'spam', 'copyright', 'other')`,
+    ),
+    check('media_reports_note_check', sql`char_length(${t.note}) <= 500`),
   ],
 );

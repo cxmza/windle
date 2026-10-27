@@ -44,7 +44,12 @@ test.describe('desktop top bar', () => {
       'href',
       'https://docs.windle.fun',
     );
-    await expect(page.locator('[data-dock-x]')).toHaveCount(0); // X lives in the footer and the mobile sheet
+    const socials = page.locator('[data-dock-socials]');
+    await expect(socials.getByRole('link', { name: /windle on GitHub/ })).toHaveAttribute(
+      'href',
+      /github\.com\/.+\/.+/,
+    );
+    await expect(socials.getByRole('link', { name: /windle on X/ })).toHaveAttribute('href', /x\.com\/[^/]+$/);
   });
 
   test('navigates to a chapter by clean path and marks it current', async ({ page }) => {
@@ -78,6 +83,21 @@ test.describe('desktop top bar', () => {
     await expect(page.locator('[data-dock-protocol]')).toHaveAttribute('data-active', '');
   });
 
+  test('has the socials on screen and clickable during the intro, before the bar itself has faded in', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('/');
+    const socials = page.locator('[data-dock-socials]');
+    const github = socials.getByRole('link', { name: /windle on GitHub/ });
+    // the intro is still running: the capsule is held back by --dock-enter-delay, the socials are not
+    await expect(socials).not.toHaveCSS('opacity', '0');
+    await expect(page.locator('[data-dock]')).toHaveCSS('opacity', '0');
+    await expect(github).toBeVisible();
+    await expect(github).toHaveAttribute('target', '_blank');
+    await expect(github).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   test('keeps one size, shape and position of every island at every scroll offset, up and down', async ({ page }) => {
     await page.goto('/');
     await storyMounted(page);
@@ -89,7 +109,7 @@ test.describe('desktop top bar', () => {
         }),
       );
     const initial = await measure();
-    expect(initial).toHaveLength(2);
+    expect(initial).toHaveLength(3);
     for (const y of [200, 1400, 600, 0]) {
       await page.evaluate(`window.scrollTo(0, ${y})`);
       await scrollSettled(page);
@@ -121,7 +141,7 @@ test.describe('desktop top bar', () => {
         const box = island.getBoundingClientRect();
         return !!filter && Math.abs(Number(filter.getAttribute('width')) - box.width) < 1 && Math.abs(Number(filter.getAttribute('height')) - box.height) < 1;
       }))()`);
-    expect(fits).toEqual([true, true]);
+    expect(fits).toEqual([true, true, true]);
   });
 
   test('a glass bubble slides to the hovered item and hides when the pointer leaves', async ({ page }) => {

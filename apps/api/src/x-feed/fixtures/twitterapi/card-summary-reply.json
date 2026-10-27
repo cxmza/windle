@@ -1,0 +1,132 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2106737425888522723",
+      "url": "https://x.com/VitalikButerin/status/2106737425888522723",
+      "twitterUrl": "https://twitter.com/VitalikButerin/status/2106737425888522723",
+      "text": "@bballer_530 隐私是自由\n隐私是秩序\n隐私是进步\n\nhttps://t.co/4Um4Qdorge",
+      "source": "",
+      "retweetCount": 441,
+      "replyCount": 448,
+      "likeCount": 2565,
+      "quoteCount": 302,
+      "viewCount": 487814,
+      "createdAt": "Sun Oct 04 13:25:18 +0000 2026",
+      "lang": "zh",
+      "bookmarkCount": 352,
+      "isReply": true,
+      "inReplyToId": "2106577373219143746",
+      "conversationId": "2106577373219143746",
+      "displayTextRange": [13, 55],
+      "inReplyToUserId": "59285149",
+      "inReplyToUsername": "bballer_530",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "VitalikButerin",
+        "url": "https://x.com/VitalikButerin",
+        "twitterUrl": "https://twitter.com/VitalikButerin",
+        "id": "295218901",
+        "name": "vitalik.eth",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": null,
+        "profilePicture": "https://pbs.twimg.com/profile_images/2042521108067352576/3rv2_9m1_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/295218901/1740846090",
+        "description": "I choose balance. First-level balance.\n\nmi pinxe lo crino tcati\n\nhttps://t.co/gC",
+        "location": "Earth",
+        "followers": 7993968,
+        "following": 551,
+        "createdAt": "Sun May 08 16:03:03 +0000 2011",
+        "fastFollowersCount": 0,
+        "favouritesCount": 12093,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 993,
+        "statusesCount": 21984,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {},
+      "card": {
+        "legacy": {
+          "binding_values": [
+            {
+              "key": "vanity_url",
+              "value": {
+                "scribe_key": "vanity_url",
+                "string_value": "vitalik.eth.limo"
+              }
+            },
+            {
+              "key": "domain",
+              "value": {
+                "string_value": "vitalik.eth.limo"
+              }
+            },
+            {
+              "key": "title",
+              "value": {
+                "string_value": "Why I support privacy"
+              }
+            },
+            {
+              "key": "card_url",
+              "value": {
+                "scribe_key": "card_url",
+                "string_value": "https://t.co/4Um4Qdorge"
+              }
+            }
+          ],
+          "card_platform": {
+            "platform": {
+              "audience": {
+                "name": "production"
+              },
+              "device": {
+                "name": "iPhone",
+                "version": "13"
+              }
+            }
+          },
+          "name": "summary",
+          "url": "https://t.co/4Um4Qdorge",
+          "user_refs_results": []
+        },
+        "rest_id": "https://t.co/4Um4Qdorge"
+      },
+      "place": {},
+      "entities": {
+        "urls": [
+          {
+            "display_url": "vitalik.eth.limo/general/2025/0…",
+            "expanded_url": "https://vitalik.eth.limo/general/2025/04/14/privacy.html",
+            "indices": [32, 55],
+            "url": "https://t.co/4Um4Qdorge"
+          }
+        ],
+        "user_mentions": [
+          {
+            "id_str": "59285149",
+            "indices": [0, 12],
+            "name": "豹啦啦",
+            "screen_name": "bballer_530"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

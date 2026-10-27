@@ -4,19 +4,48 @@ import bs58 from 'bs58';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from '../app.ts';
 import { loadConfig } from '../config.ts';
+import { MemoryMarketRepository } from '../markets/memory.ts';
+import type { MarketRepository } from '../markets/types.ts';
+import { MemoryMediaRepository } from '../media/memory.ts';
+import type { MediaRepository } from '../media/types.ts';
+import { type CacheStore, MemoryCacheStore } from '../store/cache.ts';
 import { MemoryEphemeralStore, MemoryUserRepository } from '../store/memory.ts';
 import type { EphemeralStore, UserRepository } from '../store/types.ts';
+import type { XEnrichStore } from '../x-feed/enrich.ts';
+import type { XFeedHub } from '../x-feed/hub.ts';
 
 export const APP_ORIGIN = 'https://app.windle.fun';
 export const AUTH_ORIGIN = 'https://oauth.windle.fun';
 
 /** Production-shaped config (cookie Domain + Secure, real origins) with fakes and a controllable clock. */
 export function makeTestApp(
-  opts: { env?: Record<string, string>; store?: EphemeralStore; repo?: UserRepository; clock?: { now: number } } = {},
+  opts: {
+    env?: Record<string, string>;
+    store?: EphemeralStore;
+    repo?: UserRepository;
+    clock?: { now: number };
+    xFeed?: XFeedHub;
+    xEnrichStore?: XEnrichStore;
+    xEnrichFetch?: typeof fetch;
+    markets?: MarketRepository;
+    cache?: CacheStore;
+    media?: MediaRepository;
+    mediaFetch?: typeof fetch;
+  } = {},
 ) {
   const clock = opts.clock ?? { now: Date.parse('2026-10-11T12:00:00.000Z') };
   const store = opts.store ?? new MemoryEphemeralStore(() => clock.now);
   const repo = opts.repo ?? new MemoryUserRepository();
+  const markets = opts.markets ?? new MemoryMarketRepository();
+  const cache = opts.cache ?? new MemoryCacheStore({ now: () => clock.now });
+  const media =
+    opts.media ??
+    new MemoryMediaRepository({
+      addressOf: (userId) =>
+        repo instanceof MemoryUserRepository
+          ? ([...repo.wallets.values()].find((w) => w.userId === userId)?.address ?? null)
+          : null,
+    });
   const config = loadConfig({
     NODE_ENV: 'test',
     LOG_LEVEL: 'silent',
@@ -27,8 +56,19 @@ export function makeTestApp(
       'https://www.windle.fun,https://app.windle.fun,https://oauth.windle.fun,https://docs.windle.fun',
     ...opts.env,
   });
-  const app = buildApp(config, { store, repo, now: () => new Date(clock.now) });
-  return { app, store, repo, clock, config };
+  const app = buildApp(config, {
+    store,
+    repo,
+    now: () => new Date(clock.now),
+    markets,
+    cache,
+    media,
+    ...(opts.mediaFetch ? { mediaFetch: opts.mediaFetch } : {}),
+    ...(opts.xFeed ? { xFeed: opts.xFeed } : {}),
+    ...(opts.xEnrichStore ? { xEnrichStore: opts.xEnrichStore } : {}),
+    ...(opts.xEnrichFetch ? { xEnrichFetch: opts.xEnrichFetch } : {}),
+  });
+  return { app, store, repo, clock, config, markets, cache, media };
 }
 
 export interface Wallet {

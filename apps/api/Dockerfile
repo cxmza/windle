@@ -6,7 +6,10 @@
 #     --build-arg APP_COMMIT=$(git rev-parse --short HEAD) .
 #
 # The build context is filtered by apps/api/Dockerfile.dockerignore (BuildKit per-Dockerfile ignore file).
-# Runtime: node dist/server.js (the service), node dist/migrate.js (explicit migration step).
+# Runtime: node dist/server.js (the service), node dist/migrate.js (explicit migration step), node dist/seed.js
+# (one-off sample markets). Share images use @resvg/resvg-js, a native addon: on this alpine (musl) base npm installs
+# @resvg/resvg-js-linux-x64-musl (or -arm64-musl) from the lockfile's optional dependencies; no build tools needed.
+# User images use sharp the same way: @img/sharp-linuxmusl-x64 + @img/sharp-libvips-linuxmusl-x64 (prebuilt libvips).
 
 ARG NODE_IMAGE=node:22-alpine
 
@@ -55,7 +58,11 @@ COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=prod-deps /app/apps/api/node_modules ./node_modules
 COPY --from=build /app/apps/api/dist ./dist
 COPY --from=build /app/apps/api/drizzle ./drizzle
+# Share-image fonts (Inter, OFL); src/share/og.ts reads them from ../assets/fonts relative to dist.
+COPY apps/api/assets ./assets
 COPY apps/api/package.json ./package.json
+# sharp loads lazily at the first upload; load it once here so a missing musl binary fails the build, not a user.
+RUN node -e "import('sharp').then((m) => console.log('sharp', m.default.versions.sharp, 'libvips', m.default.versions.vips))"
 
 LABEL fun.windle.project="windle" \
       fun.windle.service="api" \

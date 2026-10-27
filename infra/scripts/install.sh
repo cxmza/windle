@@ -24,6 +24,9 @@ step "layout"
 install -d -m 755 "$ROOT" "$ROOT/releases" "$ROOT/current" "$ROOT/bin" "$ROOT/www-acme" "$ROOT/logs" "$ROOT/compose"
 install -d -m 700 "$ROOT/shared" "$ROOT/backups" "$ROOT/incoming"
 install -d -m 755 -o www-data -g www-data /var/cache/nginx/windle-img
+# User image masters: written by the api container (user `node`, uid 1000), read by imgproxy (ro mount) and stat'ed
+# by host nginx (takedown gate). Must exist with this owner before compose starts, or Docker creates it root-owned.
+install -d -m 755 -o 1000 -g 1000 "$ROOT/media"
 
 step "packages (brotli for nginx, brotli CLI for precompression)"
 need=()
@@ -42,8 +45,8 @@ step "secrets"
 bash "$SRC/scripts/gen-secrets.sh"
 
 step "bin"
-for s in backup cf-realip-update deploy-static deploy-api api-integration-test render-cdn imgproxy-url disk-watch \
-    maintenance issue-cert gen-secrets; do
+for s in backup cf-realip-update deploy-static deploy-api deploy-relay api-integration-test render-cdn imgproxy-url \
+    disk-watch maintenance issue-cert gen-secrets; do
     install -m 755 -o root -g root "$SRC/scripts/$s.sh" "$ROOT/bin/$s.sh"
 done
 install -m 644 "$SRC/scripts/restore.md" "$ROOT/bin/restore.md"
@@ -109,8 +112,13 @@ step "containers"
 profiles=()
 services=(postgres redis imgproxy)
 if docker image inspect windle/api:current > /dev/null 2>&1; then
-    profiles=(--profile api)
+    profiles+=(--profile api)
     services+=(api)
+fi
+# Same for the X feed relay (released by deploy-relay.sh).
+if docker image inspect windle/x-relay:current > /dev/null 2>&1; then
+    profiles+=(--profile relay)
+    services+=(x-relay)
 fi
 "${DC[@]}" "${profiles[@]}" up -d --remove-orphans "${services[@]}"
 for _ in $(seq 1 60); do

@@ -34,7 +34,7 @@ export function CopyButton({ value, label, className = '' }: Props) {
         onClick={copy}
         aria-label={label}
         data-status={status}
-        className={`inline-flex size-9 shrink-0 items-center justify-center rounded-pill text-muted-foreground transition-colors duration-(--dur-fast) hover:bg-surface-navy-raised/70 hover:text-foreground active:translate-y-px data-[status=copied]:text-accent-text ${className}`}
+        className={`inline-flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-(--dur-fast) hover:bg-surface-raised/70 hover:text-foreground active:translate-y-px data-[status=copied]:text-accent-text ${className}`}
       >
         {/* TODO(motion): swap copy -> check glyph with a short draw-on */}
         <svg

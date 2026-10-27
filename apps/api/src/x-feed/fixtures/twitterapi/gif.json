@@ -1,0 +1,97 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2102354899556319246",
+      "url": "https://x.com/lll_k7/status/2102354899556319246",
+      "twitterUrl": "https://twitter.com/lll_k7/status/2102354899556319246",
+      "text": "Astral Party\nKaisei   Fan Art   GIF https://t.co/l7wtUMGTFe",
+      "source": "",
+      "retweetCount": 945,
+      "replyCount": 26,
+      "likeCount": 20904,
+      "quoteCount": 29,
+      "viewCount": 463786,
+      "createdAt": "Tue Sep 22 11:10:42 +0000 2026",
+      "lang": "de",
+      "bookmarkCount": 8980,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "2102354899556319246",
+      "displayTextRange": [0, 35],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "lll_k7",
+        "url": "https://x.com/lll_k7",
+        "twitterUrl": "https://twitter.com/lll_k7",
+        "id": "3010122488",
+        "name": "旅人",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": null,
+        "profilePicture": "https://pbs.twimg.com/profile_images/2102986106396626944/JNKb-WvN_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/3010122488/1788456294",
+        "description": "🌿エルフが好きです🌿\n 9月22日\n✨キョンシーにハマった✨\nチェンソーマン好きになりました。\n* AI生成をベースに、下手くそながら加筆修正・一部描き起こ",
+        "location": "日本！",
+        "followers": 1187,
+        "following": 25,
+        "createdAt": "Thu Feb 05 11:47:37 +0000 2015",
+        "fastFollowersCount": 0,
+        "favouritesCount": 1145,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 86,
+        "statusesCount": 178,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {
+        "media": [
+          {
+            "display_url": "pic.x.com/l7wtUMGTFe",
+            "expanded_url": "https://x.com/lll_k7/status/2102354899556319246/photo/1",
+            "id_str": "2102354865238474752",
+            "indices": [36, 59],
+            "media_key": "16_2102354865238474752",
+            "media_url_https": "https://pbs.twimg.com/tweet_video_thumb/HS0QnHZagAAfv3Q.jpg",
+            "original_info": {
+              "focus_rects": [],
+              "height": 500,
+              "width": 370
+            },
+            "type": "animated_gif",
+            "url": "https://t.co/l7wtUMGTFe",
+            "video_info": {
+              "aspect_ratio": [37, 50],
+              "variants": [
+                {
+                  "bitrate": 0,
+                  "content_type": "video/mp4",
+                  "url": "https://video-s.twimg.com/tweet_video/HS0QnHZagAAfv3Q.mp4"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "card": null,
+      "place": {},
+      "entities": {},
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

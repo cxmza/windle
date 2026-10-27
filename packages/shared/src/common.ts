@@ -29,6 +29,10 @@ export const ApiError = z
         .optional()
         .describe('Echo of the `X-Request-Id` response header, for support and log lookup.')
         .meta({ examples: ['5b0e8f7a-3f61-4d2b-9a7c-1c2d3e4f5a6b'] }),
+      details: z
+        .record(z.string(), z.string())
+        .optional()
+        .describe('Machine-readable extras for some codes, e.g. `existingSlug` for `duplicate_tweet`.'),
     }),
   })
   .describe('Error envelope used by every non-2xx response.');
@@ -54,6 +58,34 @@ export const API_ERROR_CODES = [
   'provider_disabled',
   'not_implemented',
   'service_unavailable',
+  'x_feed_unavailable',
+  'x_post_not_found',
+  'x_enrich_unavailable',
+  'market_not_found',
+  'market_closed',
+  'market_already_resolved',
+  'market_tier_unsupported',
+  'creator_cannot_trade',
+  'insufficient_balance',
+  'insufficient_shares',
+  'slippage_exceeded',
+  'invalid_amount',
+  'invalid_deadline',
+  'invalid_tweet_url',
+  'tweet_mismatch',
+  'tweet_not_found',
+  'duplicate_tweet',
+  'resolve_too_early',
+  'media_type_mismatch',
+  'media_invalid',
+  'media_too_many_pixels',
+  'media_quota_exceeded',
+  'media_storage_full',
+  'media_busy',
+  'media_not_found',
+  'media_not_owned',
+  'media_removed',
+  'media_already_reported',
   'internal_error',
 ] as const;
 export type ApiErrorCode = (typeof API_ERROR_CODES)[number];

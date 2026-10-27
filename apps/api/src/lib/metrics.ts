@@ -108,6 +108,13 @@ export interface Metrics {
   authEvents: Counter;
   dependencyUp: Gauge;
   dependencyLatency: Gauge;
+  xEnrich: Counter;
+  xEnrichCredits: Counter;
+  mediaUploads: Counter;
+  mediaBytes: Counter;
+  mediaRejects: Counter;
+  mediaRemovals: Counter;
+  mediaProcessing: Histogram;
   render(extra?: () => string[]): string;
   stop(): void;
 }
@@ -122,6 +129,29 @@ export function createMetrics(): Metrics {
   const authEvents = new Counter('windle_auth_events_total', 'Auth outcomes by event and result.');
   const dependencyUp = new Gauge('windle_dependency_up', '1 if the last readiness probe of the dependency succeeded.');
   const dependencyLatency = new Gauge('windle_dependency_probe_seconds', 'Duration of the last readiness probe.');
+  const xEnrich = new Counter(
+    'windle_x_enrich_total',
+    'GET /v1/x/post/:id?enrich=1 outcomes: hit, miss, not_found, stale, error, budget_exhausted, rate_limited, disabled.',
+  );
+  const xEnrichCredits = new Counter('windle_x_enrich_credits_total', 'twitterapi.io credits spent (estimated).');
+  const mediaUploads = new Counter(
+    'windle_media_uploads_total',
+    'Accepted image uploads by result: created (new master) or deduped (same image already stored).',
+  );
+  const mediaBytes = new Counter(
+    'windle_media_bytes_total',
+    'Image bytes by `stage`: received (upload bodies that were processed) and stored (new masters written).',
+  );
+  const mediaRejects = new Counter(
+    'windle_media_rejects_total',
+    'Refused uploads by reason: type_mismatch, invalid, too_many_pixels, removed, storage_full, busy, quota.',
+  );
+  const mediaRemovals = new Counter('windle_media_removals_total', 'Admin takedowns by Cloudflare purge result.');
+  const mediaProcessing = new Histogram(
+    'windle_media_processing_seconds',
+    'Time to normalize one upload (decode, resize, encode, hash).',
+    [0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10],
+  );
 
   const loop = monitorEventLoopDelay({ resolution: 20 });
   loop.enable();
@@ -132,6 +162,13 @@ export function createMetrics(): Metrics {
     authEvents,
     dependencyUp,
     dependencyLatency,
+    xEnrich,
+    xEnrichCredits,
+    mediaUploads,
+    mediaBytes,
+    mediaRejects,
+    mediaRemovals,
+    mediaProcessing,
     render(extra) {
       const mem = process.memoryUsage();
       const process_ = new Gauge('windle_process', 'Process stats (see `stat` label).');
@@ -148,6 +185,13 @@ export function createMetrics(): Metrics {
         ...authEvents.render(),
         ...dependencyUp.render(),
         ...dependencyLatency.render(),
+        ...xEnrich.render(),
+        ...xEnrichCredits.render(),
+        ...mediaUploads.render(),
+        ...mediaBytes.render(),
+        ...mediaRejects.render(),
+        ...mediaRemovals.render(),
+        ...mediaProcessing.render(),
         ...process_.render(),
         ...(extra?.() ?? []),
       ];

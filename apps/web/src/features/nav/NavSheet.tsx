@@ -1,11 +1,12 @@
+import { SOCIAL_META, socialEntries } from '@windle/brand';
 import { Dialog } from 'radix-ui';
 import { useRef, useState } from 'react';
 import { useMediaQuery } from '@/lib/use-media-query';
 import { WindleLogo } from '../story/brand/WindleLogo';
 import type { ChapterKey } from '../story/chapters';
 import { chapterPath } from '../story/routes';
-import { DOCS_URL, isProtocolActive, PROTOCOL_TARGET, SIGN_IN_URL, X_LINK } from './nav-data';
-import { ArrowUpRightGlyph, CloseGlyph, MenuGlyph, XGlyph } from './nav-icons';
+import { DOCS_URL, isProtocolActive, PROTOCOL_TARGET, SIGN_IN_URL } from './nav-data';
+import { ArrowUpRightGlyph, CloseGlyph, MenuGlyph } from './nav-icons';
 import { LaunchLink } from './nav-parts';
 
 const DESKTOP_QUERY = '(min-width: 48rem)'; // Tailwind `md`
@@ -97,23 +98,39 @@ export function NavSheet({ activeId }: { activeId: ChapterKey | null }) {
                   Sign in
                 </a>
               </li>
-              {X_LINK && (
-                <li>
-                  <a
-                    href={X_LINK.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-dock-x
-                    data-href-placeholder={X_LINK.placeholder || undefined}
-                    className={plainRow}
-                  >
-                    <span>
-                      Follow on X<span className="sr-only"> (opens in a new tab)</span>
-                    </span>
-                    <XGlyph width={16} height={16} className="text-muted-foreground" />
-                  </a>
-                </li>
-              )}
+              {socialEntries(import.meta.env.DEV).map((entry) => {
+                const { Icon } = SOCIAL_META[entry.slot];
+                const text = entry.slot === 'x' ? 'Follow on X' : 'GitHub';
+                return (
+                  <li key={entry.slot}>
+                    {entry.href === null ? (
+                      <span
+                        data-social={entry.slot}
+                        data-placeholder=""
+                        title={`${entry.label} link not set`}
+                        className={`${plainRow} cursor-not-allowed opacity-50`}
+                      >
+                        <span>{text} (link not set)</span>
+                        <Icon className="text-muted-foreground" />
+                      </span>
+                    ) : (
+                      <a
+                        href={entry.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-social={entry.slot}
+                        className={plainRow}
+                      >
+                        <span>
+                          {text}
+                          <span className="sr-only"> (opens in a new tab)</span>
+                        </span>
+                        <Icon className="text-muted-foreground" />
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

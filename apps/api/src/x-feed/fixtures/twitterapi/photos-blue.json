@@ -1,0 +1,268 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2103762130554204651",
+      "url": "https://x.com/VitalikButerin/status/2103762130554204651",
+      "twitterUrl": "https://twitter.com/VitalikButerin/status/2103762130554204651",
+      "text": "Testing out some of the mobile offline local knowledge apps that people have been trying to build\n\n(see here https://t.co/cjtSqLgbc6 )\n\nDefinitely getting much better than the one I tried to build myself 2 months ago. But also still much slower and less effective at difficult questions than the models that can run on a laptop.\n\nIt's weakest at specialized travel-related queries (eg. my eval is \"Tell me the best vegan restaurants in [city I am currently in]\", unfortunately none of these performed well on that)\n\nLooking forward to seeing these continue to improve! I hope we can soon get to the point where you can comfortably look up any facts about the world that you care about without needing to access the internet at all.",
+      "source": "",
+      "retweetCount": 190,
+      "replyCount": 290,
+      "likeCount": 1387,
+      "quoteCount": 105,
+      "viewCount": 343826,
+      "createdAt": "Sat Sep 26 08:22:32 +0000 2026",
+      "lang": "en",
+      "bookmarkCount": 197,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "2103762130554204651",
+      "displayTextRange": [0, 276],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "VitalikButerin",
+        "url": "https://x.com/VitalikButerin",
+        "twitterUrl": "https://twitter.com/VitalikButerin",
+        "id": "295218901",
+        "name": "vitalik.eth",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": null,
+        "profilePicture": "https://pbs.twimg.com/profile_images/2042521108067352576/3rv2_9m1_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/295218901/1740846090",
+        "description": "I choose balance. First-level balance.\n\nmi pinxe lo crino tcati\n\nhttps://t.co/gC",
+        "location": "Earth",
+        "followers": 7993969,
+        "following": 551,
+        "createdAt": "Sun May 08 16:03:03 +0000 2011",
+        "fastFollowersCount": 0,
+        "favouritesCount": 12093,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 993,
+        "statusesCount": 21984,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {
+        "media": [
+          {
+            "display_url": "pic.x.com/m2KkCgKJiS",
+            "expanded_url": "https://x.com/VitalikButerin/status/2103762130554204651/photo/1",
+            "id_str": "2103762120450134016",
+            "indices": [277, 300],
+            "media_key": "3_2103762120450134016",
+            "media_url_https": "https://pbs.twimg.com/media/HTIQgJlaUAAOr_Y.jpg",
+            "original_info": {
+              "focus_rects": [
+                {
+                  "h": 363,
+                  "w": 649,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 649,
+                  "w": 649,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 740,
+                  "w": 649,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 1280,
+                  "w": 640,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 1280,
+                  "w": 649,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "height": 1280,
+              "width": 649
+            },
+            "type": "photo",
+            "url": "https://t.co/m2KkCgKJiS"
+          },
+          {
+            "display_url": "pic.x.com/m2KkCgKJiS",
+            "expanded_url": "https://x.com/VitalikButerin/status/2103762130554204651/photo/1",
+            "id_str": "2103762115983228928",
+            "indices": [277, 300],
+            "media_key": "3_2103762115983228928",
+            "media_url_https": "https://pbs.twimg.com/media/HTIQf48awAAkUb-.jpg",
+            "original_info": {
+              "focus_rects": [
+                {
+                  "h": 357,
+                  "w": 637,
+                  "x": 0,
+                  "y": 558
+                },
+                {
+                  "h": 637,
+                  "w": 637,
+                  "x": 0,
+                  "y": 418
+                },
+                {
+                  "h": 726,
+                  "w": 637,
+                  "x": 0,
+                  "y": 373
+                },
+                {
+                  "h": 1274,
+                  "w": 637,
+                  "x": 0,
+                  "y": 6
+                },
+                {
+                  "h": 1280,
+                  "w": 637,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "height": 1280,
+              "width": 637
+            },
+            "type": "photo",
+            "url": "https://t.co/m2KkCgKJiS"
+          },
+          {
+            "display_url": "pic.x.com/m2KkCgKJiS",
+            "expanded_url": "https://x.com/VitalikButerin/status/2103762130554204651/photo/1",
+            "id_str": "2103762116318822400",
+            "indices": [277, 300],
+            "media_key": "3_2103762116318822400",
+            "media_url_https": "https://pbs.twimg.com/media/HTIQf6MbgAAhJnQ.jpg",
+            "original_info": {
+              "focus_rects": [
+                {
+                  "h": 374,
+                  "w": 668,
+                  "x": 0,
+                  "y": 677
+                },
+                {
+                  "h": 668,
+                  "w": 668,
+                  "x": 0,
+                  "y": 530
+                },
+                {
+                  "h": 762,
+                  "w": 668,
+                  "x": 0,
+                  "y": 483
+                },
+                {
+                  "h": 1280,
+                  "w": 640,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 1280,
+                  "w": 668,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "height": 1280,
+              "width": 668
+            },
+            "type": "photo",
+            "url": "https://t.co/m2KkCgKJiS"
+          },
+          {
+            "display_url": "pic.x.com/m2KkCgKJiS",
+            "expanded_url": "https://x.com/VitalikButerin/status/2103762130554204651/photo/1",
+            "id_str": "2103762120798294016",
+            "indices": [277, 300],
+            "media_key": "3_2103762120798294016",
+            "media_url_https": "https://pbs.twimg.com/media/HTIQgK4a0AASbil.jpg",
+            "original_info": {
+              "focus_rects": [
+                {
+                  "h": 371,
+                  "w": 663,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 663,
+                  "w": 663,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 756,
+                  "w": 663,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 1280,
+                  "w": 640,
+                  "x": 11,
+                  "y": 0
+                },
+                {
+                  "h": 1280,
+                  "w": 663,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "height": 1280,
+              "width": 663
+            },
+            "type": "photo",
+            "url": "https://t.co/m2KkCgKJiS"
+          }
+        ]
+      },
+      "card": null,
+      "place": {},
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [
+          {
+            "display_url": "poidh.xyz/mainnet/bounty…",
+            "expanded_url": "https://poidh.xyz/mainnet/bounty/31",
+            "indices": [109, 132],
+            "url": "https://t.co/cjtSqLgbc6"
+          }
+        ],
+        "user_mentions": []
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

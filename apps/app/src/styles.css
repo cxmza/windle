@@ -1,21 +1,72 @@
 @import "tailwindcss";
-@import "@windle/tokens/fonts.css";
+@import "@fontsource-variable/inter-tight/wght.css";
+@import "@fontsource-variable/jetbrains-mono/wght.css";
 @import "@windle/tokens/tokens.css";
 
 /* shared components ship Tailwind classes from source: scan them too */
 @source "../../../packages/brand/src";
+
+/* Terminal scale: a dense UI sans for chrome and prose, a mono face for every number. Tailwind's text-* steps are
+   re-cut for a table-first app (13px is the working size, 20px the largest heading). */
+@theme {
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.3;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.4;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.45;
+  --text-lg: 1rem;
+  --text-lg--line-height: 1.35;
+  --text-xl: 1.125rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 1.25rem;
+  --text-2xl--line-height: 1.25;
+  --text-3xl: 1.5rem;
+  --text-3xl--line-height: 1.2;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+}
+
+@theme inline {
+  --color-yes: var(--yes);
+  --color-no: var(--no);
+  --color-yes-foreground: var(--yes-foreground);
+  --color-no-foreground: var(--no-foreground);
+  --color-yes-soft: var(--yes-soft);
+  --color-no-soft: var(--no-soft);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
+  --color-hover: var(--hover);
+  --color-selected: var(--selected);
+  --color-hairline: var(--hairline);
+  --color-risk-extreme: var(--risk-extreme);
+  --color-risk-high: var(--risk-high);
+  --color-risk-medium: var(--risk-medium);
+}
 
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
     background-color: var(--background);
     overflow-x: clip;
+    scrollbar-gutter: stable;
   }
 
   body {
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
     min-height: 100dvh;
   }
 
@@ -25,217 +76,284 @@
   }
 }
 
-/* Navy bloom behind the page, same family as the landing backdrop. */
-@utility bg-aura {
-  background-image: var(--backdrop-navy);
-  background-color: var(--background);
-}
-
-/* Glass panel: deep-navy tint, soft cyan edge, blur. Falls back to a solid surface without backdrop-filter. */
-@utility glass {
-  background-color: oklch(from var(--surface-navy) l c h / 0.7);
-  border: 1px solid oklch(from var(--glow) l c h / 0.2);
-  box-shadow:
-    inset 0 1px 0 oklch(from var(--glow) l c h / 0.14),
-    0 24px 60px -24px oklch(0 0 0 / 0.8);
-  backdrop-filter: blur(24px) saturate(1.2);
-}
-
-/* "Классика" in miniature: a squash from the bottom edge, springing back. Hover/focus-intent only. */
-@keyframes mark-squash {
-  0% {
-    transform: scale(1, 1);
-  }
-  30% {
-    transform: scale(1.1, 0.84);
-  }
-  60% {
-    transform: scale(0.96, 1.07);
-  }
-  100% {
-    transform: scale(1, 1);
-  }
-}
-
-@utility mark-jelly {
-  transform-origin: 50% 100%;
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    &:hover {
-      animation: mark-squash 620ms var(--ease-standard);
-    }
-  }
-}
-
 :root {
-  --topbar-height: 3.5rem;
   --nav-offset: 1rem;
-  /* liquid glass pill: copied from apps/web globals.css (--nav-*), not imported across apps */
-  --nav-glass-tint: color-mix(in oklab, var(--background) 42%, transparent);
-  --nav-glass-fallback: color-mix(in oklab, var(--background) 88%, transparent);
-  --nav-specular: color-mix(in oklab, var(--foreground) 38%, transparent);
-  --nav-sheen-top: color-mix(in oklab, var(--foreground) 14%, transparent);
-  --nav-sheen-bottom: color-mix(in oklab, var(--foreground) 2%, transparent);
-  --nav-hover: color-mix(in oklab, var(--foreground) 10%, transparent);
-  --nav-shadow:
-    0 10px 30px -8px color-mix(in oklab, var(--background) 80%, transparent),
-    0 2px 8px color-mix(in oklab, var(--background) 50%, transparent);
-  --hairline: color-mix(in oklab, var(--foreground) 12%, transparent);
-  --panel-surface: color-mix(in oklab, var(--background) 88%, var(--blue-200));
-  --panel-radius: 1.75rem;
-  --slash-warm: oklch(0.76 0.12 58);
   --chrome-bottom: calc(var(--nav-offset) + env(safe-area-inset-bottom, 0px));
   --live-period: 2000ms;
-  --dur-glow: 1600ms;
+  --dur-flash: 1600ms;
+}
+
+/* Flat opaque palette. Dark is the default; light is opt-in through data-theme. Three surface steps (page, panel, raised),
+   one hairline for dividers, one stronger border for controls (3:1 or better against every surface it sits on). */
+:root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --background: oklch(0.15 0.004 260);
+  --surface: oklch(0.185 0.004 260);
+  --surface-raised: oklch(0.225 0.005 260);
+  --muted: oklch(0.255 0.005 260);
+  --foreground: oklch(0.94 0.003 260);
+  --muted-foreground: oklch(0.72 0.006 260);
+  --border: oklch(0.56 0.008 260);
+  --border-strong: oklch(0.8 0.006 260);
+  --hairline: oklch(0.28 0.006 260);
+  --hover: oklch(0.215 0.005 260);
+  --selected: oklch(0.265 0.006 260);
+  --ring: oklch(0.74 0.14 250);
+  --scrim: oklch(0 0 0 / 0.62);
+  --emphasis: var(--foreground);
+  --emphasis-foreground: var(--background);
+
+  --accent: oklch(0.55 0.2 260);
+  --accent-hover: oklch(0.6 0.2 260);
+  --accent-foreground: oklch(1 0 0);
+  --accent-text: oklch(0.76 0.13 250);
+  --border-accent: oklch(0.66 0.17 255);
+
+  --yes: oklch(0.78 0.17 152);
+  --no: oklch(0.7 0.19 22);
+  --yes-foreground: oklch(0.16 0.01 260);
+  --no-foreground: oklch(0.16 0.01 260);
+  --yes-soft: color-mix(in oklab, var(--yes) 14%, var(--surface));
+  --no-soft: color-mix(in oklab, var(--no) 14%, var(--surface));
+  --yes-hover: oklch(0.83 0.17 152);
+  --no-hover: oklch(0.75 0.18 22);
+  --risk-extreme: oklch(0.74 0.19 355);
+  --risk-high: oklch(0.77 0.16 55);
+  --risk-medium: oklch(0.82 0.15 85);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: oklch(0.965 0.002 260);
+  --surface: oklch(0.995 0.001 260);
+  --surface-raised: oklch(1 0 0);
+  --muted: oklch(0.93 0.003 260);
+  --foreground: oklch(0.2 0.006 260);
+  --muted-foreground: oklch(0.46 0.008 260);
+  --border: oklch(0.58 0.008 260);
+  --border-strong: oklch(0.3 0.008 260);
+  --hairline: oklch(0.885 0.004 260);
+  --hover: oklch(0.945 0.003 260);
+  --selected: oklch(0.915 0.004 260);
+  --ring: oklch(0.5 0.2 262);
+  --scrim: oklch(0.2 0.006 260 / 0.45);
+  --emphasis: var(--foreground);
+  --emphasis-foreground: var(--background);
+
+  --accent: oklch(0.52 0.2 262);
+  --accent-hover: oklch(0.47 0.2 262);
+  --accent-foreground: oklch(1 0 0);
+  --accent-text: oklch(0.48 0.19 262);
+  --border-accent: oklch(0.52 0.2 262);
+
+  --yes: oklch(0.47 0.14 152);
+  --no: oklch(0.5 0.19 25);
+  --yes-foreground: oklch(1 0 0);
+  --no-foreground: oklch(1 0 0);
+  --yes-soft: color-mix(in oklab, var(--yes) 11%, var(--surface));
+  --no-soft: color-mix(in oklab, var(--no) 10%, var(--surface));
+  --yes-hover: oklch(0.42 0.14 152);
+  --no-hover: oklch(0.45 0.19 25);
+  --risk-extreme: oklch(0.5 0.2 355);
+  --risk-high: oklch(0.52 0.15 50);
+  --risk-medium: oklch(0.5 0.12 80);
+}
+
+/* Terminal convention: green is up / YES, red is down / NO. Points gained or lost read the same way. */
+:root {
+  --gain: var(--yes);
+  --loss: var(--no);
+  --panel-surface: var(--surface-raised);
+  --control-border: var(--border);
+}
+
+/* html reserves the scrollbar gutter, so Radix's scroll lock must not add its own compensation on top (that would shift the page back the other way). */
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* High contrast: stronger text, borders and focus in both themes. */
+:root:not([data-theme="light"])[data-contrast="more"] {
+  --muted-foreground: oklch(0.88 0.004 260);
+  --border: oklch(0.78 0.006 260);
+  --border-strong: oklch(0.97 0 0);
+  --hairline: oklch(0.55 0.006 260);
+  --ring: oklch(0.88 0.1 245);
+  --accent-text: oklch(0.86 0.1 245);
+  --hover: oklch(0.25 0.006 260);
+  --selected: oklch(0.32 0.008 260);
+  --yes: oklch(0.86 0.16 152);
+  --no: oklch(0.8 0.15 22);
+}
+:root[data-theme="light"][data-contrast="more"] {
+  --foreground: oklch(0 0 0);
+  --muted-foreground: oklch(0.3 0.006 260);
+  --border: oklch(0.4 0.008 260);
+  --border-strong: oklch(0.2 0.006 260);
+  --hairline: oklch(0.5 0.006 260);
+  --ring: oklch(0.38 0.2 262);
+  --accent-text: oklch(0.4 0.19 262);
+  --selected: oklch(0.86 0.005 260);
+  --yes: oklch(0.38 0.13 152);
+  --no: oklch(0.42 0.18 25);
+}
+:root[data-contrast="more"] :focus-visible {
+  outline-width: 3px;
+  outline-offset: 3px;
+}
+
+:root[data-text-size="small"] {
+  font-size: 87.5%;
+}
+:root[data-text-size="large"] {
+  font-size: 112.5%;
+}
+
+/* UI font. Everything, including the wordmark, follows the choice. */
+:root[data-font="system"] {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+:root[data-font="atkinson"] {
+  --font-sans: "Atkinson Hyperlegible Next Variable", ui-sans-serif, system-ui, sans-serif;
+}
+:root[data-font="mono"] {
+  --font-sans: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* A theme, contrast or font switch repaints in one frame: nothing transitions between the old and new look. */
+:root[data-no-transition] *,
+:root[data-no-transition] *::before,
+:root[data-no-transition] *::after {
+  transition: none !important;
+}
+
+/* Not inherited: a toggle restyles only the few elements that offset themselves by the sidebar
+   ([data-sidebar-offset]), not the whole page. The offset switches once per toggle (one layout); content marked
+   [data-sidebar-flip] then slides from its old box on the compositor (shell/use-sidebar-flip.ts). */
+@property --sidebar-w {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
 
 @layer components {
-  [data-glass] {
-    position: relative;
-    border-radius: var(--radius-pill);
-    background: linear-gradient(180deg, var(--nav-sheen-top), var(--nav-sheen-bottom) 55%), var(--nav-glass-fallback);
-    box-shadow:
-      inset 0 1px 0 var(--nav-specular),
-      inset 0 -1px 0 color-mix(in oklab, var(--foreground) 6%, transparent),
-      var(--nav-shadow);
+  [data-shell] {
+    --menu-clearance: calc(3.5rem + env(safe-area-inset-top, 0px));
   }
-  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-    [data-glass] {
-      background: linear-gradient(180deg, var(--nav-sheen-top), var(--nav-sheen-bottom) 55%), var(--nav-glass-tint);
-      -webkit-backdrop-filter: blur(18px) saturate(1.8) brightness(1.05);
-      backdrop-filter: blur(18px) saturate(1.8) brightness(1.05);
+  @media (min-width: 48rem) {
+    [data-shell] {
+      --menu-clearance: 0px;
+    }
+    [data-sidebar-offset] {
+      --sidebar-w: 14rem;
+    }
+    [data-shell][data-collapsed] [data-sidebar-offset] {
+      --sidebar-w: 3.5rem;
     }
   }
-  [data-glass]::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    pointer-events: none;
-    background: linear-gradient(
-      160deg,
-      color-mix(in oklab, var(--foreground) 50%, transparent),
-      color-mix(in oklab, var(--foreground) 6%, transparent) 40%,
-      color-mix(in oklab, var(--foreground) 4%, transparent) 60%,
-      color-mix(in oklab, var(--accent) 45%, transparent)
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#000 0 0) content-box exclude,
-      linear-gradient(#000 0 0);
+
+  /* The panel keeps its full width and layout. Collapsing slides it left while its body slides right by
+     the same amount, so the content stays put and only the visible window narrows: two compositor
+     translates, no layout, no text reflow. */
+  [data-sidebar] {
+    --sidebar-shift: calc(3.5rem - 14rem);
+    width: 14rem;
+  }
+  [data-sidebar][data-collapsed] {
+    translate: var(--sidebar-shift) 0;
+  }
+  [data-sidebar][data-collapsed] > [data-sidebar-body] {
+    translate: calc(-1 * var(--sidebar-shift)) 0;
   }
 
-  [data-scene-canvas] {
+  [data-sidebar] [data-sidebar-label] {
+    transition: opacity var(--dur-instant) linear;
+  }
+  [data-sidebar][data-collapsed] [data-sidebar-label] {
     opacity: 0;
-    transition: opacity var(--dur-slow) var(--ease-decelerate);
   }
-  [data-scene-ready] [data-scene-canvas] {
-    opacity: 1;
-  }
-
-  [data-market-panel] {
-    opacity: 0;
-    visibility: hidden;
-    translate: 1.5rem 0;
-    transition:
-      translate var(--dur-base) var(--ease-accelerate),
-      opacity var(--dur-base) var(--ease-accelerate),
-      visibility 0s linear var(--dur-base);
-  }
-  [data-market-panel][data-open] {
-    opacity: 1;
-    visibility: visible;
-    translate: 0 0;
-    transition:
-      translate var(--dur-slow) var(--ease-decelerate),
-      opacity var(--dur-fast) var(--ease-decelerate),
-      visibility 0s;
-  }
-  @media (max-width: 47.99rem) {
-    [data-market-panel] {
-      translate: 0 1.5rem;
+  @starting-style {
+    [data-sidebar]:not([data-collapsed]) [data-sidebar-label="mount"] {
+      opacity: 0;
     }
   }
-  @media (prefers-reduced-motion: reduce) {
-    [data-market-panel],
-    [data-market-panel][data-open] {
-      translate: 0 0;
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-sidebar],
+      [data-sidebar] > [data-sidebar-body] {
+        transition: translate var(--dur-base) var(--ease-standard);
+      }
+      [data-sidebar] [data-sidebar-label] {
+        transition: opacity var(--dur-base) var(--ease-decelerate) var(--dur-instant);
+      }
+      [data-sidebar][data-collapsed] [data-sidebar-label] {
+        transition: opacity var(--dur-fast) var(--ease-accelerate);
+      }
     }
   }
 
-  [data-view-thumb] {
-    transition: translate var(--dur-base) var(--ease-standard);
+  /* overlays, menus, drawer, settings: a short fade is the base (reduced motion);
+     movement and scale are added only when motion is allowed */
+  [data-scrim][data-state="open"],
+  [data-popover][data-state="open"],
+  [data-drawer][data-state="open"],
+  [data-settings-dialog][data-state="open"] {
+    animation: row-fade var(--dur-instant) linear;
+  }
+  [data-scrim][data-state="closed"],
+  [data-popover][data-state="closed"],
+  [data-drawer][data-state="closed"],
+  [data-settings-dialog][data-state="closed"] {
+    animation: fade-out var(--dur-instant) linear both;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-scrim][data-state="open"] {
+        animation: row-fade var(--dur-base) var(--ease-decelerate);
+      }
+      [data-scrim][data-state="closed"] {
+        animation: fade-out var(--dur-fast) var(--ease-accelerate) both;
+      }
+      [data-popover][data-state="open"] {
+        animation: pop-in var(--dur-fast) var(--ease-decelerate);
+      }
+      [data-popover][data-state="closed"] {
+        animation: pop-out var(--dur-instant) var(--ease-accelerate) both;
+      }
+      [data-drawer][data-state="open"] {
+        animation: drawer-in var(--dur-base) var(--ease-decelerate);
+      }
+      [data-drawer][data-state="closed"] {
+        animation: drawer-out var(--dur-fast) var(--ease-accelerate) both;
+      }
+      [data-settings-dialog][data-state="open"] {
+        animation: pop-in var(--dur-base) var(--ease-decelerate);
+      }
+      [data-settings-dialog][data-state="closed"] {
+        animation: pop-out var(--dur-fast) var(--ease-accelerate) both;
+      }
+      [data-pane-view][data-dir="forward"] {
+        animation: pane-from-right var(--dur-base) var(--ease-decelerate) both;
+      }
+      [data-pane-view][data-dir="back"] {
+        animation: pane-from-left var(--dur-base) var(--ease-decelerate) both;
+      }
+    }
+    @media (max-width: 47.99rem) {
+      :root:not([data-motion="reduced"]) {
+        [data-settings-dialog][data-state="open"] {
+          animation: sheet-in var(--dur-base) var(--ease-decelerate);
+        }
+        [data-settings-dialog][data-state="closed"] {
+          animation: sheet-out var(--dur-fast) var(--ease-accelerate) both;
+        }
+      }
+    }
   }
 
-  [data-glass][data-dense] {
-    --nav-glass-tint: color-mix(in oklab, var(--background) 74%, transparent);
-    --nav-glass-fallback: color-mix(in oklab, var(--background) 94%, transparent);
-  }
-
-  [data-projects-menu] {
-    opacity: 0;
-    visibility: hidden;
-    scale: 0.96;
-    translate: 0 -0.25rem;
-    transform-origin: 50% 0;
-    transition:
-      scale var(--dur-fast) var(--ease-accelerate),
-      translate var(--dur-fast) var(--ease-accelerate),
-      opacity var(--dur-fast) var(--ease-accelerate),
-      visibility 0s linear var(--dur-fast);
-  }
-  [data-projects-menu][data-open] {
-    opacity: 1;
-    visibility: visible;
-    scale: 1;
-    translate: 0 0;
-    transition:
-      scale var(--dur-base) var(--ease-decelerate),
-      translate var(--dur-base) var(--ease-decelerate),
-      opacity var(--dur-fast) var(--ease-decelerate),
-      visibility 0s;
-  }
-  @media (max-width: 47.99rem) {
-    [data-projects-menu] {
-      scale: 1;
-      translate: 0 2.5rem;
-    }
-    [data-projects-menu][data-open] {
-      translate: 0 0;
-      transition:
-        translate var(--dur-slow) var(--ease-decelerate),
-        opacity var(--dur-fast) var(--ease-decelerate),
-        visibility 0s;
-    }
-  }
-  [data-projects-menu][data-open] [data-menu-row] {
-    animation: row-in var(--dur-base) var(--ease-decelerate) both;
-    animation-delay: calc(60ms + min(var(--i, 0), 7) * 40ms);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    [data-projects-menu],
-    [data-projects-menu][data-open] {
-      scale: 1;
-      translate: 0 0;
-    }
-    [data-projects-menu][data-open] [data-menu-row] {
-      animation: row-fade var(--dur-fast) linear both;
-    }
-  }
-
-  [data-market-row],
-  [data-project-row] {
-    animation: row-in var(--dur-base) var(--ease-decelerate) both;
-    animation-delay: calc(min(var(--i, 0), 7) * 40ms);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    [data-market-row],
-    [data-project-row] {
-      animation: row-fade var(--dur-fast) linear both;
-    }
+  [data-market-row] {
+    animation: row-fade var(--dur-fast) linear both;
   }
 
   [data-rise] {
@@ -250,21 +368,24 @@
       animation: row-fade var(--dur-fast) linear both;
     }
   }
+  :root[data-motion="reduced"] [data-rise] {
+    animation: row-fade var(--dur-fast) linear both;
+  }
 
   [data-live-dot]::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: var(--glow);
+    background: var(--yes);
     opacity: 0;
     pointer-events: none;
   }
   @media (prefers-reduced-motion: no-preference) {
-    [data-live-dot] {
+    :root:not([data-motion="reduced"]) [data-live-dot] {
       animation: live-breathe var(--live-period) var(--ease-standard) infinite;
     }
-    [data-live-dot]::after {
+    :root:not([data-motion="reduced"]) [data-live-dot]::after {
       animation: live-halo var(--live-period) var(--ease-decelerate) infinite;
     }
   }
@@ -295,22 +416,30 @@
       transition: filter var(--dur-fast) var(--ease-standard);
     }
   }
+  :root[data-motion="reduced"] {
+    [data-odds-fill],
+    [data-odds-fill][data-enter] {
+      transition: filter var(--dur-fast) var(--ease-standard);
+    }
+  }
 
   [data-digit] {
     display: inline-block;
   }
   @media (prefers-reduced-motion: no-preference) {
-    [data-digit][data-new] {
-      animation: digit-up var(--dur-base) var(--ease-decelerate) both;
-    }
-    [data-digits][data-dir="down"] > [data-digit][data-new] {
-      animation-name: digit-down;
-    }
-    [data-seconds="odd"] {
-      animation: tick-a var(--dur-slow) var(--ease-standard);
-    }
-    [data-seconds="even"] {
-      animation: tick-b var(--dur-slow) var(--ease-standard);
+    :root:not([data-motion="reduced"]) {
+      [data-digit][data-new] {
+        animation: digit-up var(--dur-base) var(--ease-decelerate) both;
+      }
+      [data-digits][data-dir="down"] > [data-digit][data-new] {
+        animation-name: digit-down;
+      }
+      [data-seconds="odd"] {
+        animation: tick-a var(--dur-slow) var(--ease-standard);
+      }
+      [data-seconds="even"] {
+        animation: tick-b var(--dur-slow) var(--ease-standard);
+      }
     }
   }
 
@@ -331,11 +460,11 @@
     content: "";
     position: absolute;
     inset: 0 -0.75rem;
-    border-radius: 1rem;
-    background: color-mix(in oklab, var(--glow) 13%, transparent);
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--yes) 12%, transparent);
     opacity: 0;
     pointer-events: none;
-    animation: row-glow var(--dur-glow) var(--ease-standard) both;
+    animation: row-flash var(--dur-flash) var(--ease-standard) both;
   }
   @media (prefers-reduced-motion: reduce) {
     [data-activity-row][data-fresh] {
@@ -346,56 +475,18 @@
       animation: none;
     }
   }
-
-  [data-row-arrow] {
-    opacity: 0;
-    translate: -0.5rem 0;
-    transition:
-      opacity var(--dur-base) var(--ease-standard),
-      translate var(--dur-base) var(--ease-standard);
-  }
-  [data-project-row] [data-monogram] {
-    transition: translate var(--dur-base) var(--ease-standard);
-  }
-  @media (hover: hover) {
-    [data-project-row] a:hover [data-row-arrow] {
-      opacity: 1;
-      translate: 0 0;
-    }
-    [data-project-row] a:hover [data-monogram] {
-      translate: 0 -3px;
-    }
-    [data-project-row] a:hover [data-odds-fill] {
-      filter: brightness(1.45);
-    }
-  }
-  [data-project-row] a:focus-visible [data-row-arrow] {
-    opacity: 1;
-    translate: 0 0;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    [data-row-arrow],
-    [data-project-row] a:hover [data-row-arrow] {
-      translate: 0 0;
-    }
-    [data-project-row] a:hover [data-monogram] {
-      translate: 0 0;
-    }
-  }
-
-  [data-ticker-item] {
-    animation: ticker-in var(--dur-base) var(--ease-decelerate) both;
-  }
-  [data-ticker-item][data-leaving] {
-    animation: ticker-out var(--dur-fast) var(--ease-accelerate) both;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    [data-ticker-item] {
+  :root[data-motion="reduced"] {
+    [data-activity-row][data-fresh] {
       animation: row-fade var(--dur-fast) linear both;
     }
-    [data-ticker-item][data-leaving] {
-      animation: fade-out var(--dur-fast) linear both;
+    [data-activity-row][data-fresh] [data-activity-body],
+    [data-activity-row][data-fresh]::before {
+      animation: none;
     }
+  }
+
+  :root[data-motion="reduced"] [class*="animate-pulse"] {
+    animation: none;
   }
 }
 
@@ -466,7 +557,7 @@
   }
 }
 
-@keyframes row-glow {
+@keyframes row-flash {
   0% {
     opacity: 0;
   }
@@ -475,20 +566,6 @@
   }
   100% {
     opacity: 0;
-  }
-}
-
-@keyframes ticker-in {
-  from {
-    opacity: 0;
-    translate: 0 100%;
-  }
-}
-
-@keyframes ticker-out {
-  to {
-    opacity: 0;
-    translate: 0 -100%;
   }
 }
 
@@ -511,7 +588,552 @@
   }
 }
 
-@utility bg-nebula {
-  background-image: var(--backdrop-nebula);
-  background-color: var(--blue-50);
+/* scale only: the desktop settings dialog is centered with the `translate` property */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
 }
+
+@keyframes pop-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    translate: -100% 0;
+  }
+}
+
+@keyframes drawer-out {
+  to {
+    translate: -100% 0;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--distance-enter);
+  }
+}
+
+@keyframes sheet-out {
+  to {
+    opacity: 0;
+    translate: 0 var(--distance-enter);
+  }
+}
+
+@keyframes pane-from-right {
+  from {
+    opacity: 0;
+    translate: var(--distance-enter) 0;
+  }
+}
+
+@keyframes pane-from-left {
+  from {
+    opacity: 0;
+    translate: calc(var(--distance-enter) * -1) 0;
+  }
+}
+
+/* predict motion: market page, create wizard, portfolio, markets list.
+   Base = what reduced motion gets (instant, or a short fade); movement only under
+   no-preference + not data-motion=reduced. Colour washes are not movement and stay in both. */
+@layer components {
+  /* a value moved: wash toward the direction, then back (live odds included, so short and faint) */
+  [data-tint] {
+    border-radius: 0.25em;
+    padding-inline: 0.12em;
+    margin-inline: -0.12em;
+  }
+  [data-tint="up"] {
+    --tint: var(--gain);
+  }
+  [data-tint="down"] {
+    --tint: var(--loss);
+  }
+  [data-tint][data-tick="a"] {
+    animation: tint-a var(--dur-slow) var(--ease-standard);
+  }
+  [data-tint][data-tick="b"] {
+    animation: tint-b var(--dur-slow) var(--ease-standard);
+  }
+
+  /* chart range switch: the redrawn chart fades in; the canvas has no cheap per-line draw */
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-odds-chart][data-redraw="a"] {
+        animation: chart-in-a var(--dur-base) var(--ease-decelerate);
+      }
+      [data-odds-chart][data-redraw="b"] {
+        animation: chart-in-b var(--dur-base) var(--ease-decelerate);
+      }
+    }
+  }
+
+  /* activity: the row pushed out at the bottom collapses in step with the fresh row opening at the top
+     (same duration and easing as row-open, so the list height stays constant) */
+  [data-activity-row][data-tail] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-activity-row][data-tail="leave"] {
+        display: grid;
+        animation: row-close var(--dur-slow) var(--ease-decelerate) both;
+      }
+      [data-activity-row][data-tail="leave"] > * {
+        min-height: 0;
+        overflow: hidden;
+      }
+    }
+  }
+
+  /* resolution timeline: steps stagger in once on screen, done connectors draw down toward the current step */
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-reveal="wait"] [data-step] {
+        opacity: 0;
+      }
+      [data-reveal="go"] [data-step] {
+        animation: row-in var(--dur-base) var(--ease-decelerate) both;
+        animation-delay: calc(min(var(--i, 0), 7) * 50ms);
+      }
+      [data-reveal="go"] [data-step-line="drawn"] {
+        transform-origin: top;
+        animation: line-draw var(--dur-slow) var(--ease-standard) both;
+        animation-delay: calc(min(var(--i, 0), 7) * 50ms + var(--dur-fast));
+      }
+    }
+  }
+
+  /* trade placed: the confirmation settles in */
+  [data-trade-confirmation]:not(:empty),
+  [data-quick-bet-confirmation] {
+    animation: row-fade var(--dur-fast) linear;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-trade-confirmation]:not(:empty),
+      [data-quick-bet-confirmation] {
+        animation: row-in var(--dur-base) var(--ease-decelerate);
+      }
+    }
+  }
+
+  /* the coin: a balance beats when it changes (a bet drops the coin into place), a win flips it once.
+     Reduced motion keeps only a short opacity dip as the state cue. */
+  [data-coin][data-tick="a"],
+  [data-coin][data-flip] {
+    animation: coin-dim-a var(--dur-instant) linear;
+  }
+  [data-coin][data-tick="b"] {
+    animation: coin-dim-b var(--dur-instant) linear;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-coin][data-beat="pulse"][data-tick="a"] {
+        animation: coin-pulse-a var(--dur-base) var(--ease-standard);
+      }
+      [data-coin][data-beat="pulse"][data-tick="b"] {
+        animation: coin-pulse-b var(--dur-base) var(--ease-standard);
+      }
+      [data-coin][data-beat="settle"][data-tick="a"] {
+        animation: coin-settle-a var(--dur-base) var(--ease-decelerate);
+      }
+      [data-coin][data-beat="settle"][data-tick="b"] {
+        animation: coin-settle-b var(--dur-base) var(--ease-decelerate);
+      }
+      [data-coin][data-flip] {
+        animation: coin-flip var(--dur-slow) var(--ease-standard) var(--dur-instant) both;
+      }
+    }
+  }
+
+  /* create: the tweet card replaces its skeleton; the success beat dims the finished form */
+  [data-tweet-reveal] {
+    animation: row-fade var(--dur-fast) linear;
+  }
+  [data-created-label] {
+    animation: row-fade var(--dur-fast) linear;
+  }
+  form[data-created] [data-wizard-panel] {
+    opacity: 0.6;
+    transition: opacity var(--dur-fast) var(--ease-standard);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) [data-tweet-reveal] {
+      animation: row-in var(--dur-base) var(--ease-decelerate);
+    }
+  }
+
+  /* portfolio: rows that arrive with a filter switch, and a short wash on rows just claimed */
+  [data-position-row] {
+    animation: row-fade var(--dur-fast) linear both;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) [data-position-row] {
+      animation: row-in var(--dur-base) var(--ease-decelerate) both;
+      animation-delay: calc(min(var(--i, 0), 7) * 40ms);
+    }
+  }
+  [data-position-row][data-claimed-now] > td {
+    animation: claimed-wash var(--dur-slower) var(--ease-standard);
+  }
+
+  /* countdown chip: one beat per second through the last minute of trading; reduced motion keeps it steady */
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-countdown-chip][data-beat="a"] {
+        animation: chip-beat-a var(--dur-slow) var(--ease-standard);
+      }
+      [data-countdown-chip][data-beat="b"] {
+        animation: chip-beat-b var(--dur-slow) var(--ease-standard);
+      }
+    }
+  }
+
+  /* duration card: the selected outline and wash ease in; a press while choosing (not on mount, not under reduced motion) */
+  [data-duration-card] {
+    transition-property: color, background-color, border-color;
+    transition-duration: var(--dur-fast);
+    transition-timing-function: var(--ease-standard);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) {
+      [data-duration-card] {
+        transition-property: color, background-color, border-color, scale;
+      }
+      [data-duration-card]:active {
+        scale: 0.98;
+        transition-duration: var(--dur-instant);
+      }
+    }
+  }
+}
+
+@keyframes tint-a {
+  from {
+    color: var(--tint);
+    background-color: color-mix(in oklab, var(--tint) 14%, transparent);
+  }
+}
+
+@keyframes tint-b {
+  from {
+    color: var(--tint);
+    background-color: color-mix(in oklab, var(--tint) 14%, transparent);
+  }
+}
+
+@keyframes chart-in-a {
+  from {
+    opacity: 0.15;
+  }
+}
+
+@keyframes chart-in-b {
+  from {
+    opacity: 0.15;
+  }
+}
+
+@keyframes row-close {
+  from {
+    grid-template-rows: 1fr;
+  }
+  to {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+}
+
+@keyframes line-draw {
+  from {
+    scale: 1 0;
+  }
+}
+
+@keyframes coin-dim-a {
+  from {
+    opacity: 0.4;
+  }
+}
+
+@keyframes coin-dim-b {
+  from {
+    opacity: 0.4;
+  }
+}
+
+@keyframes coin-pulse-a {
+  40% {
+    scale: 1.2;
+  }
+}
+
+@keyframes coin-pulse-b {
+  40% {
+    scale: 1.2;
+  }
+}
+
+@keyframes coin-settle-a {
+  from {
+    opacity: 0;
+    translate: 0 -0.6em;
+  }
+  60% {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1.1 0.9;
+  }
+}
+
+@keyframes chip-beat-a {
+  35% {
+    scale: 1.04;
+    background-color: color-mix(in oklab, currentColor 18%, transparent);
+  }
+}
+
+@keyframes chip-beat-b {
+  35% {
+    scale: 1.04;
+    background-color: color-mix(in oklab, currentColor 18%, transparent);
+  }
+}
+
+@keyframes coin-settle-b {
+  from {
+    opacity: 0;
+    translate: 0 -0.6em;
+  }
+  60% {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1.1 0.9;
+  }
+}
+
+/* a full turn around the vertical axis; the coin is edge-on at the midpoint, which reads as the flip */
+@keyframes coin-flip {
+  from {
+    transform: perspective(6em) rotateY(0);
+  }
+  50% {
+    transform: perspective(6em) rotateY(0.5turn) scale(1.15);
+  }
+  to {
+    transform: perspective(6em) rotateY(1turn);
+  }
+}
+
+@keyframes claimed-wash {
+  from {
+    background-color: color-mix(in oklab, var(--gain) 14%, transparent);
+  }
+}
+/* end predict motion */
+
+/* feed */
+/* The list compensates for prepended rows itself (FeedColumn); native scroll anchoring would double it. */
+[data-feed-scroll] {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--border) 55%, transparent) transparent;
+  overflow-anchor: none;
+}
+
+/* Feed motion. Base = what reduced motion gets (instant, or a fade of at most --dur-fast); movement only under
+   no-preference + not data-motion=reduced. Nothing here changes the size of anything outside the feed. */
+
+/* a post that lands at the top: FeedColumn grows its item from 0 to the measured height (WAAPI) */
+[data-feed-item][data-opening] {
+  overflow: clip;
+}
+
+/* pause / resume: breathing stops (live-dot rules) and the dot settles to grey; the label cross-fades in a
+   slot as wide as the longer word, so the header never reflows */
+[data-live-dot] {
+  transition: background-color var(--dur-base) var(--ease-standard);
+}
+[data-live-dot][data-paused] {
+  background-color: var(--muted-foreground);
+}
+/* simulated posts: a still accent dot, never the green of a live source */
+[data-live-dot][data-paused][data-tone="sample"] {
+  background-color: var(--accent);
+}
+[data-feed-status] > [data-label] {
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+[data-feed-status] > [aria-hidden] {
+  opacity: 0;
+}
+
+[data-feed-pill] {
+  animation: row-fade var(--dur-fast) linear both;
+}
+
+/* md to lg drawer */
+[data-feed][data-mode="overlay"] {
+  animation: row-fade var(--dur-fast) linear;
+}
+[data-feed][data-mode="overlay"][data-state="closed"] {
+  animation: fade-out var(--dur-instant) linear both;
+}
+
+/* mobile tabs: one underline that moves between the tabs; the pane that comes in fades */
+[data-tab-indicator] {
+  translate: calc(var(--tab-index, 0) * 100%) 0;
+}
+@media (max-width: 47.99rem) {
+  [data-home-pane-in] {
+    animation: row-fade var(--dur-fast) var(--ease-decelerate);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="reduced"]) {
+    [data-feed-pill] {
+      animation: feed-pill-in var(--dur-fast) var(--ease-decelerate) both;
+    }
+    [data-feed][data-mode="overlay"] {
+      animation: feed-drawer-in var(--dur-fast) var(--ease-decelerate);
+    }
+    [data-feed][data-mode="overlay"][data-state="closed"] {
+      animation: feed-drawer-out var(--dur-instant) var(--ease-accelerate) both;
+    }
+    [data-tab-indicator] {
+      transition: translate var(--dur-base) var(--ease-standard);
+    }
+  }
+}
+
+@keyframes feed-pill-in {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+
+/* the clip keeps the part still behind the sidebar edge hidden, so the drawer comes out of that edge */
+@keyframes feed-drawer-in {
+  from {
+    translate: -100% 0;
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+@keyframes feed-drawer-out {
+  to {
+    translate: -100% 0;
+    clip-path: inset(0 0 0 100%);
+  }
+}
+/* end feed */
+
+/* tweet view */
+/* X's check-mark colours identify the kind of account (blue person, gold business, grey government). On the dark
+   surfaces they are X's own. On light ones those tones fall below 3:1 (WCAG 1.4.11), so the same three hues are taken
+   darker; blue and grey still differ by chroma (0.13 against 0.035), not just by lightness. */
+:root {
+  --x-verified-blue: #1d9bf0;
+  --x-verified-gold: #e8b50f;
+  --x-verified-grey: #829aab;
+}
+:root[data-theme="light"] {
+  --x-verified-blue: oklch(0.57 0.13 245.5);
+  --x-verified-gold: oklch(0.58 0.115 88);
+  --x-verified-grey: oklch(0.58 0.035 239);
+}
+/* the sticky Next bar of the create wizard must not hide what keyboard focus scrolls to */
+html:has([data-wizard-panel]) {
+  scroll-padding-bottom: 6rem;
+}
+/* end tweet view */
+
+/* tweet motion: feed row details, poll bars, ALT popover, sensitive media, "Show more".
+   Base = what reduced motion gets (instant); movement only under no-preference + not data-motion=reduced.
+   Unlayered on purpose: [data-sizing] has to beat the line-clamp utility. */
+
+/* feed row details: the box is a one-row grid, so its height can ease between 0fr and 1fr. The JS side
+   (FeedRow) picks the same mode from the same inputs: expand (Smooth), fade (Calm), instant (reduced). */
+[data-feed-details] {
+  grid-template-rows: 1fr;
+}
+[data-feed-details] > div {
+  overflow: clip;
+}
+[data-feed-details]:not([data-open]) {
+  grid-template-rows: 0fr;
+}
+
+/* poll: each fill spans the option and is scaled to its share, so a fill is drawn on the compositor */
+[data-poll-fill] {
+  scale: var(--fill, 0) 1;
+  transform-origin: left center;
+}
+
+/* RichText: while the clamp eases open or shut the text is unclamped and clipped to the eased height */
+[data-tweet-text][data-sizing] {
+  overflow: clip;
+  -webkit-line-clamp: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="reduced"]) {
+    [data-feed-details="expand"] {
+      transition: grid-template-rows var(--dur-fast) var(--ease-standard);
+    }
+    [data-feed-details="expand"][data-open] {
+      transition: grid-template-rows var(--dur-base) var(--ease-decelerate);
+    }
+    [data-feed-details="fade"][data-open] [data-feed-details-panel] {
+      animation: row-fade var(--dur-fast) linear;
+    }
+
+    [data-poll-fill] {
+      transition: scale var(--dur-slow) var(--ease-decelerate);
+    }
+
+    [data-alt-popover][data-state="open"] {
+      animation: tweet-alt-in var(--dur-fast) var(--ease-decelerate);
+    }
+    [data-alt-popover][data-state="closed"] {
+      animation: fade-out var(--dur-instant) var(--ease-accelerate) both;
+    }
+
+    [data-media-body] {
+      transition: filter var(--dur-base) var(--ease-standard);
+    }
+  }
+}
+/* first paint starts from empty; without a transition (reduced motion) this has no visible effect */
+@starting-style {
+  [data-feed-details="expand"][data-open] {
+    grid-template-rows: 0fr;
+  }
+  [data-poll-fill] {
+    scale: 0 1;
+  }
+}
+
+/* side="top" by default, so the popover rises toward its badge; flipped below, it drops toward it */
+@keyframes tweet-alt-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--alt-from, 4px);
+  }
+}
+[data-alt-popover][data-side="bottom"] {
+  --alt-from: -4px;
+}
+/* end tweet motion */

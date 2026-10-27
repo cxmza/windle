@@ -48,7 +48,7 @@ export default defineConfig({
         ThemeProvider: './src/components/ThemeProvider.astro',
         ThemeSelect: './src/components/ThemeSelect.astro',
         Footer: './src/components/Footer.astro',
-        // X placeholder link lives here, not in `social` (see the component for why).
+        // X and GitHub links (mirrors packages/brand/src/socials.ts).
         SocialIcons: './src/components/SocialIcons.astro',
       },
       lastUpdated: false,

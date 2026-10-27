@@ -35,6 +35,35 @@ ssh <SSH_HOST> /opt/windle/bin/deploy-api.sh --rollback [tag]  # image only; mig
 ssh <SSH_HOST> /opt/windle/bin/api-integration-test.sh /opt/windle/incoming/api-src-<tag>
 ```
 
+Practice markets: migration `0001_markets` runs inside `push-api.sh`. Once, after the first release that has it,
+seed the open sample markets (idempotent: existing slugs are skipped, a second run changes nothing):
+
+```bash
+ssh <SSH_HOST> 'docker compose -p windle -f /opt/windle/compose/docker-compose.prod.yml --profile api \
+  run --rm --no-deps api node --enable-source-maps dist/seed.js'
+```
+
+Admins who may resolve any market: `ADMIN_WALLETS=<addr>[,<addr>]` in `/opt/windle/shared/api.env`, then recreate
+the api. Share links `https://app.windle.fun/s/<slug>` need the nginx route shipped by `infra/scripts/push-infra.sh`.
+
+## X feed relay (services/x-relay, Go; built on the server, health-gated switch)
+
+```bash
+infra/scripts/push-relay.sh                                    # build windle/x-relay:<UTC ts>, switch, wait /health
+ssh <SSH_HOST> /opt/windle/bin/deploy-relay.sh --list
+ssh <SSH_HOST> /opt/windle/bin/deploy-relay.sh --rollback [tag]
+ssh <SSH_HOST> /opt/windle/bin/deploy-relay.sh --stop             # feed off; api answers 503 / SSE retry hints
+```
+
+Unofficial gmgn source, one IP: see infra/README.md "X feed relay" for the risk.
+
+## X post enrichment key (twitterapi.io)
+
+`GET /v1/x/post/:id?enrich=1` needs `TWITTERAPI_IO_KEY` in `/opt/windle/shared/api.env` (0600 root; without it
+the endpoint answers 503 and the rest of the api works). The key goes from the git-ignored `key/twitter-key.txt`
+over ssh stdin, never as an argument; then recreate the api. Exact commands, budget and metrics: infra/README.md
+"X post enrichment (twitterapi.io)".
+
 ## Server config (nginx, compose, scripts, secrets)
 
 ```bash

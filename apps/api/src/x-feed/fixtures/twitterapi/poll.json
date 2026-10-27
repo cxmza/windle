@@ -1,0 +1,171 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "1686032042385899521",
+      "url": "https://x.com/Politics_Polls/status/1686032042385899521",
+      "twitterUrl": "https://twitter.com/Politics_Polls/status/1686032042385899521",
+      "text": "If the 2024 Presidential Election were held today, for whom would you vote?\n\nPoll sponsored by @LibertarianLars",
+      "source": "",
+      "retweetCount": 2714,
+      "replyCount": 529,
+      "likeCount": 2061,
+      "quoteCount": 162,
+      "viewCount": 273016,
+      "createdAt": "Mon Jul 31 15:12:18 +0000 2023",
+      "lang": "en",
+      "bookmarkCount": 63,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "1686032042385899521",
+      "displayTextRange": [0, 111],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "Politics_Polls",
+        "url": "https://x.com/Politics_Polls",
+        "twitterUrl": "https://twitter.com/Politics_Polls",
+        "id": "1903105045",
+        "name": "Political Polls",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": null,
+        "profilePicture": "https://pbs.twimg.com/profile_images/879203541289717760/qw0an2wG_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/1903105045/1498455589",
+        "description": "Posting all Political Polls",
+        "location": "",
+        "followers": 399542,
+        "following": 347,
+        "createdAt": "Wed Sep 25 06:22:22 +0000 2013",
+        "fastFollowersCount": 0,
+        "favouritesCount": 1884,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 3091,
+        "statusesCount": 42876,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {},
+      "card": {
+        "legacy": {
+          "binding_values": [
+            {
+              "key": "choice1_label",
+              "value": {
+                "string_value": "Joe Biden (D)"
+              }
+            },
+            {
+              "key": "choice2_label",
+              "value": {
+                "string_value": "Lars Mapstead (L)"
+              }
+            },
+            {
+              "key": "end_datetime_utc",
+              "value": {
+                "string_value": "2023-08-07T15:12:18Z"
+              }
+            },
+            {
+              "key": "counts_are_final",
+              "value": {
+                "boolean_value": true
+              }
+            },
+            {
+              "key": "choice2_count",
+              "value": {
+                "string_value": "2161"
+              }
+            },
+            {
+              "key": "choice1_count",
+              "value": {
+                "string_value": "9682"
+              }
+            },
+            {
+              "key": "last_updated_datetime_utc",
+              "value": {
+                "string_value": "2023-08-07T15:12:20Z"
+              }
+            },
+            {
+              "key": "duration_minutes",
+              "value": {
+                "string_value": "10080"
+              }
+            },
+            {
+              "key": "choice3_count",
+              "value": {
+                "string_value": "27621"
+              }
+            },
+            {
+              "key": "choice3_label",
+              "value": {
+                "string_value": "Donald Trump (R)"
+              }
+            },
+            {
+              "key": "api",
+              "value": {
+                "string_value": "capi://passthrough/1"
+              }
+            },
+            {
+              "key": "card_url",
+              "value": {
+                "scribe_key": "card_url",
+                "string_value": "https://twitter.com"
+              }
+            }
+          ],
+          "card_platform": {
+            "platform": {
+              "audience": {
+                "name": "production"
+              },
+              "device": {
+                "name": "iPhone",
+                "version": "13"
+              }
+            }
+          },
+          "name": "poll3choice_text_only",
+          "url": "card://1686032041479929856",
+          "user_refs_results": []
+        },
+        "rest_id": "card://1686032041479929856"
+      },
+      "place": {},
+      "entities": {
+        "user_mentions": [
+          {
+            "id_str": "1398696233888190464",
+            "indices": [95, 111],
+            "name": "Lars Mapstead",
+            "screen_name": "LibertarianLars"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

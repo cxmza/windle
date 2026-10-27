@@ -1,0 +1,190 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2109755364648337736",
+      "url": "https://x.com/solana/status/2109755364648337736",
+      "twitterUrl": "https://twitter.com/solana/status/2109755364648337736",
+      "text": ".@colosseum Crypto's World Fair submissions are due by 11:59pm PDT on October 12.\n\nReminder: All STOCKLANA projects are eligible for submission as well.",
+      "source": "",
+      "retweetCount": 8,
+      "replyCount": 50,
+      "likeCount": 103,
+      "quoteCount": 3,
+      "viewCount": 35337,
+      "createdAt": "Mon Oct 12 21:17:30 +0000 2026",
+      "lang": "en",
+      "bookmarkCount": 1,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "2109755364648337736",
+      "displayTextRange": [0, 152],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "solana",
+        "url": "https://x.com/solana",
+        "twitterUrl": "https://twitter.com/solana",
+        "id": "951329744804392960",
+        "name": "Solana",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": "Business",
+        "profilePicture": "https://pbs.twimg.com/profile_images/2108951229892313088/MlkM0StP_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/951329744804392960/1778240988",
+        "description": "The high performance network powering internet capital markets, payments, AI age",
+        "location": "Solana",
+        "followers": 4219040,
+        "following": 3693,
+        "createdAt": "Thu Jan 11 05:47:40 +0000 2018",
+        "fastFollowersCount": 0,
+        "favouritesCount": 29475,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 4015,
+        "statusesCount": 29964,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {},
+      "card": null,
+      "place": {},
+      "entities": {
+        "user_mentions": [
+          {
+            "id_str": "1626610682773794816",
+            "indices": [1, 11],
+            "name": "Colosseum",
+            "screen_name": "colosseum"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": true,
+      "isConversationControlled": false,
+      "quoted_tweet": {
+        "type": "tweet",
+        "id": "2109654404702015576",
+        "url": "https://x.com/colosseum/status/2109654404702015576",
+        "twitterUrl": "https://twitter.com/colosseum/status/2109654404702015576",
+        "text": "It's the final day of Crypto World's Fair.\n\nThousands of developers and founders from across the blockchain ecosystem are now submitting the products they have been building over the past month.\n\nFor many of you, today is not the end of your journey. It's just the beginning. https://t.co/vopx9lH4c1",
+        "source": "",
+        "retweetCount": 23,
+        "replyCount": 35,
+        "likeCount": 170,
+        "quoteCount": 9,
+        "viewCount": 16435,
+        "createdAt": "Mon Oct 12 14:36:20 +0000 2026",
+        "lang": "en",
+        "bookmarkCount": 19,
+        "isReply": false,
+        "inReplyToId": "",
+        "conversationId": "2109654404702015576",
+        "displayTextRange": [0, 275],
+        "inReplyToUserId": "",
+        "inReplyToUsername": "",
+        "isPinned": false,
+        "author": {
+          "type": "user",
+          "userName": "colosseum",
+          "url": "https://x.com/colosseum",
+          "twitterUrl": "https://twitter.com/colosseum",
+          "id": "1626610682773794816",
+          "name": "Colosseum",
+          "isVerified": false,
+          "isBlueVerified": false,
+          "verifiedType": "Business",
+          "profilePicture": "https://pbs.twimg.com/profile_images/2095348447692070912/llDzmx5C_normal.jpg",
+          "coverPicture": "https://pbs.twimg.com/profile_banners/1626610682773794816/1789485631",
+          "description": "Crypto’s premier hackathon, accelerator, and venture fund | https://t.co/l8ojirF",
+          "location": "",
+          "followers": 64183,
+          "following": 116,
+          "createdAt": "Fri Feb 17 15:53:13 +0000 2023",
+          "fastFollowersCount": 0,
+          "favouritesCount": 5987,
+          "hasCustomTimelines": true,
+          "isTranslator": false,
+          "mediaCount": 580,
+          "statusesCount": 3276,
+          "affiliatesHighlightedLabel": {},
+          "possiblySensitive": false,
+          "isAutomated": false,
+          "automatedBy": null
+        },
+        "extendedEntities": {
+          "media": [
+            {
+              "additional_media_info": {
+                "monetizable": false
+              },
+              "display_url": "pic.x.com/vopx9lH4c1",
+              "expanded_url": "https://x.com/colosseum/status/2109654404702015576/video/1",
+              "id_str": "2109653679137751040",
+              "indices": [276, 299],
+              "media_key": "13_2109653679137751040",
+              "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/2109653679137751040/img/5f_CFMLVjvAgcrH3.jpg",
+              "original_info": {
+                "focus_rects": [],
+                "height": 1080,
+                "width": 1236
+              },
+              "type": "video",
+              "url": "https://t.co/vopx9lH4c1",
+              "video_info": {
+                "aspect_ratio": [103, 90],
+                "duration_millis": 40233,
+                "variants": [
+                  {
+                    "content_type": "application/x-mpegURL",
+                    "url": "https://video-s.twimg.com/amplify_video/2109653679137751040/pl/WWzXssWovNoaYRqq.m3u8?tag=29&v=6ab"
+                  },
+                  {
+                    "bitrate": 256000,
+                    "content_type": "video/mp4",
+                    "url": "https://video-s.twimg.com/amplify_video/2109653679137751040/vid/avc1/308x270/m7rd3dL6vG1L_uAJ.mp4?tag=29"
+                  },
+                  {
+                    "bitrate": 832000,
+                    "content_type": "video/mp4",
+                    "url": "https://video-s.twimg.com/amplify_video/2109653679137751040/vid/avc1/412x360/kstVxb-LOfZCsbsT.mp4?tag=29"
+                  },
+                  {
+                    "bitrate": 2176000,
+                    "content_type": "video/mp4",
+                    "url": "https://video-s.twimg.com/amplify_video/2109653679137751040/vid/avc1/824x720/IDBkGRmwgMUbka7s.mp4?tag=29"
+                  },
+                  {
+                    "bitrate": 10368000,
+                    "content_type": "video/mp4",
+                    "url": "https://video-s.twimg.com/amplify_video/2109653679137751040/vid/avc1/1236x1080/oo4R1qWk0xTb0ckX.mp4?tag=29"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "card": null,
+        "place": {},
+        "entities": {},
+        "isRetweet": false,
+        "isQuote": false,
+        "isConversationControlled": false,
+        "quoted_tweet": null,
+        "retweeted_tweet": null,
+        "isLimitedReply": false,
+        "communityInfo": null
+      },
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

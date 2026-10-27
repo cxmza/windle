@@ -1,5 +1,6 @@
 #!/bin/bash
-# Nightly backup: Postgres (pg_dump -Fc + roles) and Redis (RDB after BGSAVE) into /opt/windle/backups.
+# Nightly backup: Postgres (pg_dump -Fc + roles), Redis (RDB after BGSAVE) and user image masters into
+# /opt/windle/backups.
 # Each artifact is verified before it is kept; failures exit non-zero and are logged (cron -> logs/backup.log).
 # Retention: newest 14 of each kind. Offsite copy: TODO (needs a target from the owner, see README).
 set -euo pipefail
@@ -53,6 +54,18 @@ rdb="$DIR/redis/dump-$TS.rdb"
 chmod 600 "$rdb.partial"
 mv "$rdb.partial" "$rdb"
 log "redis ok: $(basename "$rdb") $(du -h "$rdb" | cut -f1)"
+
+# --- User image masters -----------------------------------------------------------------------------
+# Content-addressed and immutable (<ab>/<sha256>.webp), so a mirror is enough: rsync hard-links every unchanged file
+# against the live tree (--link-dest), costing no disk space on the same filesystem, and --delete drops masters that
+# were taken down since the last run (removed content must not live on in backups). Protects against deletion by
+# mistake or a bug; it is NOT a second copy against disk loss (see README "Offsite backups").
+MEDIA="$ROOT/media"
+if [ -d "$MEDIA" ]; then
+    install -d -m 700 "$DIR/media"
+    rsync -a --delete --link-dest="$MEDIA/" --exclude='.*.tmp' "$MEDIA/" "$DIR/media/" || fail "rsync media"
+    log "media ok: $(find "$DIR/media" -type f -name '*.webp' | wc -l) masters, $(du -sh "$MEDIA" | cut -f1) live"
+fi
 
 # --- Retention -------------------------------------------------------------------------------------
 prune() { ls -1t $1 2>/dev/null | tail -n +$((KEEP + 1)) | xargs -r rm -f --; }

@@ -11,12 +11,14 @@
     "build": "node build.mjs",
     "start": "node --enable-source-maps dist/server.js",
     "migrate": "node --enable-source-maps dist/migrate.js",
+    "seed": "node --enable-source-maps dist/seed.js",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:integration": "vitest run src/integration.test.ts",
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/migrate.ts",
+    "db:seed": "tsx src/seed.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -26,6 +28,7 @@
     "@fastify/rate-limit": "^11.2.1",
     "@fastify/swagger": "^9.9.2",
     "@noble/curves": "^2.4.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@scalar/fastify-api-reference": "^1.73.1",
     "@windle/shared": "*",
     "bs58": "^6.0.0",
@@ -35,6 +38,9 @@
     "ioredis": "^6.0.0",
     "pino": "^10.4.0",
     "postgres": "^3.4.9",
+    "satori": "^0.62.0",
+    "sharp": "^0.35.5",
+    "thumbhash": "^0.1.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {

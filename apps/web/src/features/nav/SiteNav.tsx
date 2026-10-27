@@ -2,6 +2,7 @@ import { NavigationMenu } from 'radix-ui';
 import { WindleLogo } from '../story/brand/WindleLogo';
 import { chapterPath } from '../story/routes';
 import { useActiveChapter } from '../story/story-scroll';
+import { DockSocials } from './DockSocials';
 import { GlassIsland } from './GlassIsland';
 import { NavSheet } from './NavSheet';
 import { useNavBubble } from './nav-bubble';
@@ -14,7 +15,7 @@ const wordmarkClass = 'text-base font-extrabold tracking-[-0.03em] uppercase max
 /**
  * Top bar as three islands at a fixed size and position (nothing collapses on scroll): the lockup sits straight on the
  * page, a glass capsule in the middle holds Protocol (link to chapter 01), Docs and Ecosystem, a second glass island on the right holds
- * Sign in and Launch app. Below md the capsule is gone and the right island holds Launch app and the menu button + sheet.
+ * Sign in and Launch app; beside it a third island holds the social icons (DockSocials, which also holds the token CA chip). Below md the capsule is gone and the right island holds Launch app and the menu button + sheet.
  * Hooks (stable, for motion and tests): [data-dock-root] fixed wrapper, [data-dock-island] every glass island
  * ([data-dock] the centre capsule, [data-dock-actions] the right one; [data-glass] its glass layer), [data-dock-bubble]
  * the sliding hover bubble, [data-header-logo] the lockup link ([data-logo-jelly] on its mark), [data-dock-link=<chapter
@@ -93,11 +94,14 @@ export function SiteNav() {
           </NavigationMenu.Root>
         </GlassIsland>
 
-        <GlassIsland data-dock-actions className="flex h-full items-center gap-1 justify-self-end p-1.5">
-          <SignInLink className="max-md:hidden" />
-          <LaunchLink />
-          <NavSheet activeId={activeId} />
-        </GlassIsland>
+        <div className="relative flex h-full items-center justify-self-end gap-2">
+          <DockSocials />
+          <GlassIsland data-dock-actions className="flex h-full items-center gap-1 p-1.5">
+            <SignInLink className="max-md:hidden" />
+            <LaunchLink />
+            <NavSheet activeId={activeId} />
+          </GlassIsland>
+        </div>
       </div>
     </header>
   );

@@ -1,0 +1,35 @@
+{
+  "article": {
+    "id": "QXJ0aWNsZUVudGl0eToyMTA4NDYwMTM5NDYwMzEzMDg4",
+    "author": {
+      "type": "user",
+      "userName": "NVIDIARobotics",
+      "id": "92597440",
+      "name": "NVIDIA Robotics"
+    },
+    "replyCount": 14,
+    "likeCount": 259,
+    "quoteCount": 2,
+    "viewCount": "11890",
+    "createdAt": "Fri Oct 09 16:03:45 +0000 2026",
+    "title": "A New Way to Build Edge AI with Jetson Agent Skills",
+    "preview_text": "Building edge AI involves more than writing code. Developers must also account for the target hardware, available memory, JetPack release, containers, accelerated runtimes, cameras, and deployment",
+    "cover_media_img_url": "https://pbs.twimg.com/media/HULBnD2bAAAZA9V.jpg",
+    "contents": [
+      {
+        "type": "unstyled",
+        "text": "Building edge AI involves more than writing code. Developers must also account for the target hardware, available memory, JetPack release, containers, accelerated runtimes, cameras, and deployment constraints."
+      },
+      {
+        "type": "unstyled",
+        "text": "NVIDIA Jetson Agent Skills bring that device-specific knowledge into AI-assisted development."
+      },
+      {
+        "type": "unstyled",
+        "text": "A developer can begin with an outcome:"
+      }
+    ]
+  },
+  "status": "success",
+  "msg": "success"
+}

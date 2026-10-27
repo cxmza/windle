@@ -1,0 +1,78 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2109679246784503829",
+      "url": "https://x.com/solana/status/2109679246784503829",
+      "twitterUrl": "https://twitter.com/solana/status/2109679246784503829",
+      "text": "@AndreaMYellie See you in London 👀",
+      "source": "",
+      "retweetCount": 0,
+      "replyCount": 3,
+      "likeCount": 15,
+      "quoteCount": 0,
+      "viewCount": 2786,
+      "createdAt": "Mon Oct 12 16:15:03 +0000 2026",
+      "lang": "en",
+      "bookmarkCount": 0,
+      "isReply": true,
+      "inReplyToId": "2109677960827478158",
+      "conversationId": "2109677960827478158",
+      "displayTextRange": [15, 34],
+      "inReplyToUserId": "1455137198504873989",
+      "inReplyToUsername": "AndreaMYellie",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "solana",
+        "url": "https://x.com/solana",
+        "twitterUrl": "https://twitter.com/solana",
+        "id": "951329744804392960",
+        "name": "Solana",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": "Business",
+        "profilePicture": "https://pbs.twimg.com/profile_images/2108951229892313088/MlkM0StP_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/951329744804392960/1778240988",
+        "description": "The high performance network powering internet capital markets, payments, AI age",
+        "location": "Solana",
+        "followers": 4219037,
+        "following": 3693,
+        "createdAt": "Thu Jan 11 05:47:40 +0000 2018",
+        "fastFollowersCount": 0,
+        "favouritesCount": 29475,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 4015,
+        "statusesCount": 29964,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {},
+      "card": null,
+      "place": {},
+      "entities": {
+        "user_mentions": [
+          {
+            "id_str": "1455137198504873989",
+            "indices": [0, 14],
+            "name": "Andrea 🐝",
+            "screen_name": "AndreaMYellie"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

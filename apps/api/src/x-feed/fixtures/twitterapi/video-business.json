@@ -1,0 +1,135 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2109742693245153564",
+      "url": "https://x.com/solana/status/2109742693245153564",
+      "twitterUrl": "https://twitter.com/solana/status/2109742693245153564",
+      "text": "\"The next is trading those tokens and tokenized U.S. equities onchain. This has probably been one of the most compelling stories on Solana over the last 18 months outside of the United States.\"\n\n– @millercwl, CEO at @SolanaInstitute at Solana Summit Korea https://t.co/20Jdksakw3",
+      "source": "",
+      "retweetCount": 31,
+      "replyCount": 102,
+      "likeCount": 239,
+      "quoteCount": 4,
+      "viewCount": 39053,
+      "createdAt": "Mon Oct 12 20:27:09 +0000 2026",
+      "lang": "en",
+      "bookmarkCount": 6,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "2109742693245153564",
+      "displayTextRange": [0, 255],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "solana",
+        "url": "https://x.com/solana",
+        "twitterUrl": "https://twitter.com/solana",
+        "id": "951329744804392960",
+        "name": "Solana",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": "Business",
+        "profilePicture": "https://pbs.twimg.com/profile_images/2108951229892313088/MlkM0StP_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/951329744804392960/1778240988",
+        "description": "The high performance network powering internet capital markets, payments, AI age",
+        "location": "Solana",
+        "followers": 4219038,
+        "following": 3693,
+        "createdAt": "Thu Jan 11 05:47:40 +0000 2018",
+        "fastFollowersCount": 0,
+        "favouritesCount": 29475,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 4015,
+        "statusesCount": 29964,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {
+        "media": [
+          {
+            "additional_media_info": {
+              "monetizable": false
+            },
+            "display_url": "pic.x.com/20Jdksakw3",
+            "expanded_url": "https://x.com/solana/status/2109742693245153564/video/1",
+            "id_str": "2109742655718760448",
+            "indices": [256, 279],
+            "media_key": "13_2109742655718760448",
+            "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/2109742655718760448/img/g_Js36TsMrTCACk3.jpg",
+            "original_info": {
+              "focus_rects": [],
+              "height": 1080,
+              "width": 1920
+            },
+            "type": "video",
+            "url": "https://t.co/20Jdksakw3",
+            "video_info": {
+              "aspect_ratio": [16, 9],
+              "duration_millis": 45682,
+              "variants": [
+                {
+                  "content_type": "application/x-mpegURL",
+                  "url": "https://video-s.twimg.com/amplify_video/2109742655718760448/pl/95n7JtCFCNhvazU5.m3u8?tag=16&v=36e"
+                },
+                {
+                  "bitrate": 288000,
+                  "content_type": "video/mp4",
+                  "url": "https://video-s.twimg.com/amplify_video/2109742655718760448/vid/avc1/480x270/JEZEc8PyJEOZmfe5.mp4?tag=16"
+                },
+                {
+                  "bitrate": 832000,
+                  "content_type": "video/mp4",
+                  "url": "https://video-s.twimg.com/amplify_video/2109742655718760448/vid/avc1/640x360/NKyZ9_F2-uSsFHsz.mp4?tag=16"
+                },
+                {
+                  "bitrate": 2176000,
+                  "content_type": "video/mp4",
+                  "url": "https://video-s.twimg.com/amplify_video/2109742655718760448/vid/avc1/1280x720/YtOgHb1zqCOuH04e.mp4?tag=16"
+                },
+                {
+                  "bitrate": 10368000,
+                  "content_type": "video/mp4",
+                  "url": "https://video-s.twimg.com/amplify_video/2109742655718760448/vid/avc1/1920x1080/5jq16n6QohpcOQ5o.mp4?tag=16"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "card": null,
+      "place": {},
+      "entities": {
+        "user_mentions": [
+          {
+            "id_str": "1075027688056913921",
+            "indices": [197, 207],
+            "name": "Miller",
+            "screen_name": "millercwl"
+          },
+          {
+            "id_str": "1889677282685722624",
+            "indices": [216, 232],
+            "name": "Solana Policy Institute",
+            "screen_name": "SolanaInstitute"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

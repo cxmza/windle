@@ -8,6 +8,34 @@
       "when": 1791722316454,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792172367922,
+      "tag": "0001_markets",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792185277359,
+      "tag": "0002_bots",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792187256938,
+      "tag": "0003_terminal",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792188716042,
+      "tag": "0004_media",
+      "breakpoints": true
     }
   ]
 }

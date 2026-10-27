@@ -29,6 +29,14 @@ export interface EphemeralStore {
   touchSession(hash: string, ttlSeconds: number): Promise<void>;
   deleteSession(hash: string): Promise<void>;
 
+  /**
+   * Takes the lease `key` for `owner` when nobody holds it (SET NX PX), or renews it when `owner` already does.
+   * False: another owner holds it. Single-runner jobs (the house market bots) tick only while holding it.
+   */
+  acquireLease(key: string, owner: string, ttlMs: number): Promise<boolean>;
+  /** Drops the lease if `owner` still holds it. */
+  releaseLease(key: string, owner: string): Promise<void>;
+
   ping(): Promise<void>;
 }
 

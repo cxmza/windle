@@ -11,13 +11,18 @@ const numeric = (text: string): number => Number(text.replace(/\D/g, '')) || 0;
 
 /**
  * Text whose changed digits slide in (from below when the value rises, from above when it falls); unchanged digits
- * stay put. Keys run from the right, so 9 → 10 only moves the digits that changed.
+ * stay put. Keys run from the right, so 9 → 10 only moves the digits that changed. Pass `value` when the text alone
+ * cannot tell the direction (signed numbers).
  */
-export function Digits({ text, dir = 'auto' }: { text: string; dir?: Dir }) {
-  const [state, setState] = useState({ text, prev: text });
-  if (state.text !== text) setState({ text, prev: state.text });
+export function Digits({ text, value, dir = 'auto' }: { text: string; value?: number; dir?: Dir }) {
+  const [state, setState] = useState({ text, prev: text, value, prevValue: value });
+  if (state.text !== text) setState({ text, prev: state.text, value, prevValue: state.value });
   const old = new Set(keysOf(state.prev));
-  const way = dir === 'auto' ? (numeric(state.text) >= numeric(state.prev) ? 'up' : 'down') : dir;
+  const rose =
+    state.value !== undefined && state.prevValue !== undefined
+      ? state.value >= state.prevValue
+      : numeric(state.text) >= numeric(state.prev);
+  const way = dir === 'auto' ? (rose ? 'up' : 'down') : dir;
   return (
     <span data-digits data-dir={way}>
       {keysOf(text).map((k) => {

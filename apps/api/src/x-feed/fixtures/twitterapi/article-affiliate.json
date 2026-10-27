@@ -1,0 +1,93 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2108589242888970280",
+      "url": "https://x.com/NVIDIARobotics/status/2108589242888970280",
+      "twitterUrl": "https://twitter.com/NVIDIARobotics/status/2108589242888970280",
+      "text": "What if your AI coding agent understood your Jetson, not just your code?\n\nExplore NVIDIA Jetson Agent Skills with hands-on tutorials, video walkthroughs, accelerated workflows, and a developer livestream.\n\nStart building physical AI at the edge. 👇 https://t.co/hKZrsimbEv",
+      "source": "",
+      "retweetCount": 41,
+      "replyCount": 14,
+      "likeCount": 259,
+      "quoteCount": 2,
+      "viewCount": 11890,
+      "createdAt": "Fri Oct 09 16:03:45 +0000 2026",
+      "lang": "en",
+      "bookmarkCount": 92,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "2108589242888970280",
+      "displayTextRange": [0, 271],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "NVIDIARobotics",
+        "url": "https://x.com/NVIDIARobotics",
+        "twitterUrl": "https://twitter.com/NVIDIARobotics",
+        "id": "92597440",
+        "name": "NVIDIA Robotics",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": "Business",
+        "profilePicture": "https://pbs.twimg.com/profile_images/1864439831335718915/WJ2VocNK_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/92597440/1711406555",
+        "description": "NVIDIA Robotics inspires visionaries and developers to create the next generatio",
+        "location": "Santa Clara, CA",
+        "followers": 147878,
+        "following": 384,
+        "createdAt": "Wed Nov 25 19:51:02 +0000 2009",
+        "fastFollowersCount": 0,
+        "favouritesCount": 3822,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 3109,
+        "statusesCount": 8976,
+        "affiliatesHighlightedLabel": {
+          "label": {
+            "badge": {
+              "url": "https://pbs.twimg.com/profile_images/1828904711124078593/SRvCZSfQ_bigger.jpg"
+            },
+            "description": "NVIDIA",
+            "url": {
+              "url": "https://twitter.com/nvidia",
+              "url_type": "DeepLink"
+            },
+            "user_label_display_type": "Badge",
+            "user_label_type": "BusinessLabel"
+          }
+        },
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {},
+      "card": {
+        "rest_id": "https://t.co/hKZrsimbEv"
+      },
+      "place": {},
+      "entities": {
+        "urls": [
+          {
+            "display_url": "x.com/i/article/2108…",
+            "expanded_url": "https://x.com/i/article/2108460139460313088",
+            "indices": [248, 271],
+            "url": "https://t.co/hKZrsimbEv"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

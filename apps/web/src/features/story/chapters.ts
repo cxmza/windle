@@ -167,16 +167,15 @@ export type LogoSlotId = (typeof LOGO_SLOT_IDS)[number];
  * "Follow on"); the section also carries an "unaffiliated" line.
  */
 export const ECOSYSTEM = [
-  { slot: 'solana', prefix: 'Built on', label: 'Solana', href: 'https://solana.com', placeholder: false },
-  { slot: 'pumpfun', prefix: 'Works with', label: 'pump.fun tokens', href: 'https://pump.fun', placeholder: false },
-  // TODO: replace with the project's own X account URL; https://x.com is only the site root.
-  { slot: 'x', prefix: 'Follow on', label: 'X', href: 'https://x.com', placeholder: true },
+  { slot: 'solana', prefix: 'Built on', label: 'Solana', href: 'https://solana.com' },
+  { slot: 'pumpfun', prefix: 'Works with', label: 'pump.fun tokens', href: 'https://pump.fun' },
+  // null: the link comes from the shared config in @windle/brand (resolved where it renders, Ecosystem.tsx)
+  { slot: 'x', prefix: 'Follow on', label: 'X', href: null },
 ] as const satisfies readonly {
   slot: LogoSlotId;
   prefix: string;
   label: string;
-  href: string;
-  placeholder: boolean;
+  href: string | null;
 }[];
 
 export const EXAMPLE_MARKET = { yes: 72, no: 28, question: 'Mainnet by Dec 1' } as const;

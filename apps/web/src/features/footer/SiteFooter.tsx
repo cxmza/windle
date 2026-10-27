@@ -1,20 +1,17 @@
-import { WindleMark } from '@windle/brand';
+import { SocialLinks, WindleMark } from '@windle/brand';
 import { useRef } from 'react';
-import { GitHubGlyph, XGlyph } from '../nav/nav-icons';
 import { useLogoJelly } from '../story/brand/use-jelly';
 import { chapterPath } from '../story/routes';
-import { DISCLAIMER, FOOTER_COLUMNS, HEALTH_URL, LEGAL_LINKS, SOCIALS, TAGLINE } from './footer-links';
+import { DISCLAIMER, FOOTER_COLUMNS, HEALTH_URL, LEGAL_LINKS, TAGLINE } from './footer-links';
 import { StatusPill } from './StatusPill';
 import { useApiHealth } from './use-api-health';
 
 const linkClass =
   'inline-flex min-h-8 items-center rounded-sm text-sm text-foreground/75 transition-colors duration-(--dur-fast) ease-standard active:text-foreground [@media(hover:hover)]:hover:text-foreground';
 
-const GLYPHS = { x: XGlyph, github: GitHubGlyph } as const;
-
 /**
  * Information footer after the final CTA chapter. Hooks: [data-site-footer], [data-footer-mark] (the draggable mark in
- * the lockup, [data-logo-jelly]), [data-api-status] on the status pill, [data-footer-x] on the social buttons.
+ * the lockup, [data-logo-jelly]), [data-api-status] on the status pill, [data-social=<slot>] on the social buttons.
  * The mark reuses the logo jelly (brand/use-jelly.ts): drag it, it stretches and springs back; static under reduced
  * motion. The oversized wordmark at the bottom is decoration only.
  */
@@ -44,27 +41,7 @@ export function SiteFooter({ fetchFn }: { fetchFn?: typeof fetch }) {
             </div>
             <p className="max-w-[36ch] text-sm leading-relaxed text-pretty text-muted-foreground">{TAGLINE}</p>
             <StatusPill health={health} />
-            <ul className="flex items-center gap-2">
-              {SOCIALS.flatMap((social) => {
-                if (!social.href) return [];
-                const Glyph = GLYPHS[social.slot];
-                return [
-                  <li key={social.slot}>
-                    <a
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-footer-x={social.slot === 'x' ? '' : undefined}
-                      data-href-placeholder={social.placeholder || undefined}
-                      aria-label={`windle on ${social.label} (opens in a new tab)`}
-                      className="inline-flex size-9 items-center justify-center rounded-md border border-border/60 text-foreground/75 transition-colors duration-(--dur-fast) ease-standard active:bg-foreground/10 [@media(hover:hover)]:hover:bg-foreground/5 [@media(hover:hover)]:hover:text-foreground"
-                    >
-                      <Glyph width={16} height={16} />
-                    </a>
-                  </li>,
-                ];
-              })}
-            </ul>
+            <SocialLinks size="md" variant="outline" className="gap-2" showPlaceholders={import.meta.env.DEV} />
           </div>
 
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">

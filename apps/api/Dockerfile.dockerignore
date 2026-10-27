@@ -14,6 +14,7 @@
 !apps/api/drizzle.config.ts
 !apps/api/src/**
 !apps/api/drizzle/**
+!apps/api/assets/**
 **/node_modules
 **/dist
 **/*.test.ts

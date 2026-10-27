@@ -1,0 +1,1170 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2109476604942643708",
+      "url": "https://x.com/solana/status/2109476604942643708",
+      "twitterUrl": "https://twitter.com/solana/status/2109476604942643708",
+      "text": "RT @colosseum: As a reminder, builders in the recent @Solana Stocklana hack and the @solanamobile Clock In hackathon are eligible to partic…",
+      "source": "",
+      "retweetCount": 16,
+      "replyCount": 34,
+      "likeCount": 206,
+      "quoteCount": 9,
+      "viewCount": 20124,
+      "createdAt": "Mon Oct 12 02:49:49 +0000 2026",
+      "lang": "en",
+      "bookmarkCount": 10,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "2109476604942643708",
+      "displayTextRange": [0, 140],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "solana",
+        "url": "https://x.com/solana",
+        "twitterUrl": "https://twitter.com/solana",
+        "id": "951329744804392960",
+        "name": "Solana",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": "Business",
+        "profilePicture": "https://pbs.twimg.com/profile_images/2108951229892313088/MlkM0StP_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/951329744804392960/1778240988",
+        "description": "The high performance network powering internet capital markets, payments, AI age",
+        "location": "Solana",
+        "followers": 4219040,
+        "following": 3693,
+        "createdAt": "Thu Jan 11 05:47:40 +0000 2018",
+        "fastFollowersCount": 0,
+        "favouritesCount": 29475,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 4015,
+        "statusesCount": 29964,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {},
+      "card": {
+        "legacy": {
+          "binding_values": [
+            {
+              "key": "photo_image_full_size_large",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 419,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=800x419",
+                  "width": 800
+                }
+              }
+            },
+            {
+              "key": "thumbnail_image",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 147,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=280x150",
+                  "width": 280
+                }
+              }
+            },
+            {
+              "key": "description",
+              "value": {
+                "string_value": "Build across blockchain ecosystems from September 14 through October 12, 2026."
+              }
+            },
+            {
+              "key": "domain",
+              "value": {
+                "string_value": "colosseum.com"
+              }
+            },
+            {
+              "key": "thumbnail_image_large",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 315,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=600x600",
+                  "width": 600
+                }
+              }
+            },
+            {
+              "key": "summary_photo_image_small",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 202,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=386x202",
+                  "width": 386
+                }
+              }
+            },
+            {
+              "key": "thumbnail_image_original",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 630,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=orig",
+                  "width": 1200
+                }
+              }
+            },
+            {
+              "key": "photo_image_full_size_small",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 202,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=386x202",
+                  "width": 386
+                }
+              }
+            },
+            {
+              "key": "summary_photo_image_large",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 419,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=800x419",
+                  "width": 800
+                }
+              }
+            },
+            {
+              "key": "thumbnail_image_small",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 76,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=144x144",
+                  "width": 144
+                }
+              }
+            },
+            {
+              "key": "creator",
+              "value": {
+                "user_value": {
+                  "id_str": "1626610682773794816",
+                  "path": []
+                }
+              }
+            },
+            {
+              "key": "thumbnail_image_x_large",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 630,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=png&name=2048x2048_2_exp",
+                  "width": 1200
+                }
+              }
+            },
+            {
+              "key": "photo_image_full_size_original",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 630,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=orig",
+                  "width": 1200
+                }
+              }
+            },
+            {
+              "key": "photo_image_full_size_alt_text",
+              "value": {
+                "string_value": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration."
+              }
+            },
+            {
+              "key": "vanity_url",
+              "value": {
+                "scribe_key": "vanity_url",
+                "string_value": "colosseum.com"
+              }
+            },
+            {
+              "key": "photo_image_full_size",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 314,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=600x314",
+                  "width": 600
+                }
+              }
+            },
+            {
+              "key": "summary_photo_image_alt_text",
+              "value": {
+                "string_value": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration."
+              }
+            },
+            {
+              "key": "thumbnail_image_color",
+              "value": {
+                "image_color_value": {
+                  "palette": [
+                    {
+                      "percentage": 54.56,
+                      "rgb": {
+                        "blue": 139,
+                        "green": 130,
+                        "red": 122
+                      }
+                    },
+                    {
+                      "percentage": 19.31,
+                      "rgb": {
+                        "blue": 52,
+                        "green": 78,
+                        "red": 78
+                      }
+                    },
+                    {
+                      "percentage": 12.74,
+                      "rgb": {
+                        "blue": 105,
+                        "green": 132,
+                        "red": 161
+                      }
+                    },
+                    {
+                      "percentage": 4.15,
+                      "rgb": {
+                        "blue": 51,
+                        "green": 77,
+                        "red": 111
+                      }
+                    },
+                    {
+                      "percentage": 4.01,
+                      "rgb": {
+                        "blue": 94,
+                        "green": 90,
+                        "red": 80
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "title",
+              "value": {
+                "string_value": "The Crypto World's Fair"
+              }
+            },
+            {
+              "key": "summary_photo_image_color",
+              "value": {
+                "image_color_value": {
+                  "palette": [
+                    {
+                      "percentage": 54.56,
+                      "rgb": {
+                        "blue": 139,
+                        "green": 130,
+                        "red": 122
+                      }
+                    },
+                    {
+                      "percentage": 19.31,
+                      "rgb": {
+                        "blue": 52,
+                        "green": 78,
+                        "red": 78
+                      }
+                    },
+                    {
+                      "percentage": 12.74,
+                      "rgb": {
+                        "blue": 105,
+                        "green": 132,
+                        "red": 161
+                      }
+                    },
+                    {
+                      "percentage": 4.15,
+                      "rgb": {
+                        "blue": 51,
+                        "green": 77,
+                        "red": 111
+                      }
+                    },
+                    {
+                      "percentage": 4.01,
+                      "rgb": {
+                        "blue": 94,
+                        "green": 90,
+                        "red": 80
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "summary_photo_image_x_large",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 630,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=png&name=2048x2048_2_exp",
+                  "width": 1200
+                }
+              }
+            },
+            {
+              "key": "summary_photo_image",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 314,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=600x314",
+                  "width": 600
+                }
+              }
+            },
+            {
+              "key": "photo_image_full_size_color",
+              "value": {
+                "image_color_value": {
+                  "palette": [
+                    {
+                      "percentage": 54.56,
+                      "rgb": {
+                        "blue": 139,
+                        "green": 130,
+                        "red": 122
+                      }
+                    },
+                    {
+                      "percentage": 19.31,
+                      "rgb": {
+                        "blue": 52,
+                        "green": 78,
+                        "red": 78
+                      }
+                    },
+                    {
+                      "percentage": 12.74,
+                      "rgb": {
+                        "blue": 105,
+                        "green": 132,
+                        "red": 161
+                      }
+                    },
+                    {
+                      "percentage": 4.15,
+                      "rgb": {
+                        "blue": 51,
+                        "green": 77,
+                        "red": 111
+                      }
+                    },
+                    {
+                      "percentage": 4.01,
+                      "rgb": {
+                        "blue": 94,
+                        "green": 90,
+                        "red": 80
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "photo_image_full_size_x_large",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 630,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=png&name=2048x2048_2_exp",
+                  "width": 1200
+                }
+              }
+            },
+            {
+              "key": "card_url",
+              "value": {
+                "scribe_key": "card_url",
+                "string_value": "https://t.co/pm2437ccDm"
+              }
+            },
+            {
+              "key": "summary_photo_image_original",
+              "value": {
+                "image_value": {
+                  "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                  "height": 630,
+                  "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=orig",
+                  "width": 1200
+                }
+              }
+            }
+          ],
+          "card_platform": {
+            "platform": {
+              "audience": {
+                "name": "production"
+              },
+              "device": {
+                "name": "iPhone",
+                "version": "13"
+              }
+            }
+          },
+          "name": "summary_large_image",
+          "url": "https://t.co/pm2437ccDm",
+          "user_refs_results": [
+            {
+              "rest_id": "1626610682773794816",
+              "result": {
+                "__typename": "User",
+                "action_counts": {
+                  "favorites_count": 5987
+                },
+                "avatar": {
+                  "image_url": "https://pbs.twimg.com/profile_images/2095348447692070912/llDzmx5C_normal.jpg"
+                },
+                "banner": {
+                  "image_url": "https://pbs.twimg.com/profile_banners/1626610682773794816/1789485631"
+                },
+                "core": {
+                  "created_at": "Fri Feb 17 15:53:13 +0000 2023",
+                  "name": "Colosseum",
+                  "screen_name": "colosseum"
+                },
+                "dm_permissions": {
+                  "can_dm": true
+                },
+                "exclusive_tweet_following": false,
+                "follow_request_sent": false,
+                "identity_profile_labels_highlighted_label": {},
+                "location": {
+                  "location": ""
+                },
+                "media_permissions": {
+                  "can_media_tag": true
+                },
+                "notifications_settings": {
+                  "notifications_enabled": false
+                },
+                "pinned_items": {
+                  "tweet_ids_str": ["2107125055436337410"]
+                },
+                "privacy": {
+                  "protected": false,
+                  "suspended": false
+                },
+                "private_super_following": false,
+                "profile_bio": {
+                  "description": "Crypto’s premier hackathon, accelerator, and venture fund | https://t.co/l8ojirFTE6",
+                  "entities": {
+                    "description": {
+                      "urls": [
+                        {
+                          "display_url": "colosseum.com/worldsfair",
+                          "expanded_url": "http://colosseum.com/worldsfair",
+                          "indices": [60, 83],
+                          "url": "https://t.co/l8ojirFTE6"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "urls": [
+                        {
+                          "display_url": "colosseum.com",
+                          "expanded_url": "http://colosseum.com",
+                          "indices": [0, 23],
+                          "url": "https://t.co/WWP873LOWX"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "profile_image_shape": "Square",
+                "profile_metadata": {
+                  "profile_interstitial_type": "",
+                  "profile_link_color": "1DA1F2"
+                },
+                "profile_translation": {
+                  "translator_type_enum": "None"
+                },
+                "properties": {
+                  "has_extended_profile": false,
+                  "has_no_screen_name": false
+                },
+                "relationship_counts": {
+                  "followers": 64183,
+                  "following": 116
+                },
+                "relationship_perspectives": {
+                  "blocked_by": false,
+                  "blocking": false,
+                  "dm_blocked_by": false,
+                  "dm_blocking": false,
+                  "followed_by": false,
+                  "following": false,
+                  "live_following": false,
+                  "muting": false
+                },
+                "rest_id": "1626610682773794816",
+                "smart_blocked_by": false,
+                "smart_blocking": false,
+                "super_follow_eligible": false,
+                "super_followed_by": false,
+                "super_following": false,
+                "tweet_counts": {
+                  "media_tweets": 580,
+                  "tweets": 3276
+                },
+                "verification": {
+                  "is_blue_verified": false,
+                  "verified": false,
+                  "verified_type": "Business"
+                },
+                "website": {
+                  "url": "https://t.co/WWP873LOWX"
+                }
+              }
+            }
+          ]
+        },
+        "rest_id": "https://t.co/pm2437ccDm"
+      },
+      "place": {},
+      "entities": {
+        "user_mentions": [
+          {
+            "id_str": "1626610682773794816",
+            "indices": [3, 13],
+            "name": "Colosseum",
+            "screen_name": "colosseum"
+          },
+          {
+            "id_str": "951329744804392960",
+            "indices": [53, 60],
+            "name": "Solana",
+            "screen_name": "solana"
+          },
+          {
+            "id_str": "1536816010375974913",
+            "indices": [84, 97],
+            "name": "Seeker | Solana Mobile",
+            "screen_name": "solanamobile"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": {
+        "type": "tweet",
+        "id": "2109408642697199884",
+        "url": "https://x.com/colosseum/status/2109408642697199884",
+        "twitterUrl": "https://twitter.com/colosseum/status/2109408642697199884",
+        "text": "As a reminder, builders in the recent @Solana Stocklana hack and the @solanamobile Clock In hackathon are eligible to participate and continue progressing in Crypto World's Fair.\n\nProject submissions are due by 11:59pm PDT on October 12.\n\nhttps://t.co/pm2437ccDm",
+        "source": "",
+        "retweetCount": 16,
+        "replyCount": 34,
+        "likeCount": 206,
+        "quoteCount": 9,
+        "viewCount": 20124,
+        "createdAt": "Sun Oct 11 22:19:45 +0000 2026",
+        "lang": "en",
+        "bookmarkCount": 10,
+        "isReply": false,
+        "inReplyToId": "",
+        "conversationId": "2109408642697199884",
+        "displayTextRange": [0, 262],
+        "inReplyToUserId": "",
+        "inReplyToUsername": "",
+        "isPinned": false,
+        "author": {
+          "type": "user",
+          "userName": "colosseum",
+          "url": "https://x.com/colosseum",
+          "twitterUrl": "https://twitter.com/colosseum",
+          "id": "1626610682773794816",
+          "name": "Colosseum",
+          "isVerified": false,
+          "isBlueVerified": false,
+          "verifiedType": "Business",
+          "profilePicture": "https://pbs.twimg.com/profile_images/2095348447692070912/llDzmx5C_normal.jpg",
+          "coverPicture": "https://pbs.twimg.com/profile_banners/1626610682773794816/1789485631",
+          "description": "Crypto’s premier hackathon, accelerator, and venture fund | https://t.co/l8ojirF",
+          "location": "",
+          "followers": 64183,
+          "following": 116,
+          "createdAt": "Fri Feb 17 15:53:13 +0000 2023",
+          "fastFollowersCount": 0,
+          "favouritesCount": 5987,
+          "hasCustomTimelines": true,
+          "isTranslator": false,
+          "mediaCount": 580,
+          "statusesCount": 3276,
+          "affiliatesHighlightedLabel": {},
+          "possiblySensitive": false,
+          "isAutomated": false,
+          "automatedBy": null
+        },
+        "extendedEntities": {},
+        "card": {
+          "legacy": {
+            "binding_values": [
+              {
+                "key": "photo_image_full_size_large",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 419,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=800x419",
+                    "width": 800
+                  }
+                }
+              },
+              {
+                "key": "thumbnail_image",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 147,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=280x150",
+                    "width": 280
+                  }
+                }
+              },
+              {
+                "key": "description",
+                "value": {
+                  "string_value": "Build across blockchain ecosystems from September 14 through October 12, 2026."
+                }
+              },
+              {
+                "key": "domain",
+                "value": {
+                  "string_value": "colosseum.com"
+                }
+              },
+              {
+                "key": "thumbnail_image_large",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 315,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=600x600",
+                    "width": 600
+                  }
+                }
+              },
+              {
+                "key": "summary_photo_image_small",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 202,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=386x202",
+                    "width": 386
+                  }
+                }
+              },
+              {
+                "key": "thumbnail_image_original",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 630,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=orig",
+                    "width": 1200
+                  }
+                }
+              },
+              {
+                "key": "photo_image_full_size_small",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 202,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=386x202",
+                    "width": 386
+                  }
+                }
+              },
+              {
+                "key": "summary_photo_image_large",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 419,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=800x419",
+                    "width": 800
+                  }
+                }
+              },
+              {
+                "key": "thumbnail_image_small",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 76,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=144x144",
+                    "width": 144
+                  }
+                }
+              },
+              {
+                "key": "creator",
+                "value": {
+                  "user_value": {
+                    "id_str": "1626610682773794816",
+                    "path": []
+                  }
+                }
+              },
+              {
+                "key": "thumbnail_image_x_large",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 630,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=png&name=2048x2048_2_exp",
+                    "width": 1200
+                  }
+                }
+              },
+              {
+                "key": "photo_image_full_size_original",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 630,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=orig",
+                    "width": 1200
+                  }
+                }
+              },
+              {
+                "key": "photo_image_full_size_alt_text",
+                "value": {
+                  "string_value": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration."
+                }
+              },
+              {
+                "key": "vanity_url",
+                "value": {
+                  "scribe_key": "vanity_url",
+                  "string_value": "colosseum.com"
+                }
+              },
+              {
+                "key": "photo_image_full_size",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 314,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=600x314",
+                    "width": 600
+                  }
+                }
+              },
+              {
+                "key": "summary_photo_image_alt_text",
+                "value": {
+                  "string_value": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration."
+                }
+              },
+              {
+                "key": "thumbnail_image_color",
+                "value": {
+                  "image_color_value": {
+                    "palette": [
+                      {
+                        "percentage": 54.56,
+                        "rgb": {
+                          "blue": 139,
+                          "green": 130,
+                          "red": 122
+                        }
+                      },
+                      {
+                        "percentage": 19.31,
+                        "rgb": {
+                          "blue": 52,
+                          "green": 78,
+                          "red": 78
+                        }
+                      },
+                      {
+                        "percentage": 12.74,
+                        "rgb": {
+                          "blue": 105,
+                          "green": 132,
+                          "red": 161
+                        }
+                      },
+                      {
+                        "percentage": 4.15,
+                        "rgb": {
+                          "blue": 51,
+                          "green": 77,
+                          "red": 111
+                        }
+                      },
+                      {
+                        "percentage": 4.01,
+                        "rgb": {
+                          "blue": 94,
+                          "green": 90,
+                          "red": 80
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "key": "title",
+                "value": {
+                  "string_value": "The Crypto World's Fair"
+                }
+              },
+              {
+                "key": "summary_photo_image_color",
+                "value": {
+                  "image_color_value": {
+                    "palette": [
+                      {
+                        "percentage": 54.56,
+                        "rgb": {
+                          "blue": 139,
+                          "green": 130,
+                          "red": 122
+                        }
+                      },
+                      {
+                        "percentage": 19.31,
+                        "rgb": {
+                          "blue": 52,
+                          "green": 78,
+                          "red": 78
+                        }
+                      },
+                      {
+                        "percentage": 12.74,
+                        "rgb": {
+                          "blue": 105,
+                          "green": 132,
+                          "red": 161
+                        }
+                      },
+                      {
+                        "percentage": 4.15,
+                        "rgb": {
+                          "blue": 51,
+                          "green": 77,
+                          "red": 111
+                        }
+                      },
+                      {
+                        "percentage": 4.01,
+                        "rgb": {
+                          "blue": 94,
+                          "green": 90,
+                          "red": 80
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "key": "summary_photo_image_x_large",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 630,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=png&name=2048x2048_2_exp",
+                    "width": 1200
+                  }
+                }
+              },
+              {
+                "key": "summary_photo_image",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 314,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=600x314",
+                    "width": 600
+                  }
+                }
+              },
+              {
+                "key": "photo_image_full_size_color",
+                "value": {
+                  "image_color_value": {
+                    "palette": [
+                      {
+                        "percentage": 54.56,
+                        "rgb": {
+                          "blue": 139,
+                          "green": 130,
+                          "red": 122
+                        }
+                      },
+                      {
+                        "percentage": 19.31,
+                        "rgb": {
+                          "blue": 52,
+                          "green": 78,
+                          "red": 78
+                        }
+                      },
+                      {
+                        "percentage": 12.74,
+                        "rgb": {
+                          "blue": 105,
+                          "green": 132,
+                          "red": 161
+                        }
+                      },
+                      {
+                        "percentage": 4.15,
+                        "rgb": {
+                          "blue": 51,
+                          "green": 77,
+                          "red": 111
+                        }
+                      },
+                      {
+                        "percentage": 4.01,
+                        "rgb": {
+                          "blue": 94,
+                          "green": 90,
+                          "red": 80
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "key": "photo_image_full_size_x_large",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 630,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=png&name=2048x2048_2_exp",
+                    "width": 1200
+                  }
+                }
+              },
+              {
+                "key": "card_url",
+                "value": {
+                  "scribe_key": "card_url",
+                  "string_value": "https://t.co/pm2437ccDm"
+                }
+              },
+              {
+                "key": "summary_photo_image_original",
+                "value": {
+                  "image_value": {
+                    "alt": "Crypto World's Fair illustrated fairgrounds with a Tesla coil demonstration.",
+                    "height": 630,
+                    "url": "https://pbs.twimg.com/card_img/2107164325945483264/q_y69jaw?format=jpg&name=orig",
+                    "width": 1200
+                  }
+                }
+              }
+            ],
+            "card_platform": {
+              "platform": {
+                "audience": {
+                  "name": "production"
+                },
+                "device": {
+                  "name": "iPhone",
+                  "version": "13"
+                }
+              }
+            },
+            "name": "summary_large_image",
+            "url": "https://t.co/pm2437ccDm",
+            "user_refs_results": [
+              {
+                "rest_id": "1626610682773794816",
+                "result": {
+                  "__typename": "User",
+                  "action_counts": {
+                    "favorites_count": 5987
+                  },
+                  "avatar": {
+                    "image_url": "https://pbs.twimg.com/profile_images/2095348447692070912/llDzmx5C_normal.jpg"
+                  },
+                  "banner": {
+                    "image_url": "https://pbs.twimg.com/profile_banners/1626610682773794816/1789485631"
+                  },
+                  "core": {
+                    "created_at": "Fri Feb 17 15:53:13 +0000 2023",
+                    "name": "Colosseum",
+                    "screen_name": "colosseum"
+                  },
+                  "dm_permissions": {
+                    "can_dm": true
+                  },
+                  "exclusive_tweet_following": false,
+                  "follow_request_sent": false,
+                  "identity_profile_labels_highlighted_label": {},
+                  "location": {
+                    "location": ""
+                  },
+                  "media_permissions": {
+                    "can_media_tag": true
+                  },
+                  "notifications_settings": {
+                    "notifications_enabled": false
+                  },
+                  "pinned_items": {
+                    "tweet_ids_str": ["2107125055436337410"]
+                  },
+                  "privacy": {
+                    "protected": false,
+                    "suspended": false
+                  },
+                  "private_super_following": false,
+                  "profile_bio": {
+                    "description": "Crypto’s premier hackathon, accelerator, and venture fund | https://t.co/l8ojirFTE6",
+                    "entities": {
+                      "description": {
+                        "urls": [
+                          {
+                            "display_url": "colosseum.com/worldsfair",
+                            "expanded_url": "http://colosseum.com/worldsfair",
+                            "indices": [60, 83],
+                            "url": "https://t.co/l8ojirFTE6"
+                          }
+                        ]
+                      },
+                      "url": {
+                        "urls": [
+                          {
+                            "display_url": "colosseum.com",
+                            "expanded_url": "http://colosseum.com",
+                            "indices": [0, 23],
+                            "url": "https://t.co/WWP873LOWX"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "profile_image_shape": "Square",
+                  "profile_metadata": {
+                    "profile_interstitial_type": "",
+                    "profile_link_color": "1DA1F2"
+                  },
+                  "profile_translation": {
+                    "translator_type_enum": "None"
+                  },
+                  "properties": {
+                    "has_extended_profile": false,
+                    "has_no_screen_name": false
+                  },
+                  "relationship_counts": {
+                    "followers": 64183,
+                    "following": 116
+                  },
+                  "relationship_perspectives": {
+                    "blocked_by": false,
+                    "blocking": false,
+                    "dm_blocked_by": false,
+                    "dm_blocking": false,
+                    "followed_by": false,
+                    "following": false,
+                    "live_following": false,
+                    "muting": false
+                  },
+                  "rest_id": "1626610682773794816",
+                  "smart_blocked_by": false,
+                  "smart_blocking": false,
+                  "super_follow_eligible": false,
+                  "super_followed_by": false,
+                  "super_following": false,
+                  "tweet_counts": {
+                    "media_tweets": 580,
+                    "tweets": 3276
+                  },
+                  "verification": {
+                    "is_blue_verified": false,
+                    "verified": false,
+                    "verified_type": "Business"
+                  },
+                  "website": {
+                    "url": "https://t.co/WWP873LOWX"
+                  }
+                }
+              }
+            ]
+          },
+          "rest_id": "https://t.co/pm2437ccDm"
+        },
+        "place": {},
+        "entities": {
+          "urls": [
+            {
+              "display_url": "colosseum.com/worldsfair",
+              "expanded_url": "https://colosseum.com/worldsfair",
+              "indices": [239, 262],
+              "url": "https://t.co/pm2437ccDm"
+            }
+          ],
+          "user_mentions": [
+            {
+              "id_str": "951329744804392960",
+              "indices": [38, 45],
+              "name": "Solana",
+              "screen_name": "solana"
+            },
+            {
+              "id_str": "1536816010375974913",
+              "indices": [69, 82],
+              "name": "Seeker | Solana Mobile",
+              "screen_name": "solanamobile"
+            }
+          ]
+        },
+        "isRetweet": false,
+        "isQuote": false,
+        "isConversationControlled": false,
+        "quoted_tweet": null,
+        "retweeted_tweet": null,
+        "isLimitedReply": false,
+        "communityInfo": null
+      },
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

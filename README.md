@@ -10,8 +10,13 @@
 
 [![CI](https://github.com/cxmza/windle/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/cxmza/windle/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/cxmza/windle/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/cxmza/windle/actions/workflows/codeql.yml)
+[![Follow on X](https://img.shields.io/badge/follow-%40windlepro-000000?logo=x&logoColor=white)](https://x.com/windlepro)
+[![pump.fun](https://img.shields.io/badge/pump.fun-live-00c853)](https://pump.fun/coin/E4mQ9PH1BVgVdYwiQeh8ZNv4YTEVo7gjR81q4mZGpump)
 
-[**Website**](https://www.windle.fun) · [**App**](https://app.windle.fun) · [**Docs**](https://docs.windle.fun) · [**API**](https://api.windle.fun) · [**How it works**](https://docs.windle.fun/how-it-works/)
+[**Website**](https://www.windle.fun) · [**App**](https://app.windle.fun) · [**Docs**](https://docs.windle.fun) · [**X**](https://x.com/windlepro) · [**API**](https://api.windle.fun) · [**How it works**](https://docs.windle.fun/how-it-works/)
+
+**CA:** `E4mQ9PH1BVgVdYwiQeh8ZNv4YTEVo7gjR81q4mZGpump`
+
 
 </div>
 

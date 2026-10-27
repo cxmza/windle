@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { usePref } from '@/features/settings/prefs';
 import { useReducedMotion } from '@/lib/media';
 import { cssDuration, decelerate } from '@/lib/motion';
+import { oddsText, oddsUnit } from '@/lib/odds';
 import { Digits } from './Digits';
 
 type Props = {
@@ -10,8 +12,15 @@ type Props = {
   delayMs?: number;
 };
 
+/** The "%" after an <OddsNumber />; nothing in decimal format. */
+export function OddsUnit({ className }: { className?: string }) {
+  const unit = oddsUnit(usePref('odds'));
+  return unit ? <span className={className}>{unit}</span> : null;
+}
+
 export function OddsNumber({ value, enter = false, delayMs = 0 }: Props) {
   const reduced = useReducedMotion();
+  const format = usePref('odds');
   const [counting, setCounting] = useState(enter && !reduced);
   const out = useRef<HTMLSpanElement>(null);
   const target = useRef(value);
@@ -35,7 +44,7 @@ export function OddsNumber({ value, enter = false, delayMs = 0 }: Props) {
     return () => cancelAnimationFrame(raf);
   }, [counting, delayMs]);
 
-  if (counting && !reduced) {
+  if (counting && !reduced && format === 'percent') {
     return (
       <>
         <span
@@ -50,5 +59,5 @@ export function OddsNumber({ value, enter = false, delayMs = 0 }: Props) {
       </>
     );
   }
-  return <Digits text={String(value)} />;
+  return <Digits key={format} text={oddsText(value, format)} />;
 }

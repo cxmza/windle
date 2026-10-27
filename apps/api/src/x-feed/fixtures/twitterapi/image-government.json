@@ -1,0 +1,133 @@
+{
+  "tweets": [
+    {
+      "type": "tweet",
+      "id": "2109775146097737812",
+      "url": "https://x.com/WhiteHouse/status/2109775146097737812",
+      "twitterUrl": "https://twitter.com/WhiteHouse/status/2109775146097737812",
+      "text": "POTUS X @BarstoolGruden X @Jakepaul\n\nOHIO, GET READY 🦅 https://t.co/KcdIFd0B5J",
+      "source": "",
+      "retweetCount": 263,
+      "replyCount": 267,
+      "likeCount": 1627,
+      "quoteCount": 32,
+      "viewCount": 91288,
+      "createdAt": "Mon Oct 12 22:36:07 +0000 2026",
+      "lang": "en",
+      "bookmarkCount": 43,
+      "isReply": false,
+      "inReplyToId": "",
+      "conversationId": "2109775146097737812",
+      "displayTextRange": [0, 54],
+      "inReplyToUserId": "",
+      "inReplyToUsername": "",
+      "isPinned": false,
+      "author": {
+        "type": "user",
+        "userName": "WhiteHouse",
+        "url": "https://x.com/WhiteHouse",
+        "twitterUrl": "https://twitter.com/WhiteHouse",
+        "id": "1879644163769335808",
+        "name": "The White House",
+        "isVerified": false,
+        "isBlueVerified": true,
+        "verifiedType": "Government",
+        "profilePicture": "https://pbs.twimg.com/profile_images/2062605835256127489/atNMwHxg_normal.jpg",
+        "coverPicture": "https://pbs.twimg.com/profile_banners/1879644163769335808/1769111449",
+        "description": "Welcome to The Golden Age of America. \n📱 Text USA to 45470 to receive alerts.",
+        "location": "Washington, DC",
+        "followers": 5325965,
+        "following": 5,
+        "createdAt": "Wed Jan 15 21:37:54 +0000 2025",
+        "fastFollowersCount": 0,
+        "favouritesCount": 268,
+        "hasCustomTimelines": true,
+        "isTranslator": false,
+        "mediaCount": 7095,
+        "statusesCount": 19516,
+        "affiliatesHighlightedLabel": {},
+        "possiblySensitive": false,
+        "isAutomated": false,
+        "automatedBy": null
+      },
+      "extendedEntities": {
+        "media": [
+          {
+            "display_url": "pic.x.com/KcdIFd0B5J",
+            "expanded_url": "https://x.com/WhiteHouse/status/2109775146097737812/photo/1",
+            "id_str": "2109775079584284672",
+            "indices": [55, 78],
+            "media_key": "3_2109775079584284672",
+            "media_url_https": "https://pbs.twimg.com/media/HUdtQb6XwAAmcXN.jpg",
+            "original_info": {
+              "focus_rects": [
+                {
+                  "h": 1960,
+                  "w": 3500,
+                  "x": 0,
+                  "y": 157
+                },
+                {
+                  "h": 2333,
+                  "w": 2333,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 2333,
+                  "w": 2046,
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "h": 2333,
+                  "w": 1167,
+                  "x": 29,
+                  "y": 0
+                },
+                {
+                  "h": 2333,
+                  "w": 3500,
+                  "x": 0,
+                  "y": 0
+                }
+              ],
+              "height": 2333,
+              "width": 3500
+            },
+            "type": "photo",
+            "url": "https://t.co/KcdIFd0B5J"
+          }
+        ]
+      },
+      "card": null,
+      "place": {},
+      "entities": {
+        "user_mentions": [
+          {
+            "id_str": "1856802454438121472",
+            "indices": [8, 23],
+            "name": "Jon Gruden",
+            "screen_name": "BarstoolGruden"
+          },
+          {
+            "id_str": "581301629",
+            "indices": [26, 35],
+            "name": "Jake Paul",
+            "screen_name": "jakepaul"
+          }
+        ]
+      },
+      "isRetweet": false,
+      "isQuote": false,
+      "isConversationControlled": false,
+      "quoted_tweet": null,
+      "retweeted_tweet": null,
+      "isLimitedReply": false,
+      "communityInfo": null
+    }
+  ],
+  "status": "success",
+  "msg": "success",
+  "code": 0
+}

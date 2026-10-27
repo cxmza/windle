@@ -1,19 +1,21 @@
 ---
-// Header social links. The X link is a placeholder rendered here instead of via Starlight's `social` config, because
-// `social` derives a `twitter:site` meta tag from the URL and https://x.com has no handle (it would emit "@").
-// Once windle has an X account: delete this override and add { icon: 'x.com', href: 'https://x.com/<handle>' } to
-// `social` in astro.config.mjs.
+// Header social links, kept in sync with SOCIALS in packages/brand/src/socials.ts (docs doesn't depend on @windle/brand:
+// its barrel pulls in React components).
 import { Icon } from '@astrojs/starlight/components';
 import Default from '@astrojs/starlight/components/SocialIcons.astro';
 
-// TODO: the project's own X account; https://x.com is only the site root.
-const X_URL = 'https://x.com';
+const X_URL = 'https://x.com/windlepro';
+const GITHUB_URL = 'https://github.com/cxmza/windle';
 ---
 
 <Default />
 <a href={X_URL} rel="me" class="sl-flex wl-social">
   <span class="sr-only">windle on X</span>
   <Icon name="x.com" />
+</a>
+<a href={GITHUB_URL} rel="me" class="sl-flex wl-social">
+  <span class="sr-only">windle on GitHub</span>
+  <Icon name="github" />
 </a>
 
 <style>

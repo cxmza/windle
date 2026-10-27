@@ -12,15 +12,20 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@react-three/fiber": "^9.8.1",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@tanstack/react-query": "^5.104.1",
     "@windle/brand": "*",
     "@windle/shared": "*",
     "@windle/tokens": "*",
+    "lightweight-charts": "^5.2.1",
+    "motion": "^14.1.0",
+    "radix-ui": "^1.7.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router": "^7.18.4",
-    "three": "^0.186.1"
+    "thumbhash": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
@@ -33,7 +38,6 @@
     "@types/node": "^24.13.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "jsdom": "^28.1.0",

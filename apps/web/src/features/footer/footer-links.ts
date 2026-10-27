@@ -1,4 +1,4 @@
-import { CHAPTERS, ECOSYSTEM } from '../story/chapters';
+import { CHAPTERS } from '../story/chapters';
 import { chapterPath } from '../story/routes';
 
 export interface FooterLink {
@@ -58,23 +58,6 @@ export const FOOTER_COLUMNS: readonly FooterColumn[] = [
       external('Risk', 'https://docs.windle.fun/legal/risk/'),
     ],
   },
-];
-
-export interface Social {
-  slot: 'x' | 'github';
-  label: string;
-  /** null until the account / repository exists: such an entry is not rendered. */
-  href: string | null;
-  placeholder: boolean;
-}
-
-const x = ECOSYSTEM.find((item) => item.slot === 'x');
-
-/** Icon-only social buttons. X reuses the ecosystem chapter's (placeholder) entry; GitHub appears once it has a URL. */
-export const SOCIALS: readonly Social[] = [
-  ...(x ? [{ slot: 'x', label: x.label, href: x.href, placeholder: x.placeholder } satisfies Social] : []),
-  // TODO: set the repository URL once it is public; until then the button stays hidden.
-  { slot: 'github', label: 'GitHub', href: null, placeholder: false },
 ];
 
 /** The legal links repeated inline in the bottom bar. */

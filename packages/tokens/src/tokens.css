@@ -31,8 +31,9 @@
   --blue-900: oklch(0.92 0.05 215);
 }
 
-/* ---------- semantic (dark-first; no light theme) ---------- */
-:root {
+/* ---------- semantic (dark-first; light is opt-in via :root[data-theme="light"] below) ---------- */
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
   --background: var(--gray-0);
   --surface: var(--gray-100);
@@ -111,6 +112,43 @@
       transparent 100%
     ),
     linear-gradient(var(--blue-50), var(--blue-50));
+}
+
+/* ---------- light theme: opt-in only. Nothing sets data-theme="light" except apps/app, so apps/web and apps/auth are
+   unchanged. [data-theme="dark"] above lets a subtree inside a light page stay dark (the 3D island).
+   Contrast (computed, WCAG relative luminance): foreground on background 16.4:1; muted-foreground on background 6.4:1,
+   on muted 5.8:1; border on background/surface 3.6:1; ring on background 5.7:1; accent-foreground on accent 5.0:1;
+   accent-text on background 6.2:1; glow on background 5.0:1. ---------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: oklch(0.965 0 0);
+  --surface: oklch(0.99 0 0);
+  --surface-raised: oklch(1 0 0);
+  --foreground: oklch(0.2 0 0);
+  --muted: oklch(0.93 0 0);
+  --muted-foreground: oklch(0.46 0 0);
+  --border: oklch(0.6 0 0);
+  --border-strong: oklch(0.3 0 0);
+  --ring: oklch(0.5 0.2 262);
+  --emphasis: oklch(0.2 0 0);
+  --emphasis-foreground: oklch(1 0 0);
+  --caption: oklch(1 0 0 / 0.88);
+  --caption-foreground: oklch(0.2 0 0);
+  --scrim: oklch(0.2 0 0 / 0.4);
+  --ink: oklch(0.2 0 0);
+  --ink-inverse: oklch(1 0 0);
+
+  --surface-navy: oklch(0.95 0.025 255);
+  --surface-navy-raised: oklch(0.92 0.045 258);
+  --accent: oklch(0.55 0.2 260);
+  --accent-foreground: oklch(1 0 0);
+  --accent-text: oklch(0.48 0.19 262);
+  --border-accent: oklch(0.55 0.2 260);
+  --glow: oklch(0.52 0.19 258);
+  --glow-soft: oklch(from var(--glow) l c h / 0.3);
+  --backdrop-navy:
+    radial-gradient(60% 55% at 78% 82%, oklch(0.9 0.06 255 / 0.7), transparent 70%),
+    radial-gradient(90% 80% at 70% 100%, oklch(0.93 0.04 258 / 0.9), transparent 75%);
 }
 
 @theme inline {
@@ -213,6 +251,8 @@
   --dock-gap: 0.75rem;
   /* the dock arrives once the hero intro has landed (INTRO.cta + --dur-slow in motion-tokens.ts, rounded) */
   --dock-enter-delay: 1100ms;
+  /* the socials and the token CA sit beside the bar from the start of the intro: a brief beat, then a quiet fade */
+  --socials-enter-delay: 150ms;
   --dock-clearance: calc(var(--dock-height) + var(--dock-gap) * 2 + env(safe-area-inset-bottom, 0px));
   /* stacking: canvas 0 < chapters 10 < drawing hand 20 < header 30 < dock 40 < dock sheet (modal) 45 < pencil
      overlay 50 (never intercepts input, so the cursor stays visible over everything). The hand draws on the page,

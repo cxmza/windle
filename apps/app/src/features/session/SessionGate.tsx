@@ -1,19 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WindleMark } from '@windle/brand';
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router';
 import { ApiUnavailable } from '@/components/ApiUnavailable';
 import { api } from '@/lib/api';
 import { AUTH_URL } from '@/lib/env';
 import { redirectTo } from '@/lib/navigate';
 import { AppShell } from '@/shell/AppShell';
+import { PageFrame } from '@/shell/PageFrame';
+import { portfolioQuery, predictKeys } from '../predict/queries';
 import { loginUrl } from './login-url';
 import { sessionQuery } from './queries';
 import { type AuthedSession, SessionContext } from './session-context';
 
 function Centered({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-aura flex min-h-dvh flex-col items-center justify-center gap-6 px-(--gutter) py-12">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-6 px-(--gutter) py-12">
       <WindleMark decorative size={56} />
       <div className="w-full max-w-md">{children}</div>
     </div>
@@ -44,56 +46,40 @@ function useSignOut() {
   });
 }
 
-function SignedInLayout({ session, layout }: { session: AuthedSession; layout: Layout }) {
+function SignedInLayout({ session }: { session: AuthedSession }) {
   const logout = useSignOut();
+  const queryClient = useQueryClient();
+  const address = useRef(session.address);
+  useEffect(() => {
+    if (address.current !== session.address) {
+      address.current = session.address;
+      queryClient.removeQueries({ queryKey: predictKeys.all });
+    }
+    void queryClient.prefetchQuery(portfolioQuery());
+  }, [queryClient, session.address]);
   const signOut = {
     run: () => logout.mutate(),
     pending: logout.isPending || logout.isSuccess,
     failed: logout.isError,
   };
 
-  if (layout === 'bare') {
-    return (
-      <SessionContext value={{ session, signOut }}>
-        <Outlet />
-      </SessionContext>
-    );
-  }
-
   return (
     <SessionContext value={{ session, signOut }}>
-      <AppShell
-        address={session.address}
-        onSignOut={signOut.run}
-        signingOut={signOut.pending}
-        notice={
-          logout.isError ? (
-            <div
-              role="alert"
-              className="rounded-2xl border border-border-accent/50 bg-surface-navy/60 px-4 py-3 text-sm"
-            >
-              Could not sign out. Check your connection and try again.
-            </div>
-          ) : null
-        }
-      >
+      <AppShell>
         <Outlet />
       </AppShell>
     </SessionContext>
   );
 }
 
-/** `shell`: header + side nav + dock (account pages). `bare`: the page draws its own chrome (full-bleed home). */
-type Layout = 'shell' | 'bare';
-
 /**
  * Layout route for everything that needs a session.
  *  - pending: the real shell with placeholders (no layout shift)
  *  - api unreachable: friendly banner with retry
  *  - anonymous: leave for the sign-in app, with `return_to` set to where the person was
- *  - authenticated: shell + the matched page (`layout="bare"`: the page alone, it draws its own chrome)
+ *  - authenticated: the sidebar shell + the matched page
  */
-export function SessionGate({ layout = 'shell' }: { layout?: Layout }) {
+export function SessionGate() {
   const query = useQuery(sessionQuery());
   const data = query.data;
   const anonymous = data?.authenticated === false;
@@ -110,22 +96,14 @@ export function SessionGate({ layout = 'shell' }: { layout?: Layout }) {
         </Centered>
       );
     }
-    if (layout === 'bare') {
-      // the home's poster: same backdrop the scene fades in over, so nothing flashes when the session resolves
-      return (
-        <div className="bg-nebula min-h-dvh">
+    return (
+      <AppShell>
+        <PageFrame>
           <span role="status" className="sr-only">
             Checking your session…
           </span>
-        </div>
-      );
-    }
-    return (
-      <AppShell>
-        <span role="status" className="sr-only">
-          Checking your session…
-        </span>
-        <PageSkeleton />
+          <PageSkeleton />
+        </PageFrame>
       </AppShell>
     );
   }
@@ -140,5 +118,5 @@ export function SessionGate({ layout = 'shell' }: { layout?: Layout }) {
     );
   }
 
-  return <SignedInLayout session={data} layout={layout} />;
+  return <SignedInLayout session={data} />;
 }

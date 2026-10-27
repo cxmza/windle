@@ -1,7 +1,7 @@
 import { SESSION_COOKIE } from '@windle/shared';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AppContext } from '../context.ts';
-import { dep } from '../errors.ts';
+import { dep, HttpError } from '../errors.ts';
 import { sha256Hex } from '../lib/crypto.ts';
 import type { SessionRecord } from '../store/types.ts';
 
@@ -65,6 +65,18 @@ export async function readSession(
     session: { token, hash, record, ttlSeconds, expiresAt: new Date(ctx.now().getTime() + ttlSeconds * 1000) },
     stale: false,
   };
+}
+
+/** The live session or `401 unauthenticated` (a stale cookie is cleared on the way). */
+export async function requireSession(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  ctx: AppContext,
+): Promise<ActiveSession> {
+  const { session, stale } = await readSession(request, ctx);
+  if (session) return session;
+  if (stale) clearSessionCookie(reply, ctx);
+  throw new HttpError(401, 'unauthenticated', 'Sign in first');
 }
 
 /** Sliding expiry: every authenticated read pushes Redis TTL and cookie Max-Age forward (capped by the absolute TTL). */

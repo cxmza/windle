@@ -181,7 +181,15 @@ describe('OpenAPI document quality', () => {
   it('has a summary and description for every operation and tags in order', async () => {
     const { app } = makeTestApp();
     const doc = (await app.inject({ method: 'GET', url: '/openapi.json' })).json();
-    expect(doc.tags.map((t: { name: string }) => t.name)).toEqual(['System', 'Auth', 'Account']);
+    expect(doc.tags.map((t: { name: string }) => t.name)).toEqual([
+      'System',
+      'Auth',
+      'Account',
+      'X feed',
+      'Markets',
+      'Share',
+      'Media',
+    ]);
     const missing: string[] = [];
     for (const [path, item] of Object.entries<
       Record<string, { summary?: string; description?: string; tags?: string[] }>

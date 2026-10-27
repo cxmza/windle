@@ -1,8 +1,11 @@
 #!/bin/bash
 # Mints a signed cdn.windle.fun/img/ URL.
-# Usage: imgproxy-url.sh <options> <path-in-cdn-release> [format]
-#   imgproxy-url.sh rs:fill:1200:600 samples/aurora.jpg          -> auto AVIF/WebP by Accept
-#   imgproxy-url.sh rs:fit:512:512 brand/windle-mark-blue.svg png -> pinned PNG
+# Usage: imgproxy-url.sh <options> <source> [format]
+# <source> is relative to imgproxy's root /srv/windle (= /opt/windle on the host, IMGPROXY_BASE_URL=local:///):
+#   current/cdn/<file>       a file of the live cdn release
+#   media/<ab>/<sha256>.webp a user image master (the api mints these itself, same scheme)
+#   imgproxy-url.sh rs:fill:1200:600 current/cdn/samples/aurora.jpg          -> auto AVIF/WebP by Accept
+#   imgproxy-url.sh rs:fit:512:512 current/cdn/brand/windle-mark-blue.svg png -> pinned PNG
 # Key/salt are read from /opt/windle/shared/imgproxy.env (root only). The signature is
 # base64url(HMAC-SHA256(key, salt || "/<options>/plain/<path>[@fmt]")), IMGPROXY_SIGNATURE_SIZE=32 (default).
 set -euo pipefail

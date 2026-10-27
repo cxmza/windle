@@ -1,4 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { usePref } from '@/features/settings/prefs';
 
 export function useMediaQuery(query: string): boolean {
   return useSyncExternalStore(
@@ -13,21 +14,11 @@ export function useMediaQuery(query: string): boolean {
   );
 }
 
-export const useReducedMotion = () => useMediaQuery('(prefers-reduced-motion: reduce)');
-
-let webgl: boolean | undefined;
-
-export function webglAvailable(): boolean {
-  if (webgl !== undefined) return webgl;
-  try {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
-    webgl = Boolean(ctx);
-    ctx?.getExtension('WEBGL_lose_context')?.loseContext();
-  } catch {
-    webgl = false;
-  }
-  return webgl;
+/** True when the system asks for reduced motion or the person chose "Reduced" in settings. */
+export function useReducedMotion(): boolean {
+  const system = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const chosen = usePref('motion') === 'reduced';
+  return system || chosen;
 }
 
 export function useNow(intervalMs: number, enabled = true): number {

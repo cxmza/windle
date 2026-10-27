@@ -1,10 +1,13 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#000000" />
+    <!-- video.twimg.com answers 403 to cross-site Referers; same-origin keeps Referer on our own requests only. -->
+    <meta name="referrer" content="same-origin" />
+    <script src="/theme-init.js"></script>
     <!-- Private product surface: never indexed (nginx also sends X-Robots-Tag, infra/nginx/sites/windle-30-app.conf). -->
     <meta name="robots" content="noindex, nofollow" />
     <meta name="format-detection" content="telephone=no" />
@@ -24,6 +27,8 @@
     <meta name="application-name" content="windle app" />
     <meta name="apple-mobile-web-app-title" content="windle" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!-- User images are served from the CDN (CSP img-src allows it); open the connection before the first picture. -->
+    <link rel="preconnect" href="https://cdn.windle.fun" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

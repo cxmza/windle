@@ -5,6 +5,13 @@ import type { EphemeralStore, SessionRecord } from './types.ts';
 
 const NONCE_PREFIX = 'wl:siws:nonce:';
 const SESSION_PREFIX = 'wl:sess:';
+const LEASE_PREFIX = 'wl:lease:';
+
+// Renew only our own lease (a plain PEXPIRE could extend a lease another instance took after ours expired).
+const RENEW_LEASE = `if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('pexpire', KEYS[1], ARGV[2]) end
+return 0`;
+const RELEASE_LEASE = `if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) end
+return 0`;
 
 const SessionRecordSchema = z.object({
   userId: z.string(),
@@ -82,6 +89,17 @@ export class RedisEphemeralStore implements EphemeralStore {
 
   async deleteSession(hash: string) {
     await this.redis.del(SESSION_PREFIX + hash);
+  }
+
+  async acquireLease(key: string, owner: string, ttlMs: number) {
+    const taken = await this.redis.set(LEASE_PREFIX + key, owner, 'PX', ttlMs, 'NX');
+    if (taken === 'OK') return true;
+    const renewed = await this.redis.eval(RENEW_LEASE, 1, LEASE_PREFIX + key, owner, String(ttlMs));
+    return renewed === 1;
+  }
+
+  async releaseLease(key: string, owner: string) {
+    await this.redis.eval(RELEASE_LEASE, 1, LEASE_PREFIX + key, owner);
   }
 
   async ping() {

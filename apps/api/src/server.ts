@@ -1,8 +1,12 @@
 import { buildApp } from './app.ts';
 import { loadConfig } from './config.ts';
 import { createMetrics } from './lib/metrics.ts';
+import { PostgresMarketRepository } from './markets/postgres.ts';
+import { PostgresMediaRepository } from './media/postgres.ts';
+import { RedisCacheStore } from './store/cache.ts';
 import { createDb, createSql, PostgresUserRepository } from './store/postgres.ts';
 import { createRedis, RedisEphemeralStore } from './store/redis.ts';
+import { RedisXEnrichStore } from './x-feed/enrich.ts';
 
 const config = loadConfig();
 const metrics = createMetrics();
@@ -20,10 +24,15 @@ const rateLimitRedis =
         info: (o, m) => log.info(o, m),
       });
 
+const db = createDb(sql);
 const app = buildApp(config, {
   store: new RedisEphemeralStore(redis),
-  repo: new PostgresUserRepository(createDb(sql)),
+  repo: new PostgresUserRepository(db),
+  markets: new PostgresMarketRepository(db),
+  media: new PostgresMediaRepository(db),
+  cache: new RedisCacheStore(redis),
   rateLimitRedis,
+  xEnrichStore: new RedisXEnrichStore(redis),
   metrics,
   extraMetrics: () => {
     const clients =

@@ -1,3 +1,4 @@
+import { SOCIALS } from '@windle/brand';
 import { useRef } from 'react';
 import { cn } from '@/lib/cn';
 import { gsap, useGSAP } from '@/lib/gsap';
@@ -64,54 +65,71 @@ export function Ecosystem({ chapter }: { chapter: ChapterData }) {
       <ChapterTitle chapter={chapter} className="max-w-[18ch]" />
       <Caption text={chapter.caption} emphasis={chapter.emphasis} />
       <ul data-ecosystem-slots className="grid w-full max-w-3xl grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4">
-        {ECOSYSTEM.map((item) => (
-          <li
-            key={item.slot}
-            data-ecosystem-item={item.slot}
-            className={cn(
-              'group relative flex items-center gap-4 border border-border-strong bg-caption p-2 backdrop-blur-md transition-colors duration-(--dur-fast) ease-standard sm:flex-col sm:gap-3 sm:p-4',
-              '[@media(hover:hover)]:hover:border-border-accent',
-              // the 3D logo renders on the canvas BEHIND this card: once it is extruded, drop the frosted fill from the
-              // card (the backdrop blur would smear the logo); the label keeps its own backing below
-              'has-[[data-logo-state=extruded]]:bg-transparent has-[[data-logo-state=extruded]]:backdrop-blur-none',
-            )}
-          >
-            {/* Blue halo (feedback: the logo became real): a static shadow-glow layer whose OPACITY blooms in and
+        {ECOSYSTEM.map((item) => {
+          const href = item.slot === 'x' ? SOCIALS.x : item.href;
+          return (
+            <li
+              key={item.slot}
+              data-ecosystem-item={item.slot}
+              className={cn(
+                'group relative flex items-center gap-4 border border-border-strong bg-caption p-2 backdrop-blur-md transition-colors duration-(--dur-fast) ease-standard sm:flex-col sm:gap-3 sm:p-4',
+                '[@media(hover:hover)]:hover:border-border-accent',
+                // the 3D logo renders on the canvas BEHIND this card: once it is extruded, drop the frosted fill from the
+                // card (the backdrop blur would smear the logo); the label keeps its own backing below
+                'has-[[data-logo-state=extruded]]:bg-transparent has-[[data-logo-state=extruded]]:backdrop-blur-none',
+              )}
+            >
+              {/* Blue halo (feedback: the logo became real): a static shadow-glow layer whose OPACITY blooms in and
                 settles once the 3D layer has extruded the logo; fades out again on reset. Reduced motion: no bloom,
                 the layer just appears at its settled opacity (the transition is a short fade). */}
-            <span
-              aria-hidden="true"
-              data-logo-glow
-              className="pointer-events-none absolute inset-0 opacity-0 shadow-glow transition-opacity duration-(--dur-fast) ease-standard group-has-[[data-logo-state=extruded]]:opacity-60 motion-safe:group-has-[[data-logo-state=extruded]]:animate-glow-settle"
-            />
-            <div
-              data-logo-slot={item.slot}
-              data-logo-state="sketch"
-              className="group/slot aspect-square w-12 shrink-0 text-ink sm:w-full sm:max-w-32"
-            >
-              <HandDrawing
-                id={`logo-${item.slot}`}
-                drawing={LOGO_SKETCHES[item.slot]}
-                data-logo-sketch={item.slot}
-                className="size-full transition-opacity duration-(--dur-slow) ease-standard group-data-[logo-state=extruded]/slot:opacity-0"
+              <span
+                aria-hidden="true"
+                data-logo-glow
+                className="pointer-events-none absolute inset-0 opacity-0 shadow-glow transition-opacity duration-(--dur-fast) ease-standard group-has-[[data-logo-state=extruded]]:opacity-60 motion-safe:group-has-[[data-logo-state=extruded]]:animate-glow-settle"
               />
-            </div>
-            <p className="flex flex-col gap-1 bg-caption px-2 py-1 text-left uppercase backdrop-blur-md sm:items-center sm:text-center">
-              <span className="text-kicker font-semibold tracking-[0.18em] text-caption-foreground">{item.prefix}</span>
-              <a
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-href-placeholder={item.placeholder || undefined}
-                className="inline-flex min-h-6 items-center gap-1 font-display text-lede font-extrabold underline underline-offset-4 transition-colors duration-(--dur-fast) ease-standard active:opacity-70 [@media(hover:hover)]:hover:text-accent-text"
+              <div
+                data-logo-slot={item.slot}
+                data-logo-state="sketch"
+                className="group/slot aspect-square w-12 shrink-0 text-ink sm:w-full sm:max-w-32"
               >
-                {item.label}
-                <span aria-hidden="true">&#8599;</span>
-                <span className="sr-only">(opens in a new tab)</span>
-              </a>
-            </p>
-          </li>
-        ))}
+                <HandDrawing
+                  id={`logo-${item.slot}`}
+                  drawing={LOGO_SKETCHES[item.slot]}
+                  data-logo-sketch={item.slot}
+                  className="size-full transition-opacity duration-(--dur-slow) ease-standard group-data-[logo-state=extruded]/slot:opacity-0"
+                />
+              </div>
+              <p className="flex flex-col gap-1 bg-caption px-2 py-1 text-left uppercase backdrop-blur-md sm:items-center sm:text-center">
+                <span className="text-kicker font-semibold tracking-[0.18em] text-caption-foreground">
+                  {item.prefix}
+                </span>
+                {href === null ? (
+                  <span
+                    data-href-placeholder={import.meta.env.DEV || undefined}
+                    title={import.meta.env.DEV ? `${item.label} link not set` : undefined}
+                    className={cn(
+                      'inline-flex min-h-6 items-center font-display text-lede font-extrabold',
+                      import.meta.env.DEV && 'underline decoration-dashed underline-offset-4 opacity-60',
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                ) : (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-6 items-center gap-1 font-display text-lede font-extrabold underline underline-offset-4 transition-colors duration-(--dur-fast) ease-standard active:opacity-70 [@media(hover:hover)]:hover:text-accent-text"
+                  >
+                    {item.label}
+                    <span aria-hidden="true">&#8599;</span>
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                )}
+              </p>
+            </li>
+          );
+        })}
       </ul>
       <p className="max-w-[52ch] bg-caption px-3 py-2 text-kicker uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-md">
         Independent project. Not affiliated with or endorsed by Solana, pump.fun or X. Logos belong to their owners.

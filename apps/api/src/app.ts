@@ -15,10 +15,26 @@ import type { AppContext } from './context.ts';
 import { HttpError, registerErrorHandling } from './errors.ts';
 import { clientIp, createTrustList, isTrusted } from './lib/client-ip.ts';
 import { createMetrics, type Metrics } from './lib/metrics.ts';
+import type { Rng } from './markets/bots/model.ts';
+import { MarketBots } from './markets/bots/runner.ts';
+import { MemoryMarketRepository } from './markets/memory.ts';
+import type { MarketRepository } from './markets/types.ts';
+import { MemoryMediaRepository } from './media/memory.ts';
+import { MediaService } from './media/service.ts';
+import { MediaStorage } from './media/storage.ts';
+import type { MediaRepository } from './media/types.ts';
 import { REFERENCE_CSP, referenceConfiguration } from './reference.ts';
+import { marketRoutes } from './routes/markets.ts';
+import { mediaRoutes } from './routes/media.ts';
+import { shareRoutes } from './routes/share.ts';
 import { systemRoutes } from './routes/system.ts';
+import { xFeedRoutes } from './routes/x-feed.ts';
+import { type CacheStore, MemoryCacheStore } from './store/cache.ts';
 import type { EphemeralStore, UserRepository } from './store/types.ts';
 import { VERSION } from './version.ts';
+import { MemoryXEnrichStore, XEnricher, type XEnrichStore } from './x-feed/enrich.ts';
+import { XFeedHub } from './x-feed/hub.ts';
+import { resolveTco, TwitterApiClient } from './x-feed/twitterapi.ts';
 
 export interface AppDeps {
   store: EphemeralStore;
@@ -29,6 +45,22 @@ export interface AppDeps {
   now?: () => Date;
   /** Extra Prometheus lines (pool/client gauges) appended to /metrics. */
   extraMetrics?: () => string[];
+  /** Fan-out to the X feed relay; built from config.xFeed when omitted. */
+  xFeed?: XFeedHub;
+  /** Enrichment cache + credit budget; in process memory when omitted (tests, single-instance dev). */
+  xEnrichStore?: XEnrichStore;
+  /** fetch for twitterapi.io and t.co (tests). */
+  xEnrichFetch?: typeof fetch;
+  /** Markets, trades, balances; in process memory when omitted (tests, single-instance dev). */
+  markets?: MarketRepository;
+  /** Leaderboard and share-image cache; in process memory when omitted. */
+  cache?: CacheStore;
+  /** Randomness of the house market bots (tests); Math.random when omitted. */
+  botsRng?: Rng;
+  /** Image metadata; in process memory when omitted (tests, single-instance dev). Masters go to MEDIA_ROOT. */
+  media?: MediaRepository;
+  /** fetch for the Cloudflare purge API (tests). */
+  mediaFetch?: typeof fetch;
 }
 
 const REQUEST_ID = /^[A-Za-z0-9._:-]{1,128}$/;
@@ -40,14 +72,6 @@ const API_CSP = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; fo
 export function buildApp(config: Config, deps: AppDeps): FastifyInstance {
   const trust = createTrustList(config.trustProxy);
   const metrics = deps.metrics ?? createMetrics();
-  const ctx: AppContext = {
-    config,
-    store: deps.store,
-    repo: deps.repo,
-    metrics,
-    trust,
-    now: deps.now ?? (() => new Date()),
-  };
   const allowedOrigins = new Set(config.corsOrigins);
 
   const app = Fastify({
@@ -90,6 +114,44 @@ export function buildApp(config: Config, deps: AppDeps): FastifyInstance {
     routerOptions: { ignoreTrailingSlash: true, maxParamLength: 200 },
   });
 
+  const xFeed =
+    deps.xFeed ?? new XFeedHub({ relayUrl: config.xFeed.relayUrl, log: app.log.child({ module: 'x-feed' }) });
+  const now = deps.now ?? (() => new Date());
+  const enrichFetch = deps.xEnrichFetch ?? fetch;
+  const { apiKey, baseUrl, dailyBudget } = config.xEnrich;
+  const xEnrich = new XEnricher({
+    client: apiKey ? new TwitterApiClient({ apiKey, baseUrl, fetch: enrichFetch }) : undefined,
+    store: deps.xEnrichStore ?? new MemoryXEnrichStore(() => now().getTime()),
+    hub: xFeed,
+    log: app.log.child({ module: 'x-enrich' }),
+    now,
+    dailyBudget,
+    resolveTco: (url) => resolveTco(url, enrichFetch),
+    results: metrics.xEnrich,
+    credits: metrics.xEnrichCredits,
+  });
+  const ctx: AppContext = {
+    config,
+    store: deps.store,
+    repo: deps.repo,
+    metrics,
+    trust,
+    now,
+    xFeed,
+    xEnrich,
+    markets: deps.markets ?? new MemoryMarketRepository(),
+    cache: deps.cache ?? new MemoryCacheStore({ now: () => now().getTime() }),
+    media: new MediaService({
+      repo: deps.media ?? new MemoryMediaRepository(),
+      storage: new MediaStorage(config.media.root),
+      config: config.media,
+      metrics,
+      log: app.log.child({ module: 'media' }),
+      now,
+      ...(deps.mediaFetch ? { fetch: deps.mediaFetch } : {}),
+    }),
+  };
+
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
   registerErrorHandling(app, { exposeInternalMessages: !config.isProd });
@@ -127,9 +189,16 @@ export function buildApp(config: Config, deps: AppDeps): FastifyInstance {
   app.register(fastifyCors, {
     origin: (origin, cb) => cb(null, origin !== undefined && allowedOrigins.has(origin)),
     credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'X-Request-Id'],
-    exposedHeaders: ['X-Request-Id', 'Retry-After', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset'],
+    exposedHeaders: [
+      'X-Request-Id',
+      'Retry-After',
+      'X-RateLimit-Limit',
+      'X-RateLimit-Remaining',
+      'X-RateLimit-Reset',
+      'Date',
+    ],
     maxAge: 600,
     strictPreflight: true,
   });
@@ -204,6 +273,20 @@ export function buildApp(config: Config, deps: AppDeps): FastifyInstance {
         { name: 'System', description: 'Service index, liveness and readiness.' },
         { name: 'Auth', description: 'Sign-In With Solana and cookie sessions.' },
         { name: 'Account', description: 'The signed-in user.' },
+        { name: 'X feed', description: 'Live posts of tracked KOL and founder accounts on X (JSON + SSE).' },
+        {
+          name: 'Markets',
+          description:
+            'Prediction markets on tweets, traded with practice points (no real value; every account starts at ' +
+            '1000). LMSR pricing, automatic settlement, leaderboard.',
+        },
+        { name: 'Share', description: 'Link previews of markets: share page and Open Graph image.' },
+        {
+          name: 'Media',
+          description:
+            'User images (market image, avatar): upload once, attach by id, served from cdn.windle.fun in fixed ' +
+            'sizes. Reports and admin takedown.',
+        },
       ],
       components: {
         securitySchemes: {
@@ -221,8 +304,12 @@ export function buildApp(config: Config, deps: AppDeps): FastifyInstance {
   });
 
   app.register(async (scope) => {
-    await systemRoutes(scope, ctx, deps.extraMetrics);
+    await systemRoutes(scope, ctx, () => [...(deps.extraMetrics?.() ?? []), ...xFeedMetrics(xFeed)]);
     await authRoutes(scope, ctx);
+    await xFeedRoutes(scope, ctx);
+    await marketRoutes(scope, ctx);
+    await shareRoutes(scope, ctx);
+    await mediaRoutes(scope, ctx);
     scope.get('/openapi.json', { schema: { hide: true } }, async () => app.swagger());
   });
 
@@ -249,6 +336,39 @@ export function buildApp(config: Config, deps: AppDeps): FastifyInstance {
     else if (!quiet) request.log.info(line, 'request');
   });
 
+  if (config.bots.enabled) {
+    const bots = new MarketBots({
+      repo: ctx.markets,
+      store: deps.store,
+      config: config.bots,
+      now,
+      log: app.log.child({ module: 'market-bots' }),
+      ...(deps.botsRng ? { rng: deps.botsRng } : {}),
+    });
+    app.addHook('onReady', async () => bots.start());
+    // Before onClose (which ends the Postgres pool in server.ts): a running tick finishes, the lease is released.
+    app.addHook('preClose', async () => bots.stop());
+  }
+
+  // Open SSE streams would keep server.close() waiting; end them (with a retry hint) before it runs.
+  app.addHook('preClose', async () => xFeed.close());
   app.addHook('onClose', async () => metrics.stop());
   return app;
+}
+
+function xFeedMetrics(hub: XFeedHub): string[] {
+  const s = hub.stats();
+  return [
+    '# HELP windle_x_feed_live 1 if the upstream stream from x-relay is live.',
+    '# TYPE windle_x_feed_live gauge',
+    `windle_x_feed_live ${s.live ? 1 : 0}`,
+    '# HELP windle_x_feed_clients Open GET /v1/x/stream connections.',
+    '# TYPE windle_x_feed_clients gauge',
+    `windle_x_feed_clients ${s.clients}`,
+    '# HELP windle_x_feed_events_total X feed hub counters (see `event` label).',
+    '# TYPE windle_x_feed_events_total counter',
+    `windle_x_feed_events_total{event="upstream_session"} ${s.upstreamSessions}`,
+    `windle_x_feed_events_total{event="invalid_dropped"} ${s.invalidDropped}`,
+    `windle_x_feed_events_total{event="slow_client_dropped"} ${s.slowClientsDropped}`,
+  ];
 }

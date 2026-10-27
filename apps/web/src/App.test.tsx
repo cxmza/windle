@@ -1,4 +1,5 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
+import { SOCIALS } from '@windle/brand';
 import { describe, expect, it } from 'vitest';
 import { App } from '@/App';
 import { AppProviders } from '@/app/providers';
@@ -81,7 +82,7 @@ describe('App', () => {
       'href',
       'https://pump.fun',
     );
-    expect(within(section as HTMLElement).getByRole('link', { name: /^X/ })).toHaveAttribute('href', 'https://x.com');
+    expect(within(section as HTMLElement).getByRole('link', { name: /^X/ })).toHaveAttribute('href', SOCIALS.x);
     for (const link of section?.querySelectorAll('a') ?? []) expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     expect(section).toHaveTextContent(/Built on/);
     expect(section).toHaveTextContent(/Works with/);

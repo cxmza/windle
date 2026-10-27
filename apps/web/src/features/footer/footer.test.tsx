@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
+import { SOCIALS } from '@windle/brand';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { FOOTER_COLUMNS, HEALTH_URL, LEGAL_LINKS, TAGLINE } from './footer-links';
 import { SiteFooter } from './SiteFooter';
@@ -37,13 +38,14 @@ describe('SiteFooter', () => {
     expect(screen.getByText(/2026 windle/)).toBeInTheDocument();
   });
 
-  it('shows the tagline, icon-only socials (no GitHub until it has a URL) and the legal links inline', () => {
+  it('shows the tagline, icon-only socials from the shared config and the legal links inline', () => {
     render(<SiteFooter />);
     expect(screen.getByText(TAGLINE)).toBeInTheDocument();
     const x = screen.getByRole('link', { name: /windle on X/ });
     expect(x).toHaveTextContent('');
     expect(x.querySelector('svg')).not.toBeNull();
-    expect(screen.queryByRole('link', { name: /GitHub/ })).toBeNull();
+    expect(x).toHaveAttribute('href', SOCIALS.x);
+    expect(screen.getByRole('link', { name: /windle on GitHub/ })).toHaveAttribute('href', SOCIALS.github);
     const bottom = screen.getByText(/2026 windle/).parentElement;
     for (const link of LEGAL_LINKS) {
       expect(bottom?.querySelector(`a[href="${link.href}"]`)).not.toBeNull();

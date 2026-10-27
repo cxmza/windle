@@ -7,12 +7,20 @@ export class HttpError extends Error {
   readonly statusCode: number;
   readonly code: ApiErrorCode;
   readonly headers: Record<string, string> | undefined;
+  readonly details: Record<string, string> | undefined;
 
-  constructor(statusCode: number, code: ApiErrorCode, message: string, headers?: Record<string, string>) {
+  constructor(
+    statusCode: number,
+    code: ApiErrorCode,
+    message: string,
+    headers?: Record<string, string>,
+    details?: Record<string, string>,
+  ) {
     super(message);
     this.statusCode = statusCode;
     this.code = code;
     this.headers = headers;
+    this.details = details;
   }
 }
 
@@ -36,8 +44,13 @@ export async function dep<T>(dependency: 'postgres' | 'redis', fn: () => Promise
   }
 }
 
-export function errorBody(request: FastifyRequest, code: ApiErrorCode, message: string): ApiError {
-  return { error: { code, message, requestId: request.id } };
+export function errorBody(
+  request: FastifyRequest,
+  code: ApiErrorCode,
+  message: string,
+  details?: Record<string, string>,
+): ApiError {
+  return { error: { code, message, requestId: request.id, ...(details ? { details } : {}) } };
 }
 
 const FASTIFY_CODES: Record<string, [number, ApiErrorCode, string]> = {
@@ -53,7 +66,7 @@ export function registerErrorHandling(app: FastifyInstance, opts: { exposeIntern
     if (error instanceof HttpError) {
       if (error.headers) reply.headers(error.headers);
       if (error.statusCode >= 500) request.log.error({ err: error }, error.message);
-      return reply.code(error.statusCode).send(errorBody(request, error.code, error.message));
+      return reply.code(error.statusCode).send(errorBody(request, error.code, error.message, error.details));
     }
 
     if (error instanceof DependencyError) {

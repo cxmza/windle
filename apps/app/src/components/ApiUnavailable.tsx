@@ -33,13 +33,16 @@ export function ApiUnavailable({ error, onRetry, retrying = false, className = '
   const { title, body } = describe(error);
   const devHint = IS_LOCAL_API && error instanceof ApiRequestError && error.kind === 'network';
   return (
-    <div role="alert" className={`glass flex flex-col gap-4 rounded-2xl p-5 ${className}`}>
+    <div
+      role="alert"
+      className={`flex flex-col gap-3 rounded-lg border border-(--hairline) bg-surface p-4 ${className}`}
+    >
       <div className="flex flex-col gap-1.5">
-        <h2 className="font-display text-base font-bold lowercase tracking-tight">{title}</h2>
+        <h2 className="text-sm font-semibold">{title}</h2>
         <p className="text-sm text-muted-foreground">{body}</p>
       </div>
       {devHint ? (
-        <p className="rounded-xl border border-dashed border-border-accent/60 px-4 py-3 text-caption text-accent-text">
+        <p className="rounded-md border border-dashed border-border-accent/60 px-4 py-3 text-caption text-accent-text">
           Dev notice: the API at <code className="font-mono">{API_URL}</code> is not responding. Start it with{' '}
           <code className="font-mono">npm run dev:api</code> (needs Postgres and Redis).
         </p>

@@ -85,6 +85,15 @@ AUTH_SIWS_ENABLED=true
 AUTH_EMAIL_ENABLED=false
 AUTH_X_ENABLED=false
 AUTH_GOOGLE_ENABLED=false
+X_RELAY_URL=http://x-relay:3010
+ADMIN_WALLETS=
+EOF
+
+# X feed relay (compose service `x-relay`, profile "relay"). No secrets today; an optional X_RELAY_PROXY may carry
+# credentials, hence 0600 like every other env file.
+write_once x-relay.env <<EOF
+X_RELAY_TAGS=kol,founder
+X_RELAY_LOG_LEVEL=info
 EOF
 
 # One-off migrations only (compose service `migrate`, profile "migrate"): owner role with DDL.
@@ -105,6 +114,11 @@ ensure api.env PUBLIC_DOCS_ORIGIN https://docs.windle.fun
 ensure api.env SIWS_DOMAIN oauth.windle.fun
 ensure api.env SIWS_URI https://oauth.windle.fun
 ensure api.env METRICS_TOKEN "$(rand 32)"
+ensure api.env X_RELAY_URL http://x-relay:3010
+ensure api.env ADMIN_WALLETS ""
+# The api signs cdn image URLs (user uploads) with the imgproxy key; required in production since the media pipeline.
+ensure api.env IMGPROXY_KEY "${IMGPROXY_KEY}"
+ensure api.env IMGPROXY_SALT "${IMGPROXY_SALT}"
 # The owner URL must not be visible to the long-running api: drop it once api-migrate.env holds it.
 if grep -q '^DATABASE_MIGRATION_URL=' "$SHARED/api.env" && grep -q '^DATABASE_MIGRATION_URL=' "$SHARED/api-migrate.env"; then
     sed -i '/^DATABASE_MIGRATION_URL=/d' "$SHARED/api.env"

@@ -1,5 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SOCIALS } from '@windle/brand';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CHAPTERS } from '../story/chapters';
 import { chapterPath } from '../story/routes';
@@ -28,9 +29,20 @@ describe('SiteNav', () => {
     expect(within(nav).getByRole('link', { name: 'Ecosystem' })).toHaveAttribute('href', '/ecosystem');
   });
 
-  it('offers Sign in and a Launch app that goes to the real app; X lives in the mobile sheet and footer only', () => {
-    render(<SiteNav />);
-    expect(screen.queryByRole('link', { name: /windle on X/ })).toBeNull();
+  it('offers Sign in and a Launch app that goes to the real app, with the socials in their own glass island beside it', () => {
+    const { container } = render(<SiteNav />);
+    const socials = container.querySelector('[data-dock-socials]');
+    expect(socials).not.toBeNull();
+    expect(within(socials as HTMLElement).getByRole('link', { name: /windle on X/ })).toHaveAttribute(
+      'href',
+      SOCIALS.x,
+    );
+    expect(within(socials as HTMLElement).getByRole('link', { name: /windle on GitHub/ })).toHaveAttribute(
+      'href',
+      SOCIALS.github,
+    );
+    expect(socials).toHaveAttribute('data-dock-early');
+    expect(container.querySelector('[data-dock-ca]')).toBeNull();
     expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', SIGN_IN_URL);
     expect(screen.getByRole('link', { name: 'Launch app' })).toHaveAttribute('href', APP_URL);
   });
@@ -46,10 +58,10 @@ describe('SiteNav', () => {
     expect(container.querySelector('[data-dock-progress]')).toBeNull();
   });
 
-  it('keeps the logo on the page and glass islands only for the capsule and the actions', () => {
+  it('keeps the logo on the page and glass islands only for the capsule, the socials and the actions', () => {
     const { container } = render(<SiteNav />);
-    expect(container.querySelectorAll('[data-dock-island]')).toHaveLength(2);
-    expect(container.querySelectorAll('[data-dock-island] [data-glass]')).toHaveLength(2);
+    expect(container.querySelectorAll('[data-dock-island]')).toHaveLength(3);
+    expect(container.querySelectorAll('[data-dock-island] [data-glass]')).toHaveLength(3);
     const logo = container.querySelector('[data-header-logo]');
     expect(logo?.closest('[data-dock-island]')).toBeNull();
     expect(container.querySelector('[data-dock] [data-dock-protocol]')).not.toBeNull();
@@ -121,7 +133,8 @@ describe('SiteNav', () => {
     expect(within(sheet).queryByRole('link', { name: /Judge|Collateral/ })).toBeNull();
     expect(within(sheet).getByRole('link', { name: /^Docs/ })).toHaveAttribute('href', DOCS_URL);
     expect(within(sheet).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', SIGN_IN_URL);
-    expect(within(sheet).getByRole('link', { name: /Follow on X/ })).toBeInTheDocument();
+    expect(within(sheet).getByRole('link', { name: /Follow on X/ })).toHaveAttribute('href', SOCIALS.x);
+    expect(within(sheet).getByRole('link', { name: /GitHub/ })).toHaveAttribute('href', SOCIALS.github);
     expect(within(sheet).getByRole('link', { name: 'Launch app' })).toHaveAttribute('href', APP_URL);
     expect(sheet).toContainElement(document.activeElement as HTMLElement);
     await user.keyboard('{Escape}');

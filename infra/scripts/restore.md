@@ -8,6 +8,7 @@ Backups live in `/opt/windle/backups` (root-only, mode 700), produced nightly at
 | `pg/windle-<ts>.dump` | `pg_dump -Fc` of database `windle` | `pg_restore --list` read the TOC |
 | `pg/globals-<ts>.sql` | roles + password hashes (`pg_dumpall --globals-only`) | written without error |
 | `redis/dump-<ts>.rdb` | RDB snapshot after `BGSAVE` | `rdb_last_bgsave_status:ok` + `REDIS` magic header |
+| `media/<ab>/<sha256>.webp` | mirror of the user image masters (`rsync --link-dest`: hard links, no extra space) | rsync exit 0 |
 
 Newest 14 of each are kept. **They are on the same disk as the data** — see README "Offsite backups".
 
@@ -108,6 +109,23 @@ $DC up -d redis
 $DC exec redis sh -c 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli DBSIZE'
 # once satisfied: rm -rf "$VOL/appendonlydir.before-restore"
 ```
+
+## 3b. User image masters
+
+`/opt/windle/backups/media/` mirrors `/opt/windle/media/` as of the last backup (hard links to the same files, so it
+guards against deletion, not against losing the disk). Masters are content-addressed and never change, so restoring
+is a copy back; files whose rows are `removed` (taken down) are not served even if present.
+
+```bash
+rsync -a --ignore-existing /opt/windle/backups/media/ /opt/windle/media/
+chown -R 1000:1000 /opt/windle/media && find /opt/windle/media -type d -exec chmod 755 {} +   && find /opt/windle/media -type f -exec chmod 644 {} +
+```
+
+After a database restore to an older dump, masters uploaded later are orphans (no row): harmless, never linked.
+**Takedowns made after that dump are lost with it**: re-apply them (`DELETE /v1/admin/media/<id>`; the ids are in
+the api log, `"msg":"media taken down"`) before anything else, and never copy a taken-down master back.
+Masters the database still lists as `active` but that are missing on disk return 404 at the CDN; uploading the
+same image again rewrites the file.
 
 ## 4. Static sites
 

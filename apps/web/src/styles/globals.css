@@ -298,6 +298,13 @@
     animation: dock-fade-in var(--dur-slow) var(--ease-decelerate) var(--dock-enter-delay) backwards;
   }
 
+  /* socials + CA chip: present from the first frame so they are usable during the intro; a short, quiet fade (same
+     easing as the bar) instead of waiting for --dock-enter-delay */
+  [data-dock-island][data-dock-early] {
+    animation-duration: var(--dur-slower);
+    animation-delay: var(--socials-enter-delay);
+  }
+
   /* focus: 2px white ring, 2px off the edge, on the bar, the menu and the sheet */
   [data-dock-root] :focus-visible,
   [data-dock-sheet] :focus-visible {

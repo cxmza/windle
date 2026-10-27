@@ -1,4 +1,5 @@
 import { SolanaAddress } from './common.ts';
+import { ApiImage } from './media.ts';
 import { z } from './zod.ts';
 
 /** Session cookie: opaque random token, the session itself lives in Redis. Domain=.windle.fun HttpOnly Secure SameSite=Lax. */
@@ -87,6 +88,9 @@ export const Me = z
       .meta({ examples: ['0b8f3c0e-6a51-4d47-9a8e-2f4c1d7b9e10'] }),
     createdAt: z.iso.datetime().describe('Account creation time (ISO 8601, UTC).'),
     wallets: z.array(Wallet).describe('Linked wallets, oldest first.'),
+    avatar: ApiImage.nullable()
+      .optional()
+      .describe('Profile image (`PUT /v1/me/avatar`); null when none. Always sent by the api.'),
   })
   .describe('The signed-in user.');
 export type Me = z.infer<typeof Me>;
