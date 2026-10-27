@@ -18,7 +18,7 @@
     "@fontsource-variable/unbounded": "^5.3.0",
     "@gsap/react": "^2.1.2",
     "@react-three/drei": "^10.7.9",
-    "@react-three/fiber": "^9.8.1",
+    "@react-three/fiber": "^9.8.2",
     "@windle/brand": "*",
     "@windle/tokens": "*",
     "class-variance-authority": "^0.7.1",
